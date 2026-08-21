@@ -1,0 +1,2310 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DinoMio - Original Tamagotchi Rules Edition</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', Courier, monospace;
+            image-rendering: pixelated;
+        }
+
+        body {
+            background-color: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #000;
+        }
+
+        .tamagotchi-container {
+            width: 100%;
+            max-width: 420px;
+            height: 100vh;
+            max-height: 750px;
+            background-color: #d8d8d8;
+            border-radius: 40px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            border: 6px solid #8c8c8c;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        /* Varianti Colore Guscio */
+        .tamagotchi-container.shell-blue { background-color: #3b82f6; border-color: #1d4ed8; }
+        .tamagotchi-container.shell-red { background-color: #ef4444; border-color: #b91c1c; }
+        .tamagotchi-container.shell-white { background-color: #f3f4f6; border-color: #d1d5db; }
+        .tamagotchi-container.shell-yellow { background-color: #eab308; border-color: #ca8a04; }
+        .tamagotchi-container.shell-pink { background-color: #f472b6; border-color: #db2777; }
+        .tamagotchi-container.shell-beige { background-color: #f5f5dc; border-color: #d2b48c; }
+        .tamagotchi-container.shell-lightblue { background-color: #38bdf8; border-color: #0284c7; }
+
+        .lcd-screen {
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            border: 4px solid #000000;
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+            position: relative;
+            transition: background-color 0.5s;
+        }
+
+        h1, h2 {
+            font-size: 0.9rem;
+            text-align: center;
+            color: #000;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 4px;
+            margin-bottom: 6px;
+            width: 100%;
+        }
+
+        .selection-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pets-list {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .pet-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #f0f0f0;
+            border: 2px solid #000;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .pet-row-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pet-name-title {
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .pet-inputs-container {
+            width: 100%;
+            background: #e8e8e8;
+            border: 2px solid #000;
+            padding: 6px;
+            border-radius: 4px;
+            margin-top: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            font-weight: bold;
+        }
+
+        .input-group input[type="text"] {
+            width: 55%;
+            padding: 2px 4px;
+            font-size: 0.65rem;
+            border: 1px solid #000;
+            font-family: inherit;
+            text-transform: uppercase;
+        }
+
+        .gender-options {
+            display: flex;
+            gap: 8px;
+        }
+
+        .gender-options label {
+            font-size: 0.65rem;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .select-pet-btn {
+            background: #000;
+            color: #fff;
+            border: none;
+            padding: 4px 8px;
+            font-size: 0.6rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 1px 1px 0px #000;
+        }
+
+        .select-pet-btn:active {
+            transform: translate(1px, 1px);
+            box-shadow: none;
+        }
+
+        .pixel-art-canvas {
+            width: 32px;
+            height: 32px;
+            display: inline-block;
+        }
+
+        .area-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 4px;
+            padding: 4px 0;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            width: 100%;
+        }
+
+        .area-btn {
+            background-color: #ffffff;
+            color: #000000;
+            border: 2px solid #000000;
+            border-radius: 4px;
+            padding: 10px 4px;
+            font-size: 0.65rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            text-transform: uppercase;
+            box-shadow: 2px 2px 0px #000000;
+            width: 100%;
+        }
+
+        .area-btn:active {
+            transform: translate(1px, 1px);
+            box-shadow: none;
+        }
+
+        .gameplay-screen, .rules-screen, .info-screen, .settings-screen, .choose-area-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .game-frame {
+            width: 100%;
+            flex: 0.95;
+            display: flex;
+            flex-direction: column;
+            border: 2px solid #000;
+            background-color: #eaeaea;
+            padding: 4px;
+            margin-bottom: 4px;
+            border-radius: 6px;
+        }
+
+        .frame-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2px 4px;
+            background: #d0d0d0;
+            border-bottom: 2px solid #000;
+            gap: 8px;
+        }
+
+        .frame-bottom-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2px 4px;
+            background: #d0d0d0;
+            border-top: 2px solid #000;
+        }
+
+        .top-icons-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex: 1;
+            margin-left: 8px;
+        }
+
+        .icon-stat-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1px;
+            flex: 1;
+        }
+
+        .dots-mini {
+            font-size: 0.7rem;
+            line-height: 1;
+            letter-spacing: -1px;
+            font-weight: bold;
+        }
+
+        .pixel-pet-badge {
+            background: #000;
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 2px;
+            font-size: 0.6rem;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+        }
+
+        #badge-pet-gender {
+            font-size: 0.9rem;
+            font-weight: 900;
+            margin-left: 2px;
+            line-height: 1;
+        }
+
+        .pet-display {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            border: 2px dashed #000;
+            background-color: #fafafa;
+            background-image: 
+                radial-gradient(rgba(0, 0, 0, 0.08) 20%, transparent 20%),
+                radial-gradient(rgba(0, 0, 0, 0.08) 20%, transparent 20%);
+            background-size: 8px 8px;
+            background-position: 0 0, 4px 4px;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .pet-display.lights-off {
+            background-color: #000000 !important;
+            background-image: none !important;
+        }
+
+        #bg-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        #game-canvas {
+            width: 128px;
+            height: 128px;
+            transition: transform 0.2s;
+            position: relative;
+            z-index: 2;
+        }
+
+        .pet-idle-bounce {
+            animation: bounceAndMove 3s infinite ease-in-out;
+        }
+
+        @keyframes bounceAndMove {
+            0%   { transform: translate(0, 0) scale(1, 1); }
+            25%  { transform: translate(-6px, -8px) scale(1.05, 0.95); }
+            50%  { transform: translate(0, -2px) scale(0.98, 1.02); }
+            75%  { transform: translate(6px, -8px) scale(1.05, 0.95); }
+            100% { transform: translate(0, 0) scale(1, 1); }
+        }
+
+        .egg-wobble {
+            animation: wobble 0.5s infinite ease-in-out !important;
+        }
+
+        @keyframes wobble {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(-8deg); }
+            75% { transform: rotate(8deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        #runner-container {
+            position: relative;
+            width: 100%;
+            height: 100px;
+            display: none;
+            z-index: 5;
+        }
+
+        #runner-canvas {
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            border: 1px solid #000;
+        }
+
+        .close-gym-btn {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background-color: #000;
+            color: #fff;
+            border: 1px solid #fff;
+            font-weight: bold;
+            font-size: 0.6rem;
+            width: 18px;
+            height: 18px;
+            line-height: 14px;
+            text-align: center;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .poop-indicator {
+            position: absolute;
+            right: 12px;
+            bottom: 24px;
+            display: none;
+            z-index: 4;
+        }
+
+        .sick-indicator {
+            position: absolute;
+            right: 8px;
+            top: 8px;
+            font-size: 10px;
+            font-weight: bold;
+            z-index: 4;
+        }
+
+        .action-btn {
+            margin-top: 5px;
+            background-color: #000000;
+            color: #ffffff;
+            padding: 8px 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.65rem;
+        }
+
+        .kitchen-options {
+            display: flex;
+            gap: 6px;
+            width: 100%;
+            margin-top: 4px;
+            align-items: center;
+        }
+
+        .kitchen-options .kitchen-btn {
+            flex: 1;
+            padding: 6px 4px;
+            font-size: 0.6rem;
+        }
+
+        .rules-content, .info-content, .settings-content {
+            font-size: 0.65rem;
+            text-align: left;
+            line-height: 1.4;
+            border: 1px solid #000;
+            padding: 8px;
+            background: #f9f9f9;
+            height: 100%;
+            width: 100%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .stat-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pixel-stat-icon {
+            width: 16px;
+            height: 16px;
+            image-rendering: pixelated;
+            flex-shrink: 0;
+        }
+
+        .settings-group {
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 6px;
+        }
+
+        .settings-group label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .color-picker-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+        }
+
+        .color-btn {
+            padding: 4px;
+            border: 1px solid #000;
+            font-size: 0.55rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .bg-picker-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+        }
+
+        .glossy-btn {
+            background: linear-gradient(180deg, #ffffff 0%, #e0e0e0 50%, #b0b0b0 100%);
+            color: #000;
+            border: 2px solid #000;
+            border-radius: 6px;
+            padding: 6px 2px;
+            font-size: 0.55rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 4px 0 #000, inset 0 1px 0 #fff;
+            transition: all 0.1s ease;
+            position: relative;
+            text-transform: uppercase;
+        }
+
+        .glossy-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #000, inset 0 1px 0 #fff;
+        }
+
+        .glossy-btn.active-bg {
+            background: linear-gradient(180deg, #555 0%, #222 50%, #000 100%);
+            color: #fff;
+            border-color: #000;
+            box-shadow: 0 2px 0 #000, inset 0 1px 0 #888;
+        }
+
+        .bottom-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .info-btn {
+            flex: 1;
+            color: #ffffff;
+            border: 2px solid #000;
+            border-radius: 20px;
+            padding: 8px 4px;
+            font-size: 0.65rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            text-transform: uppercase;
+            box-shadow: 2px 2px 0px #000;
+            background: linear-gradient(180deg, #444 0%, #000 50%, #111 100%);
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .info-btn:active {
+            transform: translate(1px, 1px);
+            box-shadow: none;
+        }
+
+        .tamagotchi-container.shell-blue .info-btn { background: linear-gradient(180deg, #60a5fa 0%, #3b82f6 50%, #1d4ed8 100%); color: #fff; }
+        .tamagotchi-container.shell-red .info-btn { background: linear-gradient(180deg, #f87171 0%, #ef4444 50%, #b91c1c 100%); color: #fff; }
+        .tamagotchi-container.shell-white .info-btn { background: linear-gradient(180deg, #ffffff 0%, #e5e7eb 50%, #9ca3af 100%); color: #000; }
+        .tamagotchi-container.shell-yellow .info-btn { background: linear-gradient(180deg, #fde047 0%, #eab308 50%, #ca8a04 100%); color: #000; }
+        .tamagotchi-container.shell-pink .info-btn { background: linear-gradient(180deg, #fbcfe8 0%, #f472b6 50%, #db2777 100%); color: #000; }
+        .tamagotchi-container.shell-beige .info-btn { background: linear-gradient(180deg, #ffffff 0%, #f5f5dc 50%, #d2b48c 100%); color: #000; }
+        .tamagotchi-container.shell-lightblue .info-btn { background: linear-gradient(180deg, #bae6fd 0%, #38bdf8 50%, #0284c7 100%); color: #000; }
+
+        .zzz-container {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 6;
+        }
+
+        .zzz-text {
+            position: absolute;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 16px;
+            animation: floatZ 2s infinite linear;
+            opacity: 0;
+        }
+
+        .zzz-text:nth-child(1) { left: 30%; animation-delay: 0s; }
+        .zzz-text:nth-child(2) { left: 50%; animation-delay: 0.6s; }
+        .zzz-text:nth-child(3) { left: 70%; animation-delay: 1.2s; }
+
+        @keyframes floatZ {
+            0% { top: 70%; opacity: 0; transform: scale(0.6); }
+            50% { opacity: 1; }
+            100% { top: 10%; opacity: 0; transform: scale(1.3); }
+        }
+    </style>
+</head>
+<body>
+
+    <svg style="display: none;">
+        <g id="icon-hun"><path d="M2 1h1v2H2zM5 0h1v2H5zM3 4h2v1H3zM1 3h6v2H1zM0 5h8v2H0zM1 7h6v1H1z" fill="#000"/></g>
+        <g id="icon-cln"><path d="M3 1h2v1H3zM2 2h4v1H2zM1 3h6v1H1zM3 4h2v1H3zM4 6h1v1H4zM2 6h1v1H2z" fill="#000"/></g>
+        <g id="icon-hap"><path d="M1 1h2v2H1zM5 1h2v2H5zM0 2h8v2H0zM1 4h6v2H1zM2 6h4v1H2zM3 7h2v1H3z" fill="#000"/></g>
+        <g id="icon-hlt"><path d="M3 0h2v8H3zM0 3h8v2H0z" fill="#000"/></g>
+        <g id="icon-nrg"><path d="M4 0l3 4H4l2 4-5-5h3z" fill="#000"/></g>
+        <g id="icon-fit"><path d="M0 2h2v4H0zM6 2h2v4H6zM2 3h4v2H2z" fill="#000"/></g>
+        <g id="icon-int"><path d="M4 0L0 2l4 2 4-2-4-2zM2 3.5v2.5c0 1 1 1.5 2 1.5s2-.5 2-1.5V3.5M7 2.5v3.5" fill="#000"/></g>
+    </svg>
+
+    <div class="tamagotchi-container" id="shell-container">
+        <div class="lcd-screen" id="lcd-screen">
+            
+            <div id="selection-screen" style="width: 100%; height: 100%;">
+                <div class="selection-container">
+                    <h2 id="title-selection">DINOMIO - SELEZIONA PET</h2>
+
+                    <div class="pet-inputs-container">
+                        <div class="input-group">
+                            <label for="custom-pet-name" id="lbl-input-name">NOME:</label>
+                            <input type="text" id="custom-pet-name" placeholder="ES. SPIKE" maxlength="10">
+                        </div>
+                        <div class="input-group">
+                            <span id="lbl-input-gender">GENERE:</span>
+                            <div class="gender-options">
+                                <label><input type="radio" name="pet-gender" value="M" checked> ♂ M</label>
+                                <label><input type="radio" name="pet-gender" value="F"> ♀ F</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pets-list">
+                        <div class="pet-row">
+                            <div class="pet-row-info">
+                                <canvas class="pixel-art-canvas" id="p1_baby" width="32" height="32"></canvas>
+                                <span class="pet-name-title">SPIKE</span>
+                            </div>
+                            <button class="select-pet-btn" onclick="selectPet(0, 'SPIKE')">START</button>
+                        </div>
+
+                        <div class="pet-row">
+                            <div class="pet-row-info">
+                                <canvas class="pixel-art-canvas" id="p2_baby" width="32" height="32"></canvas>
+                                <span class="pet-name-title">NIBBLE</span>
+                            </div>
+                            <button class="select-pet-btn" onclick="selectPet(1, 'NIBBLE')">START</button>
+                        </div>
+
+                        <div class="pet-row">
+                            <div class="pet-row-info">
+                                <canvas class="pixel-art-canvas" id="p3_baby" width="32" height="32"></canvas>
+                                <span class="pet-name-title">BUBBLE</span>
+                            </div>
+                            <button class="select-pet-btn" onclick="selectPet(2, 'BUBBLE')">START</button>
+                        </div>
+
+                        <div class="pet-row">
+                            <div class="pet-row-info">
+                                <canvas class="pixel-art-canvas" id="p4_baby" width="32" height="32"></canvas>
+                                <span class="pet-name-title">PUFF</span>
+                            </div>
+                            <button class="select-pet-btn" onclick="selectPet(3, 'PUFF')">START</button>
+                        </div>
+
+                        <div class="pet-row">
+                            <div class="pet-row-info">
+                                <canvas class="pixel-art-canvas" id="p5_baby" width="32" height="32"></canvas>
+                                <span class="pet-name-title">DINO</span>
+                            </div>
+                            <button class="select-pet-btn" onclick="selectPet(4, 'DINO')">START</button>
+                        </div>
+                    </div>
+
+                    <div class="area-section">
+                        <button class="action-btn" id="btn-manual" style="width: 90%; margin-bottom: 4px;" onclick="showRules()">MANUALE / REGOLE</button>
+                        <button class="action-btn" id="btn-choose-area-menu" style="width: 90%;" onclick="showChooseArea()">SCEGLI AREA</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="choose-area-screen" class="choose-area-screen">
+                <h2 id="title-choose-area">SCEGLI LA TUA AREA</h2>
+                <div class="button-grid" style="grid-template-columns: repeat(3, 1fr); margin-top: 15px; gap: 8px;">
+                    <button class="area-btn" id="area-birth" onclick="navigateToLocation('Aree Nascita')">Nascita</button>
+                    <button class="area-btn" id="area-forest" onclick="navigateToLocation('Bosco Incantato')">Bosco</button>
+                    <button class="area-btn" id="area-beach" onclick="navigateToLocation('Spiaggia Solare')">Spiaggia</button>
+                    <button class="area-btn" id="area-city" onclick="navigateToLocation('Città Futuristica')">Città</button>
+                    <button class="area-btn" id="area-mountain" onclick="navigateToLocation('Montagna Rocciosa')">Montagna</button>
+                    <button class="area-btn" id="area-castle" onclick="navigateToLocation('Castello Antico')">Castello</button>
+                    <button class="area-btn" id="area-island" onclick="navigateToLocation('Isola del Tesoro')">Isola</button>
+                    <button class="area-btn" id="area-space" onclick="navigateToLocation('Spazio Aperto')">Spazio</button>
+                    <button class="area-btn" id="area-magic" onclick="navigateToLocation('Mondo Magico')">Magia</button>
+                </div>
+                <button class="action-btn" id="btn-back-area" style="margin-top: auto;" onclick="hideChooseArea()">INDIETRO</button>
+            </div>
+
+            <div id="rules-screen" class="rules-screen">
+                <h2 id="title-rules">REGOLE REALI</h2>
+                <div class="rules-content" id="rules-body">
+                    <b>1. SCHIUSA E NASCITA:</b>
+                    <p>L'uovo richiede soli 7 secondi per schiudersi!</p><br>
+                    
+                    <b>2. TEMPO REALE (1 Giorno = 24 Ore):</b>
+                    <p>L'evoluzione avviene ogni 3 giorni reali (Baby, Toddler, Teen). Lo stadio Adulto vive fino a 3 giorni reali.</p><br>
+
+                    <b>3. FAME E BISOGNI:</b>
+                    <p>I parametri diminuiscono col passare del tempo reale. Controlla il tuo pet regolarmente.</p><br>
+
+                    <b>4. IGIENE E SALUTE:</b>
+                    <p>Lasciare il pet sporco o privo di attenzioni farà calare la salute e rischierà di farlo ammalare.</p><br>
+
+                    <b>5. PALESTRA:</b>
+                    <p>Usa il tasto [X] in alto a destra nella Palestra per uscire dall'area in qualsiasi momento.</p>
+                </div>
+                <button class="action-btn" id="btn-back-sel" onclick="hideRules()">TORNA ALLA SELEZIONE</button>
+            </div>
+
+            <div id="info-screen" class="info-screen">
+                <h2 id="title-info">INFORMAZIONI PET</h2>
+                <div class="info-content">
+                    <p><b id="lbl-name">NOME:</b> <span id="info-name">SPIKE</span></p>
+                    <p><b id="lbl-gender">GENERE:</b> <span id="info-gender">♂ MASCHIO</span></p>
+                    <p><b id="lbl-gen">GENERAZIONE:</b> <span id="info-gen">1</span></p>
+                    <p><b id="lbl-age">ETÀ:</b> <span id="info-age">0</span> <span id="lbl-days">giorni</span></p>
+                    <p><b id="lbl-stage">STADIO:</b> <span id="info-stage">EGG</span></p>
+                    <hr style="margin: 6px 0;">
+                    
+                    <div class="stat-row">
+                        <svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-hun"/></svg>
+                        <p><b id="lbl-hun">FAME (HUN):</b> <span id="info-hunger">●●●●●</span></p>
+                    </div>
+                    <div class="stat-row">
+                        <svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-cln"/></svg>
+                        <p><b id="lbl-cln">PULIZIA (CLN):</b> <span id="info-cleanliness">●●●●●</span></p>
+                    </div>
+                    <div class="stat-row">
+                        <svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-hap"/></svg>
+                        <p><b id="lbl-hap">FELICITÀ (HAP):</b> <span id="info-happy">●●●●●</span></p>
+                    </div>
+                    <div class="stat-row">
+                        <svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-hlt"/></svg>
+                        <p><b id="lbl-hlt">SALUTE (HLT):</b> <span id="info-health">●●●●●</span></p>
+                    </div>
+                    <div class="stat-row">
+                        <svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-nrg"/></svg>
+                        <p><b id="lbl-nrg">ENERGIA (NRG):</b> <span id="info-energy">●●●●●</span></p>
+                    </div>
+                    <div class="stat-row">
+                        <svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-fit"/></svg>
+                        <p><b id="lbl-fit">FORMA FISICA (FIT):</b> <span id="info-fitness">●●●●●</span></p>
+                    </div>
+                    <div class="stat-row">
+                        <svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-int"/></svg>
+                        <p><b id="lbl-int">INTELLIGENZA (INT):</b> <span id="info-intelligence">○○○○○</span></p>
+                    </div>
+                </div>
+                <button class="action-btn" id="btn-back-game" onclick="hideInfo()">TORNA AL GIOCO</button>
+            </div>
+
+            <div id="settings-screen" class="settings-screen">
+                <h2 id="title-settings">IMPOSTAZIONI</h2>
+                <div class="settings-content">
+                    <div class="settings-group">
+                        <label id="lbl-lang">LINGUA / LANGUAGE:</label>
+                        <button class="action-btn" style="width: 100%; margin-top:0;" onclick="toggleLanguage()" id="btn-lang-toggle">Italiano / English</button>
+                    </div>
+
+                    <div class="settings-group">
+                        <label id="lbl-bg-style">SFONDO PIXEL-ART 8-BIT:</label>
+                        <div class="bg-picker-grid">
+                            <button class="glossy-btn active-bg" id="bg-btn-none" onclick="setBackgroundStyle('none')">VUOTO</button>
+                            <button class="glossy-btn" id="bg-btn-sea" onclick="setBackgroundStyle('sea')">MARE</button>
+                            <button class="glossy-btn" id="bg-btn-forest" onclick="setBackgroundStyle('forest')">BOSCO</button>
+                            <button class="glossy-btn" id="bg-btn-city" onclick="setBackgroundStyle('city')">CITTÀ</button>
+                            <button class="glossy-btn" id="bg-btn-sky" onclick="setBackgroundStyle('sky')">CIELO</button>
+                            <button class="glossy-btn" id="bg-btn-space" onclick="setBackgroundStyle('space')">SPAZIO</button>
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <label id="lbl-shell-color">COLORE GUSCIO:</label>
+                        <div class="color-picker-grid">
+                            <button class="color-btn" style="background:#d8d8d8;" onclick="setShellColor('default')">DEFAULT</button>
+                            <button class="color-btn" style="background:#3b82f6; color:#fff;" onclick="setShellColor('blue')">BLU</button>
+                            <button class="color-btn" style="background:#ef4444; color:#fff;" onclick="setShellColor('red')">ROSSO</button>
+                            <button class="color-btn" style="background:#ffffff;" onclick="setShellColor('white')">BIANCO</button>
+                            <button class="color-btn" style="background:#eab308;" onclick="setShellColor('yellow')">GIALLO</button>
+                            <button class="color-btn" style="background:#f472b6;" onclick="setShellColor('pink')">ROSA</button>
+                            <button class="color-btn" style="background:#f5f5dc;" onclick="setShellColor('beige')">BEIGE</button>
+                            <button class="color-btn" style="background:#38bdf8;" onclick="setShellColor('lightblue')">CELESTE</button>
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <label id="lbl-reset-opt">RESET PET:</label>
+                        <button class="action-btn" style="width: 100%; background: #b91c1c; color:#fff; margin-top:0;" id="btn-reset-game" onclick="resetGame()">RESET</button>
+                    </div>
+                </div>
+                <button class="action-btn" id="btn-back-settings" onclick="hideSettings()">TORNA AL GIOCO</button>
+            </div>
+
+            <div id="gameplay-screen" class="gameplay-screen">
+                <div class="game-frame">
+                    <div class="frame-top-bar">
+                        <div class="pixel-pet-badge">
+                            <span id="badge-pet-name">SPIKE</span>
+                            <span id="badge-pet-gender">♂</span>
+                        </div>
+                        <div class="top-icons-group">
+                            <div class="icon-stat-box" title="Fame">
+                                <svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-hun"/></svg>
+                                <span class="dots-mini" id="mini-hunger">●●●●●</span>
+                            </div>
+                            <div class="icon-stat-box" title="Pulizia">
+                                <svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-cln"/></svg>
+                                <span class="dots-mini" id="mini-cleanliness">●●●●●</span>
+                            </div>
+                            <div class="icon-stat-box" title="Felicità">
+                                <svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-hap"/></svg>
+                                <span class="dots-mini" id="mini-happy">●●●●●</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pet-display" id="pet-display-box" onmousedown="triggerJumpInRunner()" ontouchstart="triggerJumpInRunner()">
+                        <canvas id="bg-canvas" width="128" height="128"></canvas>
+
+                        <div id="sick-tag" class="sick-indicator" style="display:none;">[MALATO!]</div>
+                        
+                        <canvas id="game-canvas" width="32" height="32" class="egg-wobble"></canvas>
+                        
+                        <div id="runner-container">
+                            <button class="close-gym-btn" onclick="event.stopPropagation(); stopRunner();">X</button>
+                            <canvas id="runner-canvas" width="200" height="80"></canvas>
+                        </div>
+
+                        <div class="zzz-container" id="zzz-layer">
+                            <div class="zzz-text">Z</div>
+                            <div class="zzz-text">z</div>
+                            <div class="zzz-text">Z</div>
+                        </div>
+
+                        <canvas id="poop-canvas" width="32" height="32" class="poop-indicator"></canvas>
+                        
+                        <div id="action-msg" style="font-size: 0.55rem; margin-top: 2px; position: relative; z-index: 3;">L'uovo si sta scaldando...</div>
+                    </div>
+
+                    <div class="frame-bottom-bar">
+                        <div class="icon-stat-box" title="Salute">
+                            <svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-hlt"/></svg>
+                            <span class="dots-mini" id="mini-health">●●●●●</span>
+                        </div>
+                        <div class="icon-stat-box" title="Energia">
+                            <svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-nrg"/></svg>
+                            <span class="dots-mini" id="mini-energy">●●●●●</span>
+                        </div>
+                        <div class="icon-stat-box" title="Forma">
+                            <svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-fit"/></svg>
+                            <span class="dots-mini" id="mini-fitness">●●●●●</span>
+                        </div>
+                        <div class="icon-stat-box" title="Intelligenza">
+                            <svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-int"/></svg>
+                            <span class="dots-mini" id="mini-intelligence">○○○○○</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="area-section">
+                    <div class="button-grid">
+                        <button class="area-btn" id="btn-kitchen" onclick="toggleKitchenMenu()">Cucina</button>
+                        <button class="area-btn" id="btn-park" onclick="interactArea('Parco')">Parco</button>
+                        <button class="area-btn" id="btn-gym" onclick="interactArea('Palestra')">Palestra</button>
+                        <button class="area-btn" id="btn-clinic" onclick="interactArea('Infermeria')">Infermeria</button>
+                        <button class="area-btn" id="btn-shower" onclick="interactArea('Doccia')">Doccia</button>
+                        <button class="area-btn" id="btn-study" onclick="interactArea('Studio')">Studio</button>
+                    </div>
+                    <div id="kitchen-sub-menu" class="kitchen-options" style="display: none;">
+                        <button class="area-btn kitchen-btn" id="btn-meal" onclick="feedPet('pasto')">Pasto</button>
+                        <button class="area-btn kitchen-btn" id="btn-snack" onclick="feedPet('snack')">Snack</button>
+                        <button class="area-btn kitchen-btn" id="btn-close-kitchen" onclick="toggleKitchenMenu()">Esci</button>
+                    </div>
+                </div>
+
+                <div class="bottom-bar">
+                    <button class="info-btn" id="btn-settings-main" onclick="showSettings()">IMPOSTAZIONI</button>
+                    <button class="info-btn" id="btn-info-main" onclick="showInfo()">INFO</button>
+                    <button class="info-btn" id="btn-light" onclick="interactArea('Luce')">LUCE</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let currentLang = 'it';
+        let currentShellColor = 'default';
+        let currentBgStyle = 'none';
+        let actionMsgTimer = null;
+
+        let petCustomName = "SPIKE";
+        let petGender = "M";
+
+        function setActionMessage(msg, delay = 2000) {
+            const msgElement = document.getElementById('action-msg');
+            msgElement.innerText = msg;
+            if (actionMsgTimer) clearTimeout(actionMsgTimer);
+            if (petStage > 0 && msg) {
+                actionMsgTimer = setTimeout(() => {
+                    msgElement.innerText = "";
+                }, delay);
+            }
+        }
+
+        const i18n = {
+            it: {
+                titleSel: "DINOMIO - SELEZIONA PET",
+                lblInputName: "NOME:",
+                lblInputGender: "GENERE:",
+                manualBtn: "MANUALE / REGOLE",
+                btnChooseAreaMenu: "SCEGLI AREA",
+                titleChooseArea: "SCEGLI LA TUA AREA",
+                areaBirth: "Nascita",
+                areaForest: "Bosco",
+                areaBeach: "Spiaggia",
+                areaCity: "Città",
+                areaMountain: "Montagna",
+                areaCastle: "Castello",
+                areaIsland: "Isola",
+                areaSpace: "Spazio",
+                areaMagic: "Magia",
+                btnBackArea: "INDIETRO",
+                travelMsg: "Ti stai spostando in: ",
+                rulesTitle: "REGOLE REALI",
+                rulesBack: "TORNA ALLA SELEZIONE",
+                rulesContent: `<b>1. SCHIUSA E NASCITA:</b><p>L'uovo richiede soli 7 secondi per schiudersi!</p><br><b>2. TEMPO REALE (1 Giorno = 24 Ore):</b><p>L'evoluzione avviene ogni 3 giorni reali (Baby, Toddler, Teen). Lo stadio Adulto vive fino a 3 giorni reali.</p><br><b>3. FAME E BISOGNI:</b><p>I parametri diminuiscono col passare del tempo reale. Controlla il tuo pet regolarmente.</p><br><b>4. IGIENE E SALUTE:</b><p>Lasciare il pet sporco o privo di attenzioni farà calare la salute e rischierà di farlo ammalare.</p><br><b>5. PALESTRA:</b><p>Usa il tasto [X] in alto a destra nella Palestra per uscire dall'area in qualsiasi momento.</p>`,
+                infoTitle: "INFORMAZIONI PET",
+                infoBack: "TORNA AL GIOCO",
+                lblName: "NOME:",
+                lblGender: "GENERE:",
+                lblGen: "GENERAZIONE:",
+                lblAge: "ETÀ:",
+                lblDays: "giorni",
+                lblStage: "STADIO:",
+                lblHun: "FAME (HUN):",
+                lblCln: "PULIZIA (CLN):",
+                lblHap: "FELICITÀ (HAP):",
+                lblHlt: "SALUTE (HLT):",
+                lblNrg: "ENERGIA (NRG):",
+                lblFit: "FORMA FISICA (FIT):",
+                lblInt: "INTELLIGENZA (INT):",
+                settingsTitle: "IMPOSTAZIONI",
+                lblLang: "LINGUA / LANGUAGE:",
+                lblBgStyle: "SFONDO PIXEL-ART 8-BIT:",
+                lblShell: "COLORE GUSCIO:",
+                lblReset: "RESET PET:",
+                btnBackSettings: "TORNA AL GIOCO",
+                btnKitchen: "Cucina",
+                btnPark: "Parco",
+                btnGym: "Palestra",
+                btnClinic: "Infermeria",
+                btnShower: "Doccia",
+                btnStudy: "Studio",
+                btnMeal: "Pasto",
+                btnSnack: "Snack",
+                btnCloseKitchen: "Esci",
+                btnLight: "LUCE",
+                btnSettings: "IMPOSTAZIONI",
+                btnInfo: "INFO",
+                eggWarming: "L'uovo si sta scaldando...",
+                sickTag: "[MALATO!]",
+                poopTag: "[SPORCO!]",
+                wakeUpMsg: "Sveglia!",
+                poopMsg: "L'animaletto ha fatto la cacca!",
+                hatchedMsg: "L'uovo si è schiuso!",
+                evoMsg: "EVOLUZIONE COMPIUTA!",
+                deathMsg: "IL TUO PET È MORTO!",
+                deathRebirthMsg: "Il pet ci ha lasciati... È nato un nuovo UOVO!",
+                waitEggMsg: "Aspetta la schiusa dell'uovo!",
+                mealMsg: "Pasto consumato (Pollo)!",
+                snackMsg: "Snack gustato (Caramella)!",
+                parkMsg: "Parco! Felicità +2 Pallini",
+                showerDirtyMsg: "Doccia fatta! Tutto pulito.",
+                showerCleanMsg: "Pet lavato e profumato!",
+                clinicSickMsg: "Cura somministrata! Pet guarito.",
+                clinicOkMsg: "Controllo medico effettuato.",
+                studyMsg: "Studio in corso! Intelligenza +1, Felicità -1",
+                lightOffMsg: "Luce spenta. Addormentamento...",
+                lightRestMsg: "Luce spenta. Riposo in corso...",
+                lightOnMsg: "Luce riaccesa!",
+                gymMsg: "PALESTRA! Salta i cactus [TAP/SPAZIO]",
+                gymExitMsg: "Uscito dalla Palestra.",
+                genderM: "♂ MASCHIO",
+                genderF: "♀ FEMMINA",
+                bgNone: "VUOTO",
+                bgSea: "MARE",
+                bgForest: "BOSCO",
+                bgCity: "CITTÀ",
+                bgSky: "CIELO",
+                bgSpace: "SPAZIO"
+            },
+            en: {
+                titleSel: "DINOMIO - SELECT PET",
+                lblInputName: "NAME:",
+                lblInputGender: "GENDER:",
+                manualBtn: "MANUAL / RULES",
+                btnChooseAreaMenu: "CHOOSE AREA",
+                titleChooseArea: "CHOOSE YOUR AREA",
+                areaBirth: "Birth",
+                areaForest: "Forest",
+                areaBeach: "Beach",
+                areaCity: "City",
+                areaMountain: "Mountain",
+                areaCastle: "Castle",
+                areaIsland: "Island",
+                areaSpace: "Space",
+                areaMagic: "Magic",
+                btnBackArea: "BACK",
+                travelMsg: "Moving to: ",
+                rulesTitle: "REAL RULES",
+                rulesBack: "BACK TO SELECTION",
+                rulesContent: `<b>1. HATCHING & BIRTH:</b><p>The egg takes only 7 seconds to hatch!</p><br><b>2. REAL TIME (1 Day = 24 Hours):</b><p>Evolution happens every 3 real days (Baby, Toddler, Teen). Adult stage lives up to 3 real days.</p><br><b>3. HUNGER & NEEDS:</b><p>Stats decrease over real time. Check your pet regularly.</p><br><b>4. HYGIENE & HEALTH:</b><p>Leaving the pet dirty lowers health and causes illness.</p><br><b>5. GYM:</b><p>Use the [X] button top right in the Gym to leave at any time.</p>`,
+                infoTitle: "PET INFORMATION",
+                infoBack: "BACK TO GAME",
+                lblName: "NAME:",
+                lblGender: "GENDER:",
+                lblGen: "GENERATION:",
+                lblAge: "AGE:",
+                lblDays: "days",
+                lblStage: "STAGE:",
+                lblHun: "HUNGER (HUN):",
+                lblCln: "CLEANLINESS (CLN):",
+                lblHap: "HAPPINESS (HAP):",
+                lblHlt: "HEALTH (HLT):",
+                lblNrg: "ENERGY (NRG):",
+                lblFit: "FITNESS (FIT):",
+                lblInt: "INTELLIGENCE (INT):",
+                settingsTitle: "SETTINGS",
+                lblLang: "LANGUAGE / LINGUA:",
+                lblBgStyle: "8-BIT PIXEL-ART BG:",
+                lblShell: "SHELL COLOR:",
+                lblReset: "RESET PET:",
+                btnBackSettings: "BACK TO GAME",
+                btnKitchen: "Kitchen",
+                btnPark: "Park",
+                btnGym: "Gym",
+                btnClinic: "Clinic",
+                btnShower: "Shower",
+                btnStudy: "Study",
+                btnMeal: "Meal",
+                btnSnack: "Snack",
+                btnCloseKitchen: "Exit",
+                btnLight: "LIGHT",
+                btnSettings: "SETTINGS",
+                btnInfo: "INFO",
+                eggWarming: "The egg is warming up...",
+                sickTag: "[SICK!]",
+                poopTag: "[DIRTY!]",
+                wakeUpMsg: "Wake up!",
+                poopMsg: "The pet pooped!",
+                hatchedMsg: "The egg has hatched!",
+                evoMsg: "EVOLUTION COMPLETE!",
+                deathMsg: "YOUR PET DIED!",
+                deathRebirthMsg: "The pet left us... A new EGG is born!",
+                waitEggMsg: "Wait for the egg to hatch!",
+                mealMsg: "Meal eaten (Chicken)!",
+                snackMsg: "Snack enjoyed (Candy)!",
+                parkMsg: "Park! Happiness +2 Dots",
+                showerDirtyMsg: "Shower done! All clean.",
+                showerCleanMsg: "Pet washed and fresh!",
+                clinicSickMsg: "Medicine given! Pet cured.",
+                clinicOkMsg: "Medical check complete.",
+                studyMsg: "Studying! Intelligence +1, Happiness -1",
+                lightOffMsg: "Lights off. Falling asleep...",
+                lightRestMsg: "Lights off. Resting...",
+                lightOnMsg: "Lights back on!",
+                gymMsg: "GYM! Jump over cacti [TAP/SPACE]",
+                gymExitMsg: "Left the Gym.",
+                genderM: "♂ MALE",
+                genderF: "♀ FEMALE",
+                bgNone: "EMPTY",
+                bgSea: "SEA",
+                bgForest: "FOREST",
+                bgCity: "CITY",
+                bgSky: "SKY",
+                bgSpace: "SPACE"
+            }
+        };
+
+        function updateTexts() {
+            const t = i18n[currentLang];
+            document.getElementById('title-selection').innerText = t.titleSel;
+            document.getElementById('lbl-input-name').innerText = t.lblInputName;
+            document.getElementById('lbl-input-gender').innerText = t.lblInputGender;
+            document.getElementById('btn-manual').innerText = t.manualBtn;
+            document.getElementById('btn-choose-area-menu').innerText = t.btnChooseAreaMenu;
+            
+            document.getElementById('title-choose-area').innerText = t.titleChooseArea;
+            document.getElementById('area-birth').innerText = t.areaBirth;
+            document.getElementById('area-forest').innerText = t.areaForest;
+            document.getElementById('area-beach').innerText = t.areaBeach;
+            document.getElementById('area-city').innerText = t.areaCity;
+            document.getElementById('area-mountain').innerText = t.areaMountain;
+            document.getElementById('area-castle').innerText = t.areaCastle;
+            document.getElementById('area-island').innerText = t.areaIsland;
+            document.getElementById('area-space').innerText = t.areaSpace;
+            document.getElementById('area-magic').innerText = t.areaMagic;
+            document.getElementById('btn-back-area').innerText = t.btnBackArea;
+
+            document.getElementById('title-rules').innerText = t.rulesTitle;
+            document.getElementById('btn-back-sel').innerText = t.rulesBack;
+            document.getElementById('rules-body').innerHTML = t.rulesContent;
+            document.getElementById('title-info').innerText = t.infoTitle;
+            document.getElementById('btn-back-game').innerText = t.infoBack;
+            document.getElementById('lbl-name').innerText = t.lblName;
+            document.getElementById('lbl-gender').innerText = t.lblGender;
+            document.getElementById('lbl-gen').innerText = t.lblGen;
+            document.getElementById('lbl-age').innerText = t.lblAge;
+            document.getElementById('lbl-days').innerText = t.lblDays;
+            document.getElementById('lbl-stage').innerText = t.lblStage;
+            document.getElementById('lbl-hun').innerText = t.lblHun;
+            document.getElementById('lbl-cln').innerText = t.lblCln;
+            document.getElementById('lbl-hap').innerText = t.lblHap;
+            document.getElementById('lbl-hlt').innerText = t.lblHlt;
+            document.getElementById('lbl-nrg').innerText = t.lblNrg;
+            document.getElementById('lbl-fit').innerText = t.lblFit;
+            document.getElementById('lbl-int').innerText = t.lblInt;
+
+            document.getElementById('title-settings').innerText = t.settingsTitle;
+            document.getElementById('lbl-lang').innerText = t.lblLang;
+            document.getElementById('lbl-bg-style').innerText = t.lblBgStyle;
+            document.getElementById('lbl-shell-color').innerText = t.lblShell;
+            document.getElementById('lbl-reset-opt').innerText = t.lblReset;
+            document.getElementById('btn-back-settings').innerText = t.btnBackSettings;
+
+            document.getElementById('bg-btn-none').innerText = t.bgNone;
+            document.getElementById('bg-btn-sea').innerText = t.bgSea;
+            document.getElementById('bg-btn-forest').innerText = t.bgForest;
+            document.getElementById('bg-btn-city').innerText = t.bgCity;
+            document.getElementById('bg-btn-sky').innerText = t.bgSky;
+            document.getElementById('bg-btn-space').innerText = t.bgSpace;
+
+            document.getElementById('btn-kitchen').innerText = t.btnKitchen;
+            document.getElementById('btn-park').innerText = t.btnPark;
+            document.getElementById('btn-gym').innerText = t.btnGym;
+            document.getElementById('btn-clinic').innerText = t.btnClinic;
+            document.getElementById('btn-shower').innerText = t.btnShower;
+            document.getElementById('btn-study').innerText = t.btnStudy;
+            document.getElementById('btn-meal').innerText = t.btnMeal;
+            document.getElementById('btn-snack').innerText = t.btnSnack;
+            document.getElementById('btn-close-kitchen').innerText = t.btnCloseKitchen;
+            document.getElementById('btn-light').innerText = t.btnLight;
+            document.getElementById('btn-settings-main').innerText = t.btnSettings;
+            document.getElementById('btn-info-main').innerText = t.btnInfo;
+
+            document.getElementById('sick-tag').innerText = t.sickTag;
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'it' ? 'en' : 'it';
+            updateTexts();
+            saveGameState();
+        }
+
+        function setShellColor(color) {
+            currentShellColor = color;
+            const shell = document.getElementById('shell-container');
+            shell.className = 'tamagotchi-container';
+            if (color !== 'default') {
+                shell.classList.add(`shell-${color}`);
+            }
+            saveGameState();
+        }
+
+        function setBackgroundStyle(style) {
+            currentBgStyle = style;
+            
+            const buttons = document.querySelectorAll('.bg-picker-grid .glossy-btn');
+            buttons.forEach(btn => btn.classList.remove('active-bg'));
+            const activeBtn = document.getElementById(`bg-btn-${style}`);
+            if (activeBtn) activeBtn.classList.add('active-bg');
+
+            drawBackground();
+            saveGameState();
+        }
+
+        function drawBackground() {
+            const canvas = document.getElementById('bg-canvas');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, 128, 128);
+
+            ctx.fillStyle = "#000000";
+
+            if (currentBgStyle === 'none') {
+                return;
+            } 
+            else if (currentBgStyle === 'sea') {
+                ctx.fillRect(0, 96, 128, 1);
+                for(let x=0; x<128; x+=16) {
+                    ctx.fillRect(x, 104, 8, 1);
+                    ctx.fillRect(x+8, 116, 8, 1);
+                }
+                ctx.fillRect(40, 92, 48, 5);
+                ctx.fillRect(48, 88, 32, 4);
+                ctx.fillRect(62, 60, 4, 28);
+                ctx.fillRect(52, 56, 12, 4);
+                ctx.fillRect(64, 56, 12, 4);
+                ctx.fillRect(48, 60, 6, 4);
+                ctx.fillRect(74, 60, 6, 4);
+                ctx.fillRect(58, 52, 12, 4);
+            } 
+            else if (currentBgStyle === 'forest') {
+                ctx.fillRect(0, 112, 128, 2);
+                const treePositions = [8, 36, 72, 100];
+                treePositions.forEach(x => {
+                    ctx.fillRect(x + 10, 88, 6, 24);
+                    ctx.fillRect(x + 2, 64, 22, 24);
+                    ctx.fillRect(x + 6, 52, 14, 12);
+                    ctx.fillRect(x + 10, 44, 6, 8);
+                    ctx.fillStyle = "#ffffff";
+                    ctx.fillRect(x + 4, 72, 4, 4);
+                    ctx.fillRect(x + 16, 80, 4, 4);
+                    ctx.fillStyle = "#000000";
+                });
+            } 
+            else if (currentBgStyle === 'city') {
+                ctx.fillRect(0, 116, 128, 2);
+                ctx.fillRect(4, 30, 24, 86);
+                ctx.fillRect(32, 50, 28, 66);
+                ctx.fillRect(64, 20, 26, 96);
+                ctx.fillRect(94, 60, 30, 56);
+
+                ctx.fillStyle = "#ffffff";
+                for(let y=36; y<100; y+=12) {
+                    ctx.fillRect(8, y, 6, 6);
+                    ctx.fillRect(18, y, 6, 6);
+                }
+                for(let y=56; y<100; y+=14) {
+                    ctx.fillRect(36, y, 8, 6);
+                    ctx.fillRect(48, y, 8, 6);
+                }
+                for(let y=26; y<100; y+=10) {
+                    ctx.fillRect(68, y, 6, 5);
+                    ctx.fillRect(80, y, 6, 5);
+                }
+                for(let y=66; y<100; y+=12) {
+                    ctx.fillRect(98, y, 8, 6);
+                    ctx.fillRect(112, y, 8, 6);
+                }
+            } 
+            else if (currentBgStyle === 'sky') {
+                const clouds = [
+                    {x: 8, y: 16}, {x: 72, y: 32}, {x: 20, y: 68}, {x: 80, y: 84}
+                ];
+                clouds.forEach(c => {
+                    ctx.fillRect(c.x + 8, c.y, 24, 6);
+                    ctx.fillRect(c.x + 4, c.y + 6, 32, 6);
+                    ctx.fillRect(c.x, c.y + 12, 40, 6);
+                });
+            } 
+            else if (currentBgStyle === 'space') {
+                const stars = [
+                    {x: 12, y: 12}, {x: 45, y: 20}, {x: 90, y: 15}, {x: 115, y: 35},
+                    {x: 25, y: 55}, {x: 70, y: 60}, {x: 105, y: 75}, {x: 15, y: 95},
+                    {x: 55, y: 100}, {x: 85, y: 110}
+                ];
+                stars.forEach((s, idx) => {
+                    if (idx % 2 === 0) {
+                        ctx.fillRect(s.x, s.y - 2, 2, 6);
+                        ctx.fillRect(s.x - 2, s.y, 6, 2);
+                    } else {
+                        ctx.fillRect(s.x, s.y, 2, 2);
+                    }
+                });
+                ctx.fillRect(96, 12, 16, 16);
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(92, 10, 12, 20);
+                ctx.fillRect(96, 8, 12, 24);
+            }
+        }
+
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playBeep(freq = 440, type = 'square', duration = 0.08) {
+            initAudio();
+            if(!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        document.addEventListener('click', function(e) {
+            if (e.target.tagName === 'BUTTON' || e.target.closest('button')) {
+                playBeep(600, 'square', 0.05);
+            }
+        });
+
+        function playSyncopatedEggBeep() {
+            initAudio();
+            playBeep(220, 'square', 0.05);
+            setTimeout(() => playBeep(440, 'square', 0.04), 90);
+        }
+
+        function playHappyEndSound() {
+            initAudio();
+            const notes = [523.25, 659.25, 783.99, 1046.50];
+            notes.forEach((freq, idx) => {
+                setTimeout(() => playBeep(freq, 'square', 0.1), idx * 80);
+            });
+        }
+
+        let alarmPlayedThisWarning = false;
+
+        function playAlarmSound3Sec() {
+            initAudio();
+            const noteDuration = 0.12;
+            const pause = 0.08;
+            const totalBeeps = 14;
+            for (let i = 0; i < totalBeeps; i++) {
+                const freq = (i % 2 === 0) ? 880 : 587.33;
+                setTimeout(() => {
+                    playBeep(freq, 'sawtooth', noteDuration);
+                }, i * (noteDuration + pause) * 1000);
+            }
+        }
+
+        function checkStatsWarning() {
+            if (isDead || petStage === 0) return;
+
+            const isLowParam = (hunger < 50 || happiness < 50 || health < 50 || energy < 50 || cleanliness < 50);
+
+            if (isLowParam) {
+                if (!alarmPlayedThisWarning) {
+                    playAlarmSound3Sec();
+                    alarmPlayedThisWarning = true;
+                }
+            } else {
+                alarmPlayedThisWarning = false;
+            }
+        }
+
+        let currentPetIndex = 0;
+        let petStage = 0;
+        let hunger = 100;
+        let happiness = 100;
+        let health = 100;
+        let energy = 100;
+        let fitness = 100;
+        let intelligence = 0;
+        let cleanliness = 100;
+
+        let generation = 1;
+        let ageInDays = 0;
+        let secondsInCurrentStage = 0;
+        let totalGameSeconds = 0;
+
+        let isDirty = false;
+        let isSick = false;
+        let isDead = false;
+        let isSleeping = false;
+        let sleepTimer = null;
+        let isEatingAnimation = false;
+        let isCustomAnimation = false;
+        let gameTimer = null;
+        let poopSmokeFrame = 0;
+
+        let inRunnerMode = false;
+        let runnerAnimId = null;
+        let runnerPetY = 0;
+        let runnerVY = 0;
+        let runnerJumping = false;
+        let runnerObstacles = [];
+        let runnerScore = 0;
+        let runnerHighScore = parseInt(localStorage.getItem('dinomio_runner_highscore') || '0');
+        let runnerSpeed = 3;
+        let minObstacleDistance = 90;
+
+        let poopSchedule = [];
+        let lastWakeupDay = -1;
+
+        const stageNames = ["EGG", "BABY", "TODDLER", "TEEN", "ADULT", "DEAD"];
+
+        function generatePoopSchedule() {
+            poopSchedule = [];
+            const minSec = 1 * 3600;
+            const maxSec = 23 * 3600;
+            for(let i = 0; i < 3; i++) {
+                const randomSec = Math.floor(Math.random() * (maxSec - minSec)) + minSec;
+                poopSchedule.push(randomSec);
+            }
+            poopSchedule.sort((a, b) => a - b);
+        }
+
+        function saveGameState() {
+            const gameState = {
+                currentPetIndex,
+                petCustomName,
+                petGender,
+                petStage,
+                hunger,
+                happiness,
+                health,
+                energy,
+                fitness,
+                intelligence,
+                cleanliness,
+                generation,
+                ageInDays,
+                secondsInCurrentStage,
+                totalGameSeconds,
+                isDirty,
+                isSick,
+                isDead,
+                isSleeping,
+                poopSchedule,
+                lastWakeupDay,
+                currentLang,
+                currentShellColor,
+                currentBgStyle,
+                alarmPlayedThisWarning,
+                gameActive: true
+            };
+            localStorage.setItem('dinomio_save', JSON.stringify(gameState));
+        }
+
+        function loadGameState() {
+            const savedData = localStorage.getItem('dinomio_save');
+            if(!savedData) return false;
+
+            try {
+                const state = JSON.parse(savedData);
+                if(!state.gameActive) return false;
+
+                currentPetIndex = state.currentPetIndex;
+                petCustomName = state.petCustomName || "SPIKE";
+                petGender = state.petGender || "M";
+                petStage = state.petStage;
+                hunger = state.hunger;
+                happiness = state.happiness;
+                health = state.health;
+                energy = state.energy;
+                fitness = state.fitness;
+                intelligence = state.intelligence;
+                cleanliness = state.cleanliness !== undefined ? state.cleanliness : 100;
+                generation = state.generation;
+                ageInDays = state.ageInDays;
+                secondsInCurrentStage = state.secondsInCurrentStage;
+                totalGameSeconds = state.totalGameSeconds;
+                isDirty = state.isDirty;
+                isSick = state.isSick;
+                isDead = state.isDead;
+                isSleeping = state.isSleeping;
+                poopSchedule = state.poopSchedule || [];
+                lastWakeupDay = state.lastWakeupDay !== undefined ? state.lastWakeupDay : -1;
+                currentLang = state.currentLang || 'it';
+                currentShellColor = state.currentShellColor || 'default';
+                currentBgStyle = state.currentBgStyle || 'none';
+                alarmPlayedThisWarning = state.alarmPlayedThisWarning || false;
+
+                setShellColor(currentShellColor);
+                setBackgroundStyle(currentBgStyle);
+                updateTexts();
+                updateBadgeProfile();
+
+                if(poopSchedule.length === 0) generatePoopSchedule();
+
+                document.getElementById('selection-screen').style.display = 'none';
+                document.getElementById('choose-area-screen').style.display = 'none';
+                document.getElementById('rules-screen').style.display = 'none';
+                document.getElementById('info-screen').style.display = 'none';
+                document.getElementById('settings-screen').style.display = 'none';
+                document.getElementById('gameplay-screen').style.display = 'flex';
+
+                const mainCanvas = document.getElementById('game-canvas');
+                if(petStage === 0) {
+                    mainCanvas.classList.add('egg-wobble');
+                    mainCanvas.classList.remove('pet-idle-bounce');
+                    document.getElementById('action-msg').innerText = i18n[currentLang].eggWarming;
+                } else {
+                    mainCanvas.classList.remove('egg-wobble');
+                    mainCanvas.classList.add('pet-idle-bounce');
+                    document.getElementById('action-msg').innerText = "";
+                }
+
+                if(isSleeping) {
+                    document.getElementById('pet-display-box').classList.add('lights-off');
+                    document.getElementById('zzz-layer').style.display = 'block';
+                    mainCanvas.style.display = 'none';
+                }
+
+                updateDisplay();
+
+                if(gameTimer) clearInterval(gameTimer);
+                gameTimer = setInterval(gameLoop, 1000);
+
+                return true;
+            } catch(e) {
+                return false;
+            }
+        }
+
+        function clearGameState() {
+            localStorage.removeItem('dinomio_save');
+        }
+
+        function updateBadgeProfile() {
+            document.getElementById('badge-pet-name').innerText = petCustomName;
+            document.getElementById('badge-pet-gender').innerText = petGender === 'M' ? '♂' : '♀';
+        }
+
+        function drawPoopSprite(animFrame = 0) {
+            const canvas = document.getElementById('poop-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, 32, 32);
+
+            if (!isDirty) return;
+
+            ctx.fillStyle = "#000000";
+
+            ctx.fillRect(8, 24, 16, 6);
+            ctx.fillRect(10, 20, 12, 4);
+            ctx.fillRect(13, 17, 6, 3);
+            ctx.fillRect(15, 15, 2, 2);
+
+            const shift = animFrame % 2;
+            if (shift === 0) {
+                ctx.fillRect(12, 11, 2, 3);
+                ctx.fillRect(18, 12, 2, 2);
+                ctx.fillRect(11, 7, 2, 2);
+                ctx.fillRect(19, 8, 2, 2);
+            } else {
+                ctx.fillRect(13, 12, 2, 2);
+                ctx.fillRect(17, 10, 2, 3);
+                ctx.fillRect(14, 8, 2, 2);
+                ctx.fillRect(18, 6, 2, 2);
+            }
+        }
+
+        function drawPixelSprite(canvasId, type, stage, mouthOpen = false, overlayItem = null, animFrame = 0) {
+            const canvas = typeof canvasId === 'string' ? document.getElementById(canvasId) : canvasId;
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, 32, 32);
+
+            function drawMinimalBox(x, y, w, h) {
+                ctx.fillStyle = "#000000";
+                ctx.fillRect(x, y, w, h);
+                if(w > 4 && h > 4) {
+                    ctx.fillStyle = "#ffffff";
+                    ctx.fillRect(x + 2, y + 2, w - 4, h - 4);
+                }
+            }
+
+            function drawFace(x, y, eyeOffsetLeft, eyeOffsetRight, eyeY, mouthY, mouthW = 2) {
+                ctx.fillStyle = "#000000";
+                ctx.fillRect(x + eyeOffsetLeft, y + eyeY, 2, 2);
+                ctx.fillRect(x + eyeOffsetRight, y + eyeY, 2, 2);
+                if(mouthOpen) {
+                    ctx.fillRect(x + eyeOffsetLeft, y + mouthY, 4, 3);
+                    ctx.fillStyle = "#ffffff";
+                    ctx.fillRect(x + eyeOffsetLeft + 1, y + mouthY + 1, 2, 1);
+                    ctx.fillStyle = "#000000";
+                } else {
+                    ctx.fillRect(x + eyeOffsetLeft, y + mouthY, mouthW, 1);
+                }
+            }
+
+            if (overlayItem === 'parco') {
+                ctx.fillStyle = "#000000";
+                ctx.fillRect(2, 18, 2, 8); ctx.fillRect(0, 10, 6, 8); ctx.fillRect(1, 8, 4, 2);
+                ctx.fillRect(28, 18, 2, 8); ctx.fillRect(26, 10, 6, 8); ctx.fillRect(27, 8, 4, 2);
+                ctx.fillRect(0, 26, 32, 1); ctx.fillRect(4, 25, 2, 1); ctx.fillRect(22, 25, 2, 1);
+            }
+
+            if (stage === 5) {
+                drawMinimalBox(10, 8, 12, 12);
+                ctx.fillStyle = "#000000";
+                ctx.fillText("X X", 12, 16);
+                return;
+            }
+
+            if (stage === 0) {
+                ctx.fillStyle = "#000000";
+                ctx.fillRect(10, 6, 12, 20);
+                ctx.fillRect(8, 8, 16, 16);
+                ctx.fillRect(6, 10, 20, 12);
+
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(11, 9, 2, 4);
+                ctx.fillRect(13, 12, 4, 2);
+                ctx.fillRect(16, 14, 2, 5);
+                ctx.fillRect(19, 10, 3, 2);
+                ctx.fillRect(9, 17, 4, 2);
+                return;
+            }
+
+            const size = 12 + (stage * 3);
+            const offset = Math.floor((32 - size) / 2);
+            let yShift = (overlayItem === 'parco' && animFrame % 2 === 0) ? -2 : 0;
+
+            drawMinimalBox(offset, offset + yShift, size, size);
+
+            if (type === 0) {
+                drawMinimalBox(offset + size - 2, offset + 4 + yShift, 6, 6);
+                drawFace(offset, offset + yShift, 3, size - 5, 4, size - 4);
+            } else if (type === 1) {
+                drawMinimalBox(offset - 4, offset + 2 + yShift, 4, 6);
+                drawMinimalBox(offset + size, offset + 2 + yShift, 4, 6);
+                drawFace(offset, offset + yShift, 4, size - 6, 4, size - 4);
+            } else if (type === 2) {
+                drawMinimalBox(offset + 2, offset - 4 + yShift, 4, 4);
+                drawMinimalBox(offset + size - 6, offset - 4 + yShift, 4, 4);
+                drawFace(offset, offset + yShift, 3, size - 5, 5, size - 4);
+            } else if (type === 3) {
+                drawMinimalBox(offset + 2, offset + size - 2 + yShift, 4, 5);
+                drawMinimalBox(offset + size - 6, offset + size - 2 + yShift, 4, 5);
+                drawFace(offset, offset + yShift, 4, size - 6, 3, size - 5);
+            } else if (type === 4) {
+                drawMinimalBox(offset + size - 2, offset + 2 + yShift, 7, 5);
+                drawFace(offset, offset + yShift, 3, size - 5, 4, size - 4);
+            }
+
+            if(overlayItem === 'pasto') {
+                ctx.fillStyle = "#000000";
+                if(animFrame < 1) { ctx.fillRect(0, 15, 4, 4); ctx.fillRect(4, 16, 2, 2); }
+                else if(animFrame < 2) { ctx.fillRect(0, 16, 3, 3); ctx.fillRect(3, 17, 2, 1); }
+                else if(animFrame < 3) { ctx.fillRect(0, 17, 2, 2); }
+            } else if(overlayItem === 'snack') {
+                ctx.fillStyle = "#000000";
+                if(animFrame < 1) {
+                    ctx.fillRect(3, 15, 4, 4);
+                    ctx.fillRect(1, 14, 2, 2); ctx.fillRect(1, 17, 2, 2);
+                    ctx.fillRect(7, 14, 2, 2); ctx.fillRect(7, 17, 2, 2);
+                } else if(animFrame < 2) {
+                    ctx.fillRect(3, 16, 3, 3);
+                    ctx.fillRect(1, 15, 2, 1); ctx.fillRect(1, 18, 2, 1);
+                    ctx.fillRect(6, 15, 2, 1); ctx.fillRect(6, 18, 2, 1);
+                } else if(animFrame < 3) {
+                    ctx.fillRect(3, 17, 2, 2);
+                }
+            }
+
+            if(overlayItem === 'siringa' && (animFrame % 2 === 0)) {
+                ctx.fillStyle = "#000000";
+                ctx.fillRect(28, 2, 2, 3); ctx.fillRect(27, 5, 4, 1);
+                ctx.fillRect(28, 6, 2, 10); ctx.fillRect(27, 8, 1, 1);
+                ctx.fillRect(27, 11, 1, 1); ctx.fillRect(27, 14, 1, 1);
+                ctx.fillRect(28, 16, 2, 2); ctx.fillRect(28, 18, 1, 6);
+            }
+
+            if(overlayItem === 'doccia') {
+                ctx.fillStyle = "#000000";
+                const spongeX = 4 + (animFrame % 3) * 6;
+                ctx.fillRect(spongeX, offset + 2, 6, 4);
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(spongeX + 1, offset + 3, 1, 1);
+                ctx.fillRect(spongeX + 4, offset + 4, 1, 1);
+
+                ctx.fillStyle = "#000000";
+                const rainY1 = (animFrame * 4) % 28;
+                const rainY2 = ((animFrame * 4) + 12) % 28;
+                ctx.fillRect(4, rainY1, 1, 3);
+                ctx.fillRect(12, rainY2, 1, 3);
+                ctx.fillRect(20, rainY1, 1, 3);
+                ctx.fillRect(28, rainY2, 1, 3);
+            }
+
+            if(overlayItem === 'studio') {
+                ctx.fillStyle = "#000000";
+                const pageFlip = (animFrame % 2 === 0);
+                ctx.fillRect(20, 20, 10, 8);
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(21, 21, 4, 6);
+                ctx.fillRect(25, 21, 4, 6);
+                ctx.fillStyle = "#000000";
+                ctx.fillRect(24, 20, 1, 8);
+                if(pageFlip) {
+                    ctx.fillRect(23, 22, 2, 4);
+                }
+            }
+        }
+
+        function initPreviews() {
+            for(let p = 0; p < 5; p++) {
+                drawPixelSprite(`p${p+1}_baby`, p, 1);
+            }
+            updateTexts();
+            loadGameState();
+        }
+
+        function selectPet(index, defaultName) {
+            const customInput = document.getElementById('custom-pet-name').value.trim();
+            petCustomName = customInput ? customInput.toUpperCase() : defaultName;
+
+            const selectedGenderRadio = document.querySelector('input[name="pet-gender"]:checked');
+            petGender = selectedGenderRadio ? selectedGenderRadio.value : "M";
+
+            currentPetIndex = index;
+            petStage = 0;
+            hunger = 100;
+            happiness = 100;
+            health = 100;
+            energy = 100;
+            fitness = 100;
+            intelligence = 0;
+            cleanliness = 100;
+            
+            ageInDays = 0;
+            secondsInCurrentStage = 0;
+            totalGameSeconds = 0;
+
+            isDirty = false;
+            isSick = false;
+            isDead = false;
+            isSleeping = false;
+            alarmPlayedThisWarning = false;
+            if(sleepTimer) clearTimeout(sleepTimer);
+            isEatingAnimation = false;
+            isCustomAnimation = false;
+
+            generatePoopSchedule();
+            lastWakeupDay = -1;
+
+            stopRunner();
+
+            document.getElementById('selection-screen').style.display = 'none';
+            document.getElementById('choose-area-screen').style.display = 'none';
+            document.getElementById('rules-screen').style.display = 'none';
+            document.getElementById('info-screen').style.display = 'none';
+            document.getElementById('settings-screen').style.display = 'none';
+            document.getElementById('gameplay-screen').style.display = 'flex';
+            document.getElementById('kitchen-sub-menu').style.display = 'none';
+
+            const mainCanvas = document.getElementById('game-canvas');
+            mainCanvas.classList.add('egg-wobble');
+            mainCanvas.classList.remove('pet-idle-bounce');
+
+            document.getElementById('action-msg').innerText = i18n[currentLang].eggWarming;
+
+            updateBadgeProfile();
+            drawBackground();
+            updateDisplay();
+            saveGameState();
+            
+            if(gameTimer) clearInterval(gameTimer);
+            gameTimer = setInterval(gameLoop, 1000);
+        }
+
+        function gameLoop() {
+            if(isDead || inRunnerMode) return;
+
+            totalGameSeconds++;
+            secondsInCurrentStage++;
+            poopSmokeFrame++;
+
+            ageInDays = Math.floor(totalGameSeconds / 86400);
+
+            const ONE_DAY = 86400;
+            const THREE_DAYS = ONE_DAY * 3;
+
+            if(totalGameSeconds % ONE_DAY === 0) {
+                generatePoopSchedule();
+            }
+
+            if(petStage > 0 && !isSleeping) {
+                const currentSecondsInDay = totalGameSeconds % ONE_DAY;
+                poopSchedule.forEach((timeInSec) => {
+                    if(Math.abs(currentSecondsInDay - timeInSec) < 1) {
+                        isDirty = true;
+                        cleanliness = Math.max(0, cleanliness - 80);
+                        setActionMessage(i18n[currentLang].poopMsg);
+                    }
+                });
+            }
+
+            if (petStage === 0) {
+                playSyncopatedEggBeep();
+                if (secondsInCurrentStage >= 7) {
+                    petStage = 1;
+                    secondsInCurrentStage = 0;
+                    const mainCanvas = document.getElementById('game-canvas');
+                    mainCanvas.classList.remove('egg-wobble');
+                    mainCanvas.classList.add('pet-idle-bounce');
+                    setActionMessage(i18n[currentLang].hatchedMsg);
+                    playHappyEndSound();
+                }
+            } else if (petStage >= 1 && petStage < 4) {
+                if (secondsInCurrentStage >= THREE_DAYS) {
+                    petStage++;
+                    secondsInCurrentStage = 0;
+                    setActionMessage(i18n[currentLang].evoMsg);
+                    playHappyEndSound();
+                }
+            } else if (petStage === 4) {
+                if (secondsInCurrentStage >= THREE_DAYS) {
+                    triggerDeathAndRebirth();
+                    return;
+                }
+            }
+
+            if(petStage > 0) {
+                if(totalGameSeconds % 3600 === 0) hunger = Math.max(0, hunger - 20);
+                if(totalGameSeconds % 5400 === 0) cleanliness = Math.max(0, cleanliness - 20);
+                if(!isSleeping && totalGameSeconds % 7200 === 0) happiness = Math.max(0, happiness - 20);
+                if(!isSleeping && totalGameSeconds % 10800 === 0) energy = Math.max(0, energy - 20);
+                if(totalGameSeconds % 21600 === 0) fitness = Math.max(0, fitness - 20);
+                if(totalGameSeconds % 21600 === 0) intelligence = Math.max(0, intelligence - 20);
+
+                if(!isSick && Math.random() < (2 / 864000)) {
+                    isSick = true;
+                }
+
+                if(isSick && totalGameSeconds % 3600 === 0) {
+                    health = Math.max(0, health - 20);
+                }
+            }
+
+            if(isSleeping) {
+                energy = Math.min(100, energy + (20 / 3600));
+            }
+
+            if(health <= 0) {
+                isDead = true;
+                petStage = 5;
+                turnOffSleepingState();
+                document.getElementById('game-canvas').classList.remove('pet-idle-bounce');
+                document.getElementById('action-msg').innerText = i18n[currentLang].deathMsg;
+                clearInterval(gameTimer);
+            }
+
+            checkStatsWarning();
+            updateDisplay();
+            saveGameState();
+        }
+
+        function triggerDeathAndRebirth() {
+            turnOffSleepingState();
+            document.getElementById('action-msg').innerText = i18n[currentLang].deathRebirthMsg;
+            
+            generation++;
+            currentPetIndex = Math.floor(Math.random() * 5);
+            petStage = 0;
+            ageInDays = 0;
+            secondsInCurrentStage = 0;
+            totalGameSeconds = 0;
+            hunger = 100;
+            happiness = 100;
+            health = 100;
+            energy = 100;
+            fitness = 100;
+            intelligence = 0;
+            cleanliness = 100;
+            isDirty = false;
+            isSick = false;
+            alarmPlayedThisWarning = false;
+
+            const mainCanvas = document.getElementById('game-canvas');
+            mainCanvas.classList.add('egg-wobble');
+            mainCanvas.classList.remove('pet-idle-bounce');
+
+            generatePoopSchedule();
+
+            updateDisplay();
+            saveGameState();
+        }
+
+        function toggleKitchenMenu() {
+            if(isDead || petStage === 0 || inRunnerMode) return;
+            const menu = document.getElementById('kitchen-sub-menu');
+            menu.style.display = menu.style.display === 'none' ? 'flex' : 'none';
+        }
+
+        function feedPet(type) {
+            if(isEatingAnimation || isCustomAnimation || isDead || petStage === 0 || inRunnerMode) return;
+            isEatingAnimation = true;
+
+            if(isSleeping) turnOffSleepingState();
+
+            let step = 0;
+            const canvas = document.getElementById('game-canvas');
+
+            let msgText = "";
+            if(type === 'pasto') {
+                hunger = Math.min(100, hunger + 40);
+                msgText = i18n[currentLang].mealMsg;
+            } else {
+                happiness = Math.min(100, happiness + 20);
+                hunger = Math.min(100, hunger + 20);
+                fitness = Math.max(0, fitness - 20);
+                msgText = i18n[currentLang].snackMsg;
+            }
+
+            const eatInterval = setInterval(() => {
+                step++;
+                const mouthOpen = (step % 2 !== 0);
+                const progress = Math.floor(step / 2);
+                
+                playBeep(350 + (step * 50), 'square', 0.05);
+                drawPixelSprite(canvas, currentPetIndex, petStage, mouthOpen, type, progress);
+
+                if(step >= 6) {
+                    clearInterval(eatInterval);
+                    isEatingAnimation = false;
+                    playHappyEndSound();
+                    setActionMessage(msgText);
+                    updateDisplay();
+                    saveGameState();
+                }
+            }, 400);
+        }
+
+        function turnOffSleepingState() {
+            isSleeping = false;
+            if(sleepTimer) clearTimeout(sleepTimer);
+            document.getElementById('pet-display-box').classList.remove('lights-off');
+            document.getElementById('zzz-layer').style.display = 'none';
+            document.getElementById('game-canvas').style.display = 'block';
+        }
+
+        function interactArea(areaName) {
+            if(isDead || isEatingAnimation || isCustomAnimation) return;
+            if(petStage === 0) {
+                setActionMessage(i18n[currentLang].waitEggMsg);
+                return;
+            }
+
+            document.getElementById('kitchen-sub-menu').style.display = 'none';
+            if(inRunnerMode && areaName !== 'Palestra') stopRunner();
+
+            if(areaName !== 'Luce' && isSleeping) {
+                turnOffSleepingState();
+            }
+
+            const canvas = document.getElementById('game-canvas');
+
+            switch(areaName) {
+                case 'Parco':
+                    happiness = Math.min(100, happiness + 40);
+                    energy = Math.max(0, energy - 20);
+                    cleanliness = Math.max(0, cleanliness - 20);
+                    isCustomAnimation = true;
+                    let pStep = 0;
+                    const parkInterval = setInterval(() => {
+                        playBeep(400 + (pStep % 2 * 150), 'square', 0.06);
+                        drawPixelSprite(canvas, currentPetIndex, petStage, false, 'parco', pStep);
+                        pStep++;
+                        if(pStep > 8) {
+                            clearInterval(parkInterval);
+                            isCustomAnimation = false;
+                            playHappyEndSound();
+                            setActionMessage(i18n[currentLang].parkMsg);
+                            updateDisplay();
+                            saveGameState();
+                        }
+                    }, 250);
+                    break;
+
+                case 'Doccia':
+                    energy = Math.min(100, energy + 20);
+                    let showerMsg = isDirty ? i18n[currentLang].showerDirtyMsg : i18n[currentLang].showerCleanMsg;
+                    isCustomAnimation = true;
+                    let bStep = 0;
+                    const bathInterval = setInterval(() => {
+                        playBeep(600 - (bStep * 30), 'square', 0.05);
+                        drawPixelSprite(canvas, currentPetIndex, petStage, false, 'doccia', bStep);
+                        bStep++;
+                        if(bStep > 8) {
+                            clearInterval(bathInterval);
+                            isCustomAnimation = false;
+                            isDirty = false;
+                            cleanliness = 100;
+                            playHappyEndSound();
+                            setActionMessage(showerMsg);
+                            updateDisplay();
+                            saveGameState();
+                        }
+                    }, 250);
+                    break;
+
+                case 'Infermeria':
+                    health = 100;
+                    isSick = false;
+                    let clinicMsg = i18n[currentLang].clinicSickMsg;
+                    isCustomAnimation = true;
+                    let infStep = 0;
+                    const infInterval = setInterval(() => {
+                        playBeep(500 + (infStep % 2 * 200), 'triangle', 0.08);
+                        drawPixelSprite(canvas, currentPetIndex, petStage, false, 'siringa', infStep);
+                        infStep++;
+                        if(infStep >= 6) {
+                            clearInterval(infInterval);
+                            isCustomAnimation = false;
+                            playHappyEndSound();
+                            setActionMessage(clinicMsg);
+                            updateDisplay();
+                            saveGameState();
+                        }
+                    }, 500);
+                    break;
+
+                case 'Palestra':
+                    fitness = Math.min(100, fitness + 20);
+                    happiness = Math.min(100, happiness + 20);
+                    hunger = Math.max(0, hunger - 20);
+                    cleanliness = Math.max(0, cleanliness - 20);
+                    energy = Math.max(0, energy - 20);
+                    startRunnerMode();
+                    break;
+
+                case 'Studio':
+                    /* MODIFICA EFFETTUATA: +1 Pallino Intelligenza (+20), -1 Pallino Felicità (-20) */
+                    intelligence = Math.min(100, intelligence + 20);
+                    happiness = Math.max(0, happiness - 20);
+                    
+                    isCustomAnimation = true;
+                    let sStep = 0;
+                    const studyInterval = setInterval(() => {
+                        playBeep(450 + (sStep % 2 * 100), 'square', 0.06);
+                        drawPixelSprite(canvas, currentPetIndex, petStage, false, 'studio', sStep);
+                        sStep++;
+                        if(sStep > 8) {
+                            clearInterval(studyInterval);
+                            isCustomAnimation = false;
+                            playHappyEndSound();
+                            setActionMessage(i18n[currentLang].studyMsg);
+                            updateDisplay();
+                            saveGameState();
+                        }
+                    }, 250);
+                    break;
+
+                case 'Luce':
+                    isSleeping = !isSleeping;
+                    const displayBox = document.getElementById('pet-display-box');
+                    const zzzLayer = document.getElementById('zzz-layer');
+
+                    playBeep(isSleeping ? 300 : 600, 'square', 0.08);
+
+                    if(isSleeping) {
+                        displayBox.classList.add('lights-off');
+                        canvas.style.display = 'none';
+                        setActionMessage(i18n[currentLang].lightOffMsg);
+                        
+                        if(sleepTimer) clearTimeout(sleepTimer);
+                        sleepTimer = setTimeout(() => {
+                            if(isSleeping) {
+                                zzzLayer.style.display = 'block';
+                                setActionMessage(i18n[currentLang].lightRestMsg);
+                            }
+                        }, 2000);
+
+                    } else {
+                        turnOffSleepingState();
+                        setActionMessage(i18n[currentLang].lightOnMsg);
+                        playHappyEndSound();
+                        updateDisplay();
+                    }
+                    saveGameState();
+                    break;
+            }
+        }
+
+        function startRunnerMode() {
+            inRunnerMode = true;
+            document.getElementById('game-canvas').style.display = 'none';
+            const runnerContainer = document.getElementById('runner-container');
+            runnerContainer.style.display = 'block';
+            
+            setActionMessage(i18n[currentLang].gymMsg);
+
+            runnerPetY = 0;
+            runnerVY = 0;
+            runnerJumping = false;
+            runnerObstacles = [];
+            runnerScore = 0;
+            runnerSpeed = 3;
+            minObstacleDistance = 90;
+
+            window.addEventListener('keydown', handleRunnerInput);
+            runnerLoop();
+        }
+
+        function triggerJumpInRunner() {
+            if(inRunnerMode && !runnerJumping) {
+                runnerVY = -7;
+                runnerJumping = true;
+                playBeep(450, 'square', 0.06);
+            }
+        }
+
+        function handleRunnerInput(e) {
+            if((e.code === 'Space' || e.code === 'ArrowUp') && inRunnerMode) {
+                triggerJumpInRunner();
+            }
+        }
+
+        function stopRunner() {
+            inRunnerMode = false;
+            if(runnerAnimId) cancelAnimationFrame(runnerAnimId);
+            window.removeEventListener('keydown', handleRunnerInput);
+            document.getElementById('runner-container').style.display = 'none';
+            if(!isSleeping) {
+                document.getElementById('game-canvas').style.display = 'block';
+            }
+            setActionMessage(i18n[currentLang].gymExitMsg);
+            playHappyEndSound();
+            saveGameState();
+        }
+
+        function runnerLoop() {
+            if(!inRunnerMode) return;
+
+            const canvas = document.getElementById('runner-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            runnerSpeed = 3 + Math.floor(runnerScore / 50) * 0.5;
+            minObstacleDistance = 90 + Math.floor(runnerScore / 50) * 10;
+
+            runnerPetY += runnerVY;
+            runnerVY += 0.5;
+
+            if(runnerPetY >= 0) {
+                runnerPetY = 0;
+                runnerVY = 0;
+                runnerJumping = false;
+            }
+
+            if(Math.floor(runnerScore) % 15 === 0 && !runnerJumping) {
+                playBeep(180, 'square', 0.02);
+            }
+
+            ctx.fillStyle = "#000";
+            ctx.fillRect(0, 70, canvas.width, 2);
+
+            const petYPos = 52 + runnerPetY;
+            ctx.fillRect(20, petYPos, 16, 16);
+            ctx.fillStyle = "#fff";
+            ctx.fillRect(22, petYPos + 2, 12, 12);
+            ctx.fillStyle = "#000";
+            ctx.fillRect(24, petYPos + 4, 2, 2);
+
+            const lastObstacle = runnerObstacles[runnerObstacles.length - 1];
+            const distanceToLast = lastObstacle ? (200 - lastObstacle.x) : 999;
+            const randomGap = Math.floor(Math.random() * 60) + minObstacleDistance;
+
+            if(distanceToLast > randomGap && Math.random() < 0.03) {
+                runnerObstacles.push({ x: 200, width: 8, height: 16 });
+            }
+
+            for(let i = 0; i < runnerObstacles.length; i++) {
+                let obs = runnerObstacles[i];
+                obs.x -= runnerSpeed;
+
+                ctx.fillRect(obs.x, 70 - obs.height, obs.width, obs.height);
+                ctx.fillRect(obs.x - 2, 60, 2, 4);
+                ctx.fillRect(obs.x + obs.width, 56, 2, 4);
+
+                if(obs.x < 36 && obs.x + obs.width > 20 && petYPos + 16 > 70 - obs.height) {
+                    playBeep(150, 'sawtooth', 0.2);
+                    if(runnerScore > runnerHighScore) {
+                        runnerHighScore = runnerScore;
+                        localStorage.setItem('dinomio_runner_highscore', runnerHighScore);
+                    }
+                    setActionMessage(`PTS: ${runnerScore} | HI: ${runnerHighScore}`);
+                    stopRunner();
+                    updateDisplay();
+                    return;
+                }
+            }
+
+            runnerObstacles = runnerObstacles.filter(o => o.x > -10);
+
+            runnerScore++;
+            if(runnerScore > runnerHighScore) {
+                runnerHighScore = runnerScore;
+                localStorage.setItem('dinomio_runner_highscore', runnerHighScore);
+            }
+
+            ctx.font = '8px "Courier New"';
+            ctx.fillText(`SCORE: ${runnerScore} HI: ${runnerHighScore}`, 90, 12);
+
+            runnerAnimId = requestAnimationFrame(runnerLoop);
+        }
+
+        function updateDisplay() {
+            const poopCanvas = document.getElementById('poop-canvas');
+            if (isDirty) {
+                poopCanvas.style.display = 'block';
+                drawPoopSprite(poopSmokeFrame);
+            } else {
+                poopCanvas.style.display = 'none';
+            }
+
+            document.getElementById('sick-tag').style.display = isSick ? 'block' : 'none';
+
+            if(!isEatingAnimation && !isCustomAnimation && !inRunnerMode) {
+                const canvas = document.getElementById('game-canvas');
+                drawPixelSprite(canvas, currentPetIndex, petStage);
+            }
+
+            document.getElementById('mini-hunger').innerText = getDotsRepresentation(hunger);
+            document.getElementById('mini-cleanliness').innerText = getDotsRepresentation(cleanliness);
+            document.getElementById('mini-happy').innerText = getDotsRepresentation(happiness);
+            document.getElementById('mini-health').innerText = getDotsRepresentation(health);
+            document.getElementById('mini-energy').innerText = getDotsRepresentation(energy);
+            document.getElementById('mini-fitness').innerText = getDotsRepresentation(fitness);
+            document.getElementById('mini-intelligence').innerText = getDotsRepresentation(intelligence);
+        }
+
+        function getDotsRepresentation(val) {
+            const roundedVal = Math.round(val);
+            if (roundedVal >= 80) return '●●●●●';
+            if (roundedVal >= 60) return '●●●○○';
+            if (roundedVal >= 40) return '●●●○○';
+            if (roundedVal >= 20) return '●●○○○';
+            if (roundedVal > 0) return '●○○○○';
+            return '○○○○○';
+        }
+
+        function showInfo() {
+            const t = i18n[currentLang];
+            document.getElementById('info-name').innerText = petCustomName;
+            document.getElementById('info-gender').innerText = petGender === 'M' ? t.genderM : t.genderF;
+            document.getElementById('info-gen').innerText = generation;
+            document.getElementById('info-age').innerText = ageInDays;
+            document.getElementById('info-stage').innerText = stageNames[petStage];
+            document.getElementById('info-hunger').innerText = getDotsRepresentation(hunger);
+            document.getElementById('info-cleanliness').innerText = getDotsRepresentation(cleanliness);
+            document.getElementById('info-happy').innerText = getDotsRepresentation(happiness);
+            document.getElementById('info-health').innerText = getDotsRepresentation(health);
+            document.getElementById('info-energy').innerText = getDotsRepresentation(energy);
+            document.getElementById('info-fitness').innerText = getDotsRepresentation(fitness);
+            document.getElementById('info-intelligence').innerText = getDotsRepresentation(intelligence);
+
+            document.getElementById('gameplay-screen').style.display = 'none';
+            document.getElementById('info-screen').style.display = 'flex';
+        }
+
+        function hideInfo() {
+            document.getElementById('info-screen').style.display = 'none';
+            document.getElementById('gameplay-screen').style.display = 'flex';
+        }
+
+        function showSettings() {
+            document.getElementById('gameplay-screen').style.display = 'none';
+            document.getElementById('settings-screen').style.display = 'flex';
+        }
+
+        function hideSettings() {
+            document.getElementById('settings-screen').style.display = 'none';
+            document.getElementById('gameplay-screen').style.display = 'flex';
+        }
+
+        function showRules() {
+            document.getElementById('selection-screen').style.display = 'none';
+            document.getElementById('rules-screen').style.display = 'flex';
+        }
+
+        function hideRules() {
+            document.getElementById('rules-screen').style.display = 'none';
+            document.getElementById('selection-screen').style.display = 'block';
+        }
+
+        function showChooseArea() {
+            document.getElementById('selection-screen').style.display = 'none';
+            document.getElementById('choose-area-screen').style.display = 'flex';
+        }
+
+        function hideChooseArea() {
+            document.getElementById('choose-area-screen').style.display = 'none';
+            document.getElementById('selection-screen').style.display = 'block';
+        }
+
+        function navigateToLocation(locationName) {
+            playHappyEndSound();
+            alert(i18n[currentLang].travelMsg + locationName);
+        }
+
+        function resetGame() {
+            stopRunner();
+            if(gameTimer) clearInterval(gameTimer);
+            turnOffSleepingState();
+            clearGameState();
+            generation = 1;
+            alarmPlayedThisWarning = false;
+            currentBgStyle = 'none';
+            setBackgroundStyle('none');
+            const mainCanvas = document.getElementById('game-canvas');
+            mainCanvas.classList.remove('egg-wobble');
+            mainCanvas.classList.remove('pet-idle-bounce');
+            document.getElementById('gameplay-screen').style.display = 'none';
+            document.getElementById('info-screen').style.display = 'none';
+            document.getElementById('settings-screen').style.display = 'none';
+            document.getElementById('rules-screen').style.display = 'none';
+            document.getElementById('choose-area-screen').style.display = 'none';
+            document.getElementById('selection-screen').style.display = 'block';
+        }
+
+        window.onload = initPreviews;
+    </script>
+
+</body>
+</html>
