@@ -2014,7 +2014,6 @@
                     break;
 
                 case 'Studio':
-                    /* MODIFICA EFFETTUATA: +1 Pallino Intelligenza (+20), -1 Pallino Felicità (-20) */
                     intelligence = Math.min(100, intelligence + 20);
                     happiness = Math.max(0, happiness - 20);
                     
@@ -2214,13 +2213,14 @@
             document.getElementById('mini-intelligence').innerText = getDotsRepresentation(intelligence);
         }
 
+        /* CORREZIONE BUG: Mappatura corretta dei pallini per valore (5 pallini totali) */
         function getDotsRepresentation(val) {
             const roundedVal = Math.round(val);
             if (roundedVal >= 80) return '●●●●●';
-            if (roundedVal >= 60) return '●●●○○';
+            if (roundedVal >= 60) return '●●●●○';
             if (roundedVal >= 40) return '●●●○○';
             if (roundedVal >= 20) return '●●○○○';
-            if (roundedVal > 0) return '●○○○○';
+            if (roundedVal > 0)  return '●○○○○';
             return '○○○○○';
         }
 
