@@ -38,7 +38,6 @@
             transition: background 0.3s, border-color 0.3s;
         }
 
-        /* Shell colors VIVIDI e ACCESI */
         .tamagotchi-container.shell-blue { background: linear-gradient(150deg, #4da6ff 0%, #0066ff 100%); border-color: #0047b3; }
         .tamagotchi-container.shell-red { background: linear-gradient(150deg, #ff5252 0%, #e60000 100%); border-color: #b30000; }
         .tamagotchi-container.shell-white { background: linear-gradient(150deg, #ffffff 0%, #dfe6ee 100%); border-color: #b8c2ce; }
@@ -987,28 +986,21 @@
 
             if (currentBgStyle === 'none') { return; } 
             else if (currentBgStyle === 'sea') {
-                // --- SFONDO MARE RICONOSCIBILE ---
-                // cielo azzurro
                 ctx.fillStyle = "#8fd4f0";
                 ctx.fillRect(0, 0, 128, 84);
-                // sole in alto a destra
                 ctx.fillStyle = "#ffe14d";
                 ctx.beginPath(); ctx.arc(104, 22, 12, 0, Math.PI*2); ctx.fill();
                 ctx.fillStyle = "#ffd000";
                 ctx.beginPath(); ctx.arc(104, 22, 8, 0, Math.PI*2); ctx.fill();
-                // raggi del sole
                 ctx.fillStyle = "#ffe14d";
                 ctx.fillRect(103, 4, 2, 6); ctx.fillRect(103, 34, 2, 6);
                 ctx.fillRect(86, 21, 6, 2); ctx.fillRect(116, 21, 6, 2);
-                // nuvoletta
                 ctx.fillStyle = "#ffffff";
                 ctx.fillRect(20, 18, 22, 5); ctx.fillRect(16, 22, 30, 5);
-                // MARE (fascia inferiore) con gradiente a bande
                 ctx.fillStyle = "#1f7fc4";
                 ctx.fillRect(0, 84, 128, 44);
                 ctx.fillStyle = "#2a94d9";
                 ctx.fillRect(0, 84, 128, 14);
-                // onde bianche marcate
                 ctx.fillStyle = "#ffffff";
                 for(let x=0; x<128; x+=20) {
                     ctx.fillRect(x, 90, 8, 2);
@@ -1016,16 +1008,14 @@
                     ctx.fillRect(x+4, 112, 8, 2);
                     ctx.fillRect(x+14, 122, 8, 2);
                 }
-                // riflesso del sole sull'acqua
                 ctx.fillStyle = "rgba(255,225,77,0.6)";
                 ctx.fillRect(100, 88, 8, 2); ctx.fillRect(101, 94, 6, 2); ctx.fillRect(102, 100, 4, 2);
-                // isoletta con palma al centro
                 ctx.fillStyle = "#e6cf82";
                 ctx.fillRect(44, 82, 40, 6);
                 ctx.fillRect(52, 78, 24, 4);
-                ctx.fillStyle = "#8a5a2b"; // tronco palma
+                ctx.fillStyle = "#8a5a2b";
                 ctx.fillRect(62, 58, 4, 22);
-                ctx.fillStyle = "#3fae4f"; // foglie palma
+                ctx.fillStyle = "#3fae4f";
                 ctx.fillRect(50, 54, 14, 4);
                 ctx.fillRect(64, 54, 14, 4);
                 ctx.fillRect(46, 58, 8, 4);
@@ -1550,16 +1540,20 @@
 
             const dayIdx = cestDayIndex(nowMs);
             if (dayIdx !== poopScheduleDay) { generatePoopSchedule(); poopScheduleDay = dayIdx; }
+            // --- CACCA: gli orari già passati vengono consumati insieme e producono UNA sola cacca (fix doppia pulizia) ---
             if (petStage > 0 && !isDirty) {
                 const secOfDay = cestSecondsOfDay(nowMs);
+                let pooped = false;
                 for (let i = 0; i < poopSchedule.length; i++) {
                     if (!poopDoneToday[i] && secOfDay >= poopSchedule[i]) {
                         poopDoneToday[i] = true;
-                        isDirty = true;
-                        // Cacca: -3 pallini di pulizia
-                        cleanliness = Math.max(0, cleanliness - POOP_CLEANLINESS_LOSS);
-                        if (!simulated) setActionMessage(i18n[currentLang].poopMsg);
+                        pooped = true;
                     }
+                }
+                if (pooped) {
+                    isDirty = true;
+                    cleanliness = Math.max(0, cleanliness - POOP_CLEANLINESS_LOSS);
+                    if (!simulated) setActionMessage(i18n[currentLang].poopMsg);
                 }
             }
 
