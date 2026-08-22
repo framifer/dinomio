@@ -38,7 +38,6 @@
             transition: background-color 0.3s, border-color 0.3s;
         }
 
-        /* Varianti Colore Guscio */
         .tamagotchi-container.shell-blue { background-color: #3b82f6; border-color: #1d4ed8; }
         .tamagotchi-container.shell-red { background-color: #ef4444; border-color: #b91c1c; }
         .tamagotchi-container.shell-white { background-color: #f3f4f6; border-color: #d1d5db; }
@@ -688,22 +687,7 @@
 
             <div id="rules-screen" class="rules-screen">
                 <h2 id="title-rules">REGOLE REALI</h2>
-                <div class="rules-content" id="rules-body">
-                    <b>1. SCHIUSA E NASCITA:</b>
-                    <p>L'uovo richiede soli 7 secondi per schiudersi!</p><br>
-                    
-                    <b>2. TEMPO REALE (1 Giorno = 24 Ore):</b>
-                    <p>L'evoluzione avviene ogni 3 giorni reali (Baby, Toddler, Teen). Lo stadio Adulto vive fino a 3 giorni reali.</p><br>
-
-                    <b>3. FAME E BISOGNI:</b>
-                    <p>I parametri diminuiscono col passare del tempo reale. Controlla il tuo pet regolarmente.</p><br>
-
-                    <b>4. IGIENE E SALUTE:</b>
-                    <p>Lasciare il pet sporco o privo di attenzioni farà calare la salute e rischierà di farlo ammalare.</p><br>
-
-                    <b>5. PALESTRA:</b>
-                    <p>Usa il tasto [X] in alto a destra nella Palestra per uscire dall'area in qualsiasi momento.</p>
-                </div>
+                <div class="rules-content" id="rules-body"></div>
                 <button class="action-btn" id="btn-back-sel" onclick="hideRules()">TORNA ALLA SELEZIONE</button>
             </div>
 
@@ -924,7 +908,7 @@
                 travelMsg: "Ti stai spostando in: ",
                 rulesTitle: "REGOLE REALI",
                 rulesBack: "TORNA ALLA SELEZIONE",
-                rulesContent: `<b>1. SCHIUSA E NASCITA:</b><p>L'uovo richiede soli 7 secondi per schiudersi!</p><br><b>2. TEMPO REALE (1 Giorno = 24 Ore):</b><p>L'evoluzione avviene ogni 3 giorni reali (Baby, Toddler, Teen). Lo stadio Adulto vive fino a 3 giorni reali.</p><br><b>3. FAME E BISOGNI:</b><p>I parametri diminuiscono col passare del tempo reale. Controlla il tuo pet regolarmente.</p><br><b>4. IGIENE E SALUTE:</b><p>Lasciare il pet sporco o privo di attenzioni farà calare la salute e rischierà di farlo ammalare.</p><br><b>5. PALESTRA:</b><p>Usa il tasto [X] in alto a destra nella Palestra per uscire dall'area in qualsiasi momento.</p>`,
+                rulesContent: `<b>1. SCHIUSA E NASCITA:</b><p>L'uovo richiede soli 7 secondi per schiudersi! Il pet nasce con tutti i parametri vitali al 40%.</p><br><b>2. TEMPO REALE (SEMPRE ATTIVO):</b><p>Il tempo scorre anche ad app chiusa. Evoluzione: Baby→Toddler 3 giorni, Toddler→Teen 3 giorni, Teen→Adult 3 giorni. L'Adulto vive 3 giorni poi muore di vecchiaia (nuova generazione).</p><br><b>3. DECADIMENTO PARAMETRI:</b><p>Fame -20%/1h, Pulizia -20%/1h30, Felicità -20%/2h (da sveglio), Energia -20%/3h (da sveglio), Forma -20%/4h, Intelligenza -20%/3h.</p><br><b>4. CACCA E IGIENE:</b><p>Il pet fa la cacca 3 volte al giorno (7:00-22:00). La doccia rimette Pulizia al 100%.</p><br><b>5. MALATTIA E SALUTE:</b><p>Probabilità di malattia molto bassa. Da malato: -20% Salute/ora. Salute a 0% = morte definitiva (nessuna nuova generazione).</p><br><b>6. PALESTRA:</b><p>Usa il tasto [X] in alto a destra nella Palestra per uscire.</p><br><b>7. NANNA:</b><p>Dormendo: Felicità non cala, niente malattie, Energia +20%/ora. L'evoluzione continua comunque.</p>`,
                 infoTitle: "INFORMAZIONI PET",
                 infoBack: "TORNA AL GIOCO",
                 lblName: "NOME:",
@@ -966,11 +950,15 @@
                 hatchedMsg: "L'uovo si è schiuso!",
                 evoMsg: "EVOLUZIONE COMPIUTA!",
                 deathMsg: "IL TUO PET È MORTO!",
-                deathRebirthMsg: "Il pet ci ha lasciati... È nato un nuovo UOVO!",
+                deathRebirthMsg: "Il pet ci ha lasciati per vecchiaia...",
+                rebirthPrompt: (name) => `Il tuo pet è morto di vecchiaia.\n\nÈ disponibile un nuovo pet: ${name}.\nVuoi adottarlo? (OK = Sì, Annulla = No)`,
+                rebirthNamePrompt: "Dai un nome al nuovo pet:",
+                rebirthDone: (name) => `È nato un nuovo UOVO: ${name}!`,
+                rebirthDeclined: "Nessun nuovo pet adottato.",
                 waitEggMsg: "Aspetta la schiusa dell'uovo!",
                 mealMsg: "Pasto consumato (Pollo)!",
                 snackMsg: "Snack gustato (Caramella)!",
-                parkMsg: "Parco! Felicità +2 Pallini",
+                parkMsg: "Parco! Felicità +1 Pallino",
                 showerDirtyMsg: "Doccia fatta! Tutto pulito.",
                 showerCleanMsg: "Pet lavato e profumato!",
                 clinicSickMsg: "Cura somministrata! Pet guarito.",
@@ -1010,7 +998,7 @@
                 travelMsg: "Moving to: ",
                 rulesTitle: "REAL RULES",
                 rulesBack: "BACK TO SELECTION",
-                rulesContent: `<b>1. HATCHING & BIRTH:</b><p>The egg takes only 7 seconds to hatch!</p><br><b>2. REAL TIME (1 Day = 24 Hours):</b><p>Evolution happens every 3 real days (Baby, Toddler, Teen). Adult stage lives up to 3 real days.</p><br><b>3. HUNGER & NEEDS:</b><p>Stats decrease over real time. Check your pet regularly.</p><br><b>4. HYGIENE & HEALTH:</b><p>Leaving the pet dirty lowers health and causes illness.</p><br><b>5. GYM:</b><p>Use the [X] button top right in the Gym to leave at any time.</p>`,
+                rulesContent: `<b>1. HATCHING & BIRTH:</b><p>The egg takes only 7 seconds to hatch! The pet is born with all vital stats at 40%.</p><br><b>2. REAL TIME (ALWAYS RUNNING):</b><p>Time runs even when the app is closed. Evolution: Baby→Toddler 3 days, Toddler→Teen 3 days, Teen→Adult 3 days. The Adult lives 3 days then dies of old age (new generation).</p><br><b>3. STAT DECAY:</b><p>Hunger -20%/1h, Cleanliness -20%/1h30, Happiness -20%/2h (awake), Energy -20%/3h (awake), Fitness -20%/4h, Intelligence -20%/3h.</p><br><b>4. POOP & HYGIENE:</b><p>The pet poops 3 times a day (7:00-22:00). Shower restores Cleanliness to 100%.</p><br><b>5. ILLNESS & HEALTH:</b><p>Illness chance is very low. When sick: -20% Health/hour. Health at 0% = permanent death (no new generation).</p><br><b>6. GYM:</b><p>Use the [X] button top right in the Gym to leave at any time.</p><br><b>7. NAP:</b><p>While sleeping: Happiness doesn't drop, no illness, Energy +20%/hour. Evolution still continues.</p>`,
                 infoTitle: "PET INFORMATION",
                 infoBack: "BACK TO GAME",
                 lblName: "NAME:",
@@ -1052,11 +1040,15 @@
                 hatchedMsg: "The egg has hatched!",
                 evoMsg: "EVOLUTION COMPLETE!",
                 deathMsg: "YOUR PET DIED!",
-                deathRebirthMsg: "The pet left us... A new EGG is born!",
+                deathRebirthMsg: "The pet left us of old age...",
+                rebirthPrompt: (name) => `Your pet died of old age.\n\nA new pet is available: ${name}.\nDo you want to adopt it? (OK = Yes, Cancel = No)`,
+                rebirthNamePrompt: "Give the new pet a name:",
+                rebirthDone: (name) => `A new EGG is born: ${name}!`,
+                rebirthDeclined: "No new pet adopted.",
                 waitEggMsg: "Wait for the egg to hatch!",
                 mealMsg: "Meal eaten (Chicken)!",
                 snackMsg: "Snack enjoyed (Candy)!",
-                parkMsg: "Park! Happiness +2 Dots",
+                parkMsg: "Park! Happiness +1 Dot",
                 showerDirtyMsg: "Shower done! All clean.",
                 showerCleanMsg: "Pet washed and fresh!",
                 clinicSickMsg: "Medicine given! Pet cured.",
@@ -1329,6 +1321,8 @@
             }
         }
 
+        // Low-Stat Alarm: triggers if Hunger, Happiness, Health, Energy or Cleanliness < 50%.
+        // Plays once while the condition persists, re-arms when all are back >= 50%.
         function checkStatsWarning() {
             if (isDead || petStage === 0) return;
 
@@ -1346,18 +1340,21 @@
 
         let currentPetIndex = 0;
         let petStage = 0;
-        let hunger = 100;
-        let happiness = 100;
-        let health = 100;
-        let energy = 100;
-        let fitness = 100;
-        let intelligence = 0;
-        let cleanliness = 100;
+        let hunger = 40;
+        let happiness = 40;
+        let health = 40;
+        let energy = 40;
+        let fitness = 40;
+        let intelligence = 40;
+        let cleanliness = 40;
 
         let generation = 1;
         let ageInDays = 0;
         let secondsInCurrentStage = 0;
         let totalGameSeconds = 0;
+
+        // Real-time anchor: absolute wall-clock second at which totalGameSeconds was last updated.
+        let lastRealTimestamp = 0;
 
         let isDirty = false;
         let isSick = false;
@@ -1380,20 +1377,44 @@
         let runnerSpeed = 3;
         let minObstacleDistance = 90;
 
+        // Poop schedule: 3 random times per day (in seconds since midnight), between 07:00 and 22:00 CEST.
         let poopSchedule = [];
-        let lastWakeupDay = -1;
+        let poopDoneToday = [false, false, false];
+        let poopScheduleDay = -1;
 
         const stageNames = ["EGG", "BABY", "TODDLER", "TEEN", "ADULT", "DEAD"];
 
+        // Decay periods (in real seconds)
+        const DECAY = {
+            hunger: 3600,       // -20% / 1h
+            cleanliness: 5400,  // -20% / 1h30
+            happiness: 7200,    // -20% / 2h (awake)
+            energy: 10800,      // -20% / 3h (awake)
+            fitness: 14400,     // -20% / 4h
+            intelligence: 10800 // -20% / 3h
+        };
+        const SECONDS_PER_DAY = 86400;
+
+        // CEST = UTC+2. Returns seconds since local (CEST) midnight for a given epoch ms.
+        function cestSecondsOfDay(epochMs) {
+            const cestMs = epochMs + 2 * 3600 * 1000;
+            return Math.floor((cestMs / 1000) % SECONDS_PER_DAY);
+        }
+        function cestDayIndex(epochMs) {
+            const cestMs = epochMs + 2 * 3600 * 1000;
+            return Math.floor(cestMs / 1000 / SECONDS_PER_DAY);
+        }
+
         function generatePoopSchedule() {
             poopSchedule = [];
-            const minSec = 1 * 3600;
-            const maxSec = 23 * 3600;
+            const minSec = 7 * 3600;   // 07:00 CEST
+            const maxSec = 22 * 3600;  // 22:00 CEST
             for(let i = 0; i < 3; i++) {
                 const randomSec = Math.floor(Math.random() * (maxSec - minSec)) + minSec;
                 poopSchedule.push(randomSec);
             }
             poopSchedule.sort((a, b) => a - b);
+            poopDoneToday = [false, false, false];
         }
 
         function saveGameState() {
@@ -1402,26 +1423,15 @@
                 petCustomName,
                 petGender,
                 petStage,
-                hunger,
-                happiness,
-                health,
-                energy,
-                fitness,
-                intelligence,
-                cleanliness,
+                hunger, happiness, health, energy, fitness, intelligence, cleanliness,
                 generation,
                 ageInDays,
                 secondsInCurrentStage,
                 totalGameSeconds,
-                isDirty,
-                isSick,
-                isDead,
-                isSleeping,
-                poopSchedule,
-                lastWakeupDay,
-                currentLang,
-                currentShellColor,
-                currentBgStyle,
+                lastRealTimestamp,
+                isDirty, isSick, isDead, isSleeping,
+                poopSchedule, poopDoneToday, poopScheduleDay,
+                currentLang, currentShellColor, currentBgStyle,
                 alarmPlayedThisWarning,
                 gameActive: true
             };
@@ -1446,17 +1456,19 @@
                 energy = state.energy;
                 fitness = state.fitness;
                 intelligence = state.intelligence;
-                cleanliness = state.cleanliness !== undefined ? state.cleanliness : 100;
+                cleanliness = state.cleanliness !== undefined ? state.cleanliness : 40;
                 generation = state.generation;
                 ageInDays = state.ageInDays;
                 secondsInCurrentStage = state.secondsInCurrentStage;
                 totalGameSeconds = state.totalGameSeconds;
+                lastRealTimestamp = state.lastRealTimestamp || Math.floor(Date.now() / 1000);
                 isDirty = state.isDirty;
                 isSick = state.isSick;
                 isDead = state.isDead;
                 isSleeping = state.isSleeping;
                 poopSchedule = state.poopSchedule || [];
-                lastWakeupDay = state.lastWakeupDay !== undefined ? state.lastWakeupDay : -1;
+                poopDoneToday = state.poopDoneToday || [false, false, false];
+                poopScheduleDay = state.poopScheduleDay !== undefined ? state.poopScheduleDay : -1;
                 currentLang = state.currentLang || 'it';
                 currentShellColor = state.currentShellColor || 'default';
                 currentBgStyle = state.currentBgStyle || 'none';
@@ -1487,11 +1499,14 @@
                     document.getElementById('action-msg').innerText = "";
                 }
 
-                if(isSleeping) {
+                if(isSleeping && !isDead) {
                     document.getElementById('pet-display-box').classList.add('lights-off');
                     document.getElementById('zzz-layer').style.display = 'block';
                     mainCanvas.style.display = 'none';
                 }
+
+                // Catch up on all the real time elapsed while the app was closed.
+                catchUpRealTime();
 
                 updateDisplay();
 
@@ -1513,6 +1528,7 @@
             document.getElementById('badge-pet-gender').innerText = petGender === 'M' ? '♂' : '♀';
         }
 
+        // ---- ROUNDED / CUTE POOP SPRITE ----
         function drawPoopSprite(animFrame = 0) {
             const canvas = document.getElementById('poop-canvas');
             if (!canvas) return;
@@ -1522,52 +1538,127 @@
             if (!isDirty) return;
 
             ctx.fillStyle = "#000000";
+            ctx.beginPath();
+            ctx.ellipse(16, 27, 9, 4, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(16, 22, 6.5, 3.5, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(16, 18, 4, 2.8, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(16, 15, 1.6, 0, Math.PI * 2);
+            ctx.fill();
 
-            ctx.fillRect(8, 24, 16, 6);
-            ctx.fillRect(10, 20, 12, 4);
-            ctx.fillRect(13, 17, 6, 3);
-            ctx.fillRect(15, 15, 2, 2);
-
+            ctx.globalAlpha = 0.6;
             const shift = animFrame % 2;
             if (shift === 0) {
-                ctx.fillRect(12, 11, 2, 3);
-                ctx.fillRect(18, 12, 2, 2);
-                ctx.fillRect(11, 7, 2, 2);
-                ctx.fillRect(19, 8, 2, 2);
+                ctx.beginPath(); ctx.arc(12, 11, 1.6, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(19, 12, 1.4, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(11, 7, 1.2, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(20, 8, 1.1, 0, Math.PI*2); ctx.fill();
             } else {
-                ctx.fillRect(13, 12, 2, 2);
-                ctx.fillRect(17, 10, 2, 3);
-                ctx.fillRect(14, 8, 2, 2);
-                ctx.fillRect(18, 6, 2, 2);
+                ctx.beginPath(); ctx.arc(13, 12, 1.5, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(18, 10, 1.4, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(14, 8, 1.2, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(19, 6, 1.1, 0, Math.PI*2); ctx.fill();
             }
+            ctx.globalAlpha = 1;
         }
 
+        // ---- ROUNDED / CUTE PET SPRITE (with per-species evolution features) ----
         function drawPixelSprite(canvasId, type, stage, mouthOpen = false, overlayItem = null, animFrame = 0) {
             const canvas = typeof canvasId === 'string' ? document.getElementById(canvasId) : canvasId;
             if(!canvas) return;
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, 32, 32);
+            ctx.lineJoin = "round";
+            ctx.lineCap = "round";
 
-            function drawMinimalBox(x, y, w, h) {
+            function drawRoundBody(cx, cy, r) {
                 ctx.fillStyle = "#000000";
-                ctx.fillRect(x, y, w, h);
-                if(w > 4 && h > 4) {
-                    ctx.fillStyle = "#ffffff";
-                    ctx.fillRect(x + 2, y + 2, w - 4, h - 4);
+                ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = "#ffffff";
+                ctx.beginPath(); ctx.arc(cx, cy, Math.max(1, r - 2.2), 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = "#000000";
+            }
+            function drawEar(cx, cy, r) {
+                ctx.fillStyle = "#000000";
+                ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+            }
+            function drawFoot(cx, cy, rx, ry) {
+                ctx.fillStyle = "#000000";
+                ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2); ctx.fill();
+            }
+            // Two rounded legs under the body
+            function drawLegs(cx, cy, r, spread = 0.5, len = 0.35, thick = 0.22) {
+                ctx.fillStyle = "#000000";
+                ctx.fillRect(cx - r * spread - r*0.06, cy + r*0.7, r*0.12, r*0.6);
+                ctx.fillRect(cx + r * spread - r*0.06, cy + r*0.7, r*0.12, r*0.6);
+                drawFoot(cx - r * spread, cy + r * (0.9 + len), r * (thick + 0.12), r * (thick));
+                drawFoot(cx + r * spread, cy + r * (0.9 + len), r * (thick + 0.12), r * (thick));
+            }
+            // Two rounded arms on the sides
+            function drawArms(cx, cy, r) {
+                ctx.fillStyle = "#000000";
+                ctx.fillRect(cx - r - r*0.35, cy - r*0.1, r*0.4, r*0.16);
+                drawFoot(cx - r - r*0.45, cy, r*0.2, r*0.2);
+                ctx.fillRect(cx + r - r*0.05, cy - r*0.1, r*0.4, r*0.16);
+                drawFoot(cx + r + r*0.45, cy, r*0.2, r*0.2);
+            }
+            // Small tail poking out on the right
+            function drawTail(cx, cy, r, len = 0.9) {
+                ctx.fillStyle = "#000000";
+                drawFoot(cx + r * len, cy + r*0.4, r*0.3, r*0.18);
+                ctx.beginPath(); ctx.arc(cx + r * (len + 0.35), cy + r*0.4, r*0.16, 0, Math.PI*2); ctx.fill();
+            }
+            // Rounded wings behind the body
+            function drawWings(cx, cy, r, size = 0.6) {
+                ctx.fillStyle = "#000000";
+                ctx.beginPath(); ctx.ellipse(cx - r*0.9, cy - r*0.2, r*size, r*(size*0.7), -0.5, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(cx + r*0.9, cy - r*0.2, r*size, r*(size*0.7), 0.5, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "#ffffff";
+                ctx.beginPath(); ctx.ellipse(cx - r*0.9, cy - r*0.2, Math.max(1,r*size-1.4), Math.max(1,r*(size*0.7)-1.4), -0.5, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(cx + r*0.9, cy - r*0.2, Math.max(1,r*size-1.4), Math.max(1,r*(size*0.7)-1.4), 0.5, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "#000000";
+            }
+            function drawCuteFace(cx, cy, r, mOpen) {
+                const eyeDX = r * 0.42;
+                const eyeY = cy - r * 0.15;
+                const eyeR = Math.max(1.3, r * 0.16);
+                ctx.fillStyle = "#000000";
+                ctx.beginPath(); ctx.arc(cx - eyeDX, eyeY, eyeR, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(cx + eyeDX, eyeY, eyeR, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "#ffffff";
+                ctx.beginPath(); ctx.arc(cx - eyeDX + eyeR*0.4, eyeY - eyeR*0.4, Math.max(0.5, eyeR*0.35), 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(cx + eyeDX + eyeR*0.4, eyeY - eyeR*0.4, Math.max(0.5, eyeR*0.35 || eyeR*0.35), 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "rgba(0,0,0,0.18)";
+                ctx.beginPath(); ctx.arc(cx - r*0.6, cy + r*0.18, r*0.16, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(cx + r*0.6, cy + r*0.18, r*0.16, 0, Math.PI*2); ctx.fill();
+                ctx.strokeStyle = "#000000"; ctx.lineWidth = 1.2;
+                if (mOpen) {
+                    ctx.fillStyle = "#000000";
+                    ctx.beginPath(); ctx.arc(cx, cy + r*0.35, r*0.22, 0, Math.PI, false); ctx.fill();
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(cx, cy + r*0.18, r*0.28, 0.15*Math.PI, 0.85*Math.PI, false);
+                    ctx.stroke();
                 }
             }
-
-            function drawFace(x, y, eyeOffsetLeft, eyeOffsetRight, eyeY, mouthY, mouthW = 2) {
+            // Back ridges/spikes for the dino
+            function drawBackRidges(cx, cy, r, count) {
                 ctx.fillStyle = "#000000";
-                ctx.fillRect(x + eyeOffsetLeft, y + eyeY, 2, 2);
-                ctx.fillRect(x + eyeOffsetRight, y + eyeY, 2, 2);
-                if(mouthOpen) {
-                    ctx.fillRect(x + eyeOffsetLeft, y + mouthY, 4, 3);
-                    ctx.fillStyle = "#ffffff";
-                    ctx.fillRect(x + eyeOffsetLeft + 1, y + mouthY + 1, 2, 1);
-                    ctx.fillStyle = "#000000";
-                } else {
-                    ctx.fillRect(x + eyeOffsetLeft, y + mouthY, mouthW, 1);
+                for (let i = 0; i < count; i++) {
+                    const t = (i / (count - 1)) - 0.5;
+                    const px = cx + t * r * 1.4;
+                    const py = cy - r * 0.95 - Math.cos(t * Math.PI) * r * 0.1;
+                    ctx.beginPath();
+                    ctx.moveTo(px - r*0.14, py + r*0.18);
+                    ctx.lineTo(px, py - r*0.18);
+                    ctx.lineTo(px + r*0.14, py + r*0.18);
+                    ctx.closePath();
+                    ctx.fill();
                 }
             }
 
@@ -1578,111 +1669,128 @@
                 ctx.fillRect(0, 26, 32, 1); ctx.fillRect(4, 25, 2, 1); ctx.fillRect(22, 25, 2, 1);
             }
 
+            // DEAD
             if (stage === 5) {
-                drawMinimalBox(10, 8, 12, 12);
                 ctx.fillStyle = "#000000";
-                ctx.fillText("X X", 12, 16);
+                ctx.beginPath(); ctx.arc(16, 16, 9, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "#ffffff";
+                ctx.beginPath(); ctx.arc(16, 16, 7, 0, Math.PI*2); ctx.fill();
+                ctx.strokeStyle = "#000000"; ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.moveTo(11,13); ctx.lineTo(14,16); ctx.moveTo(14,13); ctx.lineTo(11,16);
+                ctx.moveTo(18,13); ctx.lineTo(21,16); ctx.moveTo(21,13); ctx.lineTo(18,16);
+                ctx.stroke();
                 return;
             }
 
+            // EGG (same for all species)
             if (stage === 0) {
                 ctx.fillStyle = "#000000";
-                ctx.fillRect(10, 6, 12, 20);
-                ctx.fillRect(8, 8, 16, 16);
-                ctx.fillRect(6, 10, 20, 12);
-
+                ctx.beginPath(); ctx.ellipse(16, 17, 9, 11, 0, 0, Math.PI * 2); ctx.fill();
                 ctx.fillStyle = "#ffffff";
-                ctx.fillRect(11, 9, 2, 4);
-                ctx.fillRect(13, 12, 4, 2);
-                ctx.fillRect(16, 14, 2, 5);
-                ctx.fillRect(19, 10, 3, 2);
-                ctx.fillRect(9, 17, 4, 2);
+                ctx.beginPath(); ctx.ellipse(16, 17, 7, 9, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = "#000000";
+                ctx.beginPath(); ctx.arc(13, 14, 1.5, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(19, 18, 1.5, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(15, 21, 1.2, 0, Math.PI*2); ctx.fill();
                 return;
             }
 
-            const size = 12 + (stage * 3);
-            const offset = Math.floor((32 - size) / 2);
-            let yShift = (overlayItem === 'parco' && animFrame % 2 === 0) ? -2 : 0;
+            // ---- DINO (type 4): original dinosaur growth cycle ----
+            if (type === 4) {
+                const r = 5.5 + stage * 1.7;
+                const cx = 16;
+                const cy = 18 + ((overlayItem === 'parco' && animFrame % 2 === 0) ? -2 : 0);
 
-            drawMinimalBox(offset, offset + yShift, size, size);
+                if (stage >= 3) drawTail(cx, cy, r, 1.0);
+                if (stage >= 2) drawLegs(cx, cy, r, 0.55, stage >= 4 ? 0.5 : 0.35, stage >= 4 ? 0.3 : 0.22);
+                if (stage >= 3) drawBackRidges(cx, cy, r, stage >= 4 ? 5 : 3);
+
+                if (stage >= 4) {
+                    ctx.fillStyle = "#000000";
+                    ctx.beginPath(); ctx.arc(cx, cy - r*0.7, r*0.55, 0, Math.PI*2); ctx.fill();
+                }
+
+                drawRoundBody(cx, cy, r);
+                drawCuteFace(cx, cy, r, mouthOpen);
+                drawActionOverlays(ctx, cx, cy, r, overlayItem, animFrame);
+                return;
+            }
+
+            // ---- Body radius grows with stage for the other species ----
+            let r = 6 + stage * 1.6;
+            const cx = 16;
+            const cy = 17 + ((overlayItem === 'parco' && animFrame % 2 === 0) ? -2 : 0);
 
             if (type === 0) {
-                drawMinimalBox(offset + size - 2, offset + 4 + yShift, 6, 6);
-                drawFace(offset, offset + yShift, 3, size - 5, 4, size - 4);
+                // SPIKE: toddler +legs ; teen legs + small tail ; adult bigger.
+                if (stage >= 3) drawTail(cx, cy, r, 0.95);
+                if (stage >= 2) drawLegs(cx, cy, r, 0.5, stage >= 4 ? 0.45 : 0.35, stage >= 4 ? 0.26 : 0.22);
+                drawEar(cx + r * 0.85, cy - r * 0.7, r * 0.42);
             } else if (type === 1) {
-                drawMinimalBox(offset - 4, offset + 2 + yShift, 4, 6);
-                drawMinimalBox(offset + size, offset + 2 + yShift, 4, 6);
-                drawFace(offset, offset + yShift, 4, size - 6, 4, size - 4);
+                // NIBBLE: toddler +legs ; teen +small wings ; adult bigger + bigger wings.
+                if (stage >= 3) drawWings(cx, cy, r, stage >= 4 ? 0.8 : 0.55);
+                if (stage >= 2) drawLegs(cx, cy, r, 0.5, 0.35, 0.22);
+                drawEar(cx - r * 0.9, cy - r * 0.6, r * 0.34);
+                drawEar(cx + r * 0.9, cy - r * 0.6, r * 0.34);
             } else if (type === 2) {
-                drawMinimalBox(offset + 2, offset - 4 + yShift, 4, 4);
-                drawMinimalBox(offset + size - 6, offset - 4 + yShift, 4, 4);
-                drawFace(offset, offset + yShift, 3, size - 5, 5, size - 4);
+                // BUBBLE: teen +two small legs + bigger ; adult bigger + bigger legs.
+                if (stage >= 3) drawLegs(cx, cy, r, 0.45, stage >= 4 ? 0.5 : 0.32, stage >= 4 ? 0.3 : 0.18);
+                drawEar(cx - r * 0.45, cy - r * 1.05, r * 0.26);
+                drawEar(cx + r * 0.45, cy - r * 1.05, r * 0.26);
             } else if (type === 3) {
-                drawMinimalBox(offset + 2, offset + size - 2 + yShift, 4, 5);
-                drawMinimalBox(offset + size - 6, offset + size - 2 + yShift, 4, 5);
-                drawFace(offset, offset + yShift, 4, size - 6, 3, size - 5);
-            } else if (type === 4) {
-                drawMinimalBox(offset + size - 2, offset + 2 + yShift, 7, 5);
-                drawFace(offset, offset + yShift, 3, size - 5, 4, size - 4);
+                // PUFF: teen +arms ; adult bigger.
+                if (stage >= 3) drawArms(cx, cy, r);
+                drawFoot(cx - r * 0.5, cy + r * 0.95, r * 0.32, r * 0.22);
+                drawFoot(cx + r * 0.5, cy + r * 0.95, r * 0.32, r * 0.22);
             }
 
+            drawRoundBody(cx, cy, r);
+            drawCuteFace(cx, cy, r, mouthOpen);
+            drawActionOverlays(ctx, cx, cy, r, overlayItem, animFrame);
+        }
+
+        // Action overlays factored out so every species can reuse them.
+        function drawActionOverlays(ctx, cx, cy, r, overlayItem, animFrame) {
             if(overlayItem === 'pasto') {
                 ctx.fillStyle = "#000000";
-                if(animFrame < 1) { ctx.fillRect(0, 15, 4, 4); ctx.fillRect(4, 16, 2, 2); }
-                else if(animFrame < 2) { ctx.fillRect(0, 16, 3, 3); ctx.fillRect(3, 17, 2, 1); }
-                else if(animFrame < 3) { ctx.fillRect(0, 17, 2, 2); }
+                const rr = Math.max(1, 3 - animFrame);
+                if (rr > 0) { ctx.beginPath(); ctx.arc(3, 17, rr, 0, Math.PI*2); ctx.fill(); }
             } else if(overlayItem === 'snack') {
                 ctx.fillStyle = "#000000";
-                if(animFrame < 1) {
-                    ctx.fillRect(3, 15, 4, 4);
-                    ctx.fillRect(1, 14, 2, 2); ctx.fillRect(1, 17, 2, 2);
-                    ctx.fillRect(7, 14, 2, 2); ctx.fillRect(7, 17, 2, 2);
-                } else if(animFrame < 2) {
-                    ctx.fillRect(3, 16, 3, 3);
-                    ctx.fillRect(1, 15, 2, 1); ctx.fillRect(1, 18, 2, 1);
-                    ctx.fillRect(6, 15, 2, 1); ctx.fillRect(6, 18, 2, 1);
-                } else if(animFrame < 3) {
-                    ctx.fillRect(3, 17, 2, 2);
+                const rr = Math.max(1, 3 - animFrame);
+                if (rr > 0) {
+                    ctx.beginPath(); ctx.arc(4, 17, rr, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.moveTo(4-rr,17-2); ctx.lineTo(4-rr-2,17); ctx.lineTo(4-rr,17+2); ctx.fill();
+                    ctx.beginPath(); ctx.moveTo(4+rr,17-2); ctx.lineTo(4+rr+2,17); ctx.lineTo(4+rr,17+2); ctx.fill();
                 }
             }
-
             if(overlayItem === 'siringa' && (animFrame % 2 === 0)) {
                 ctx.fillStyle = "#000000";
                 ctx.fillRect(28, 2, 2, 3); ctx.fillRect(27, 5, 4, 1);
-                ctx.fillRect(28, 6, 2, 10); ctx.fillRect(27, 8, 1, 1);
-                ctx.fillRect(27, 11, 1, 1); ctx.fillRect(27, 14, 1, 1);
+                ctx.fillRect(28, 6, 2, 10);
                 ctx.fillRect(28, 16, 2, 2); ctx.fillRect(28, 18, 1, 6);
             }
-
             if(overlayItem === 'doccia') {
                 ctx.fillStyle = "#000000";
                 const spongeX = 4 + (animFrame % 3) * 6;
-                ctx.fillRect(spongeX, offset + 2, 6, 4);
-                ctx.fillStyle = "#ffffff";
-                ctx.fillRect(spongeX + 1, offset + 3, 1, 1);
-                ctx.fillRect(spongeX + 4, offset + 4, 1, 1);
-
-                ctx.fillStyle = "#000000";
+                ctx.beginPath(); ctx.arc(spongeX + 3, cy - r + 2, 3, 0, Math.PI*2); ctx.fill();
                 const rainY1 = (animFrame * 4) % 28;
                 const rainY2 = ((animFrame * 4) + 12) % 28;
-                ctx.fillRect(4, rainY1, 1, 3);
-                ctx.fillRect(12, rainY2, 1, 3);
-                ctx.fillRect(20, rainY1, 1, 3);
-                ctx.fillRect(28, rainY2, 1, 3);
+                ctx.beginPath(); ctx.arc(6, rainY1, 1, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(14, rainY2, 1, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(22, rainY1, 1, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(28, rainY2, 1, 0, Math.PI*2); ctx.fill();
             }
-
             if(overlayItem === 'studio') {
                 ctx.fillStyle = "#000000";
-                const pageFlip = (animFrame % 2 === 0);
                 ctx.fillRect(20, 20, 10, 8);
                 ctx.fillStyle = "#ffffff";
                 ctx.fillRect(21, 21, 4, 6);
                 ctx.fillRect(25, 21, 4, 6);
                 ctx.fillStyle = "#000000";
                 ctx.fillRect(24, 20, 1, 8);
-                if(pageFlip) {
-                    ctx.fillRect(23, 22, 2, 4);
-                }
+                if(animFrame % 2 === 0) ctx.fillRect(23, 22, 2, 4);
             }
         }
 
@@ -1703,17 +1811,12 @@
 
             currentPetIndex = index;
             petStage = 0;
-            hunger = 100;
-            happiness = 100;
-            health = 100;
-            energy = 100;
-            fitness = 100;
-            intelligence = 0;
-            cleanliness = 100;
+            hunger = 40; happiness = 40; health = 40; energy = 40; fitness = 40; intelligence = 40; cleanliness = 40;
             
             ageInDays = 0;
             secondsInCurrentStage = 0;
             totalGameSeconds = 0;
+            lastRealTimestamp = Math.floor(Date.now() / 1000);
 
             isDirty = false;
             isSick = false;
@@ -1725,7 +1828,7 @@
             isCustomAnimation = false;
 
             generatePoopSchedule();
-            lastWakeupDay = -1;
+            poopScheduleDay = cestDayIndex(Date.now());
 
             stopRunner();
 
@@ -1740,6 +1843,7 @@
             const mainCanvas = document.getElementById('game-canvas');
             mainCanvas.classList.add('egg-wobble');
             mainCanvas.classList.remove('pet-idle-bounce');
+            mainCanvas.style.display = 'block';
 
             document.getElementById('action-msg').innerText = i18n[currentLang].eggWarming;
 
@@ -1752,122 +1856,202 @@
             gameTimer = setInterval(gameLoop, 1000);
         }
 
-        function gameLoop() {
-            if(isDead || inRunnerMode) return;
+        // Simulate a single game-second of decay/evolution/poop/illness.
+        function stepOneSecond(simulated) {
+            if (isDead) return;
 
             totalGameSeconds++;
             secondsInCurrentStage++;
-            poopSmokeFrame++;
 
-            ageInDays = Math.floor(totalGameSeconds / 86400);
+            const nowMs = (lastRealTimestamp) * 1000;
+            ageInDays = Math.floor(totalGameSeconds / SECONDS_PER_DAY);
 
-            const ONE_DAY = 86400;
-            const THREE_DAYS = ONE_DAY * 3;
+            const THREE_DAYS = SECONDS_PER_DAY * 3;
 
-            if(totalGameSeconds % ONE_DAY === 0) {
+            const dayIdx = cestDayIndex(nowMs);
+            if (dayIdx !== poopScheduleDay) {
                 generatePoopSchedule();
+                poopScheduleDay = dayIdx;
             }
-
-            if(petStage > 0 && !isSleeping) {
-                const currentSecondsInDay = totalGameSeconds % ONE_DAY;
-                poopSchedule.forEach((timeInSec) => {
-                    if(Math.abs(currentSecondsInDay - timeInSec) < 1) {
+            if (petStage > 0 && !isDirty) {
+                const secOfDay = cestSecondsOfDay(nowMs);
+                for (let i = 0; i < poopSchedule.length; i++) {
+                    if (!poopDoneToday[i] && secOfDay >= poopSchedule[i]) {
+                        poopDoneToday[i] = true;
                         isDirty = true;
-                        cleanliness = Math.max(0, cleanliness - 80);
-                        setActionMessage(i18n[currentLang].poopMsg);
+                        if (!simulated) setActionMessage(i18n[currentLang].poopMsg);
                     }
-                });
+                }
             }
 
+            // Evolution (continues even while sleeping)
             if (petStage === 0) {
-                playSyncopatedEggBeep();
+                if (!simulated) playSyncopatedEggBeep();
                 if (secondsInCurrentStage >= 7) {
                     petStage = 1;
                     secondsInCurrentStage = 0;
-                    const mainCanvas = document.getElementById('game-canvas');
-                    mainCanvas.classList.remove('egg-wobble');
-                    mainCanvas.classList.add('pet-idle-bounce');
-                    setActionMessage(i18n[currentLang].hatchedMsg);
-                    playHappyEndSound();
+                    hunger = 40; happiness = 40; health = 40; energy = 40; fitness = 40; intelligence = 40; cleanliness = 40;
+                    if (!simulated) {
+                        const mainCanvas = document.getElementById('game-canvas');
+                        mainCanvas.classList.remove('egg-wobble');
+                        mainCanvas.classList.add('pet-idle-bounce');
+                        setActionMessage(i18n[currentLang].hatchedMsg);
+                        playHappyEndSound();
+                    }
                 }
             } else if (petStage >= 1 && petStage < 4) {
                 if (secondsInCurrentStage >= THREE_DAYS) {
                     petStage++;
                     secondsInCurrentStage = 0;
-                    setActionMessage(i18n[currentLang].evoMsg);
-                    playHappyEndSound();
+                    if (!simulated) { setActionMessage(i18n[currentLang].evoMsg); playHappyEndSound(); }
                 }
             } else if (petStage === 4) {
                 if (secondsInCurrentStage >= THREE_DAYS) {
-                    triggerDeathAndRebirth();
+                    triggerNaturalDeath(simulated);
                     return;
                 }
             }
 
-            if(petStage > 0) {
-                if(totalGameSeconds % 3600 === 0) hunger = Math.max(0, hunger - 20);
-                if(totalGameSeconds % 5400 === 0) cleanliness = Math.max(0, cleanliness - 20);
-                if(!isSleeping && totalGameSeconds % 7200 === 0) happiness = Math.max(0, happiness - 20);
-                if(!isSleeping && totalGameSeconds % 10800 === 0) energy = Math.max(0, energy - 20);
-                if(totalGameSeconds % 21600 === 0) fitness = Math.max(0, fitness - 20);
-                if(totalGameSeconds % 21600 === 0) intelligence = Math.max(0, intelligence - 20);
+            // Stat decay (only after hatching)
+            if (petStage > 0) {
+                if (totalGameSeconds % DECAY.hunger === 0)       hunger = Math.max(0, hunger - 20);
+                if (totalGameSeconds % DECAY.cleanliness === 0)  cleanliness = Math.max(0, cleanliness - 20);
+                if (!isSleeping && totalGameSeconds % DECAY.happiness === 0) happiness = Math.max(0, happiness - 20);
+                if (!isSleeping && totalGameSeconds % DECAY.energy === 0)    energy = Math.max(0, energy - 20);
+                if (totalGameSeconds % DECAY.fitness === 0)      fitness = Math.max(0, fitness - 20);
+                if (totalGameSeconds % DECAY.intelligence === 0) intelligence = Math.max(0, intelligence - 20);
 
-                if(!isSick && Math.random() < (2 / 864000)) {
+                // Illness: not while sleeping. 2 in 864000 chance per second.
+                if (!isSick && !isSleeping && Math.random() < (2 / 864000)) {
                     isSick = true;
                 }
-
-                if(isSick && totalGameSeconds % 3600 === 0) {
+                if (isSick && totalGameSeconds % 3600 === 0) {
                     health = Math.max(0, health - 20);
                 }
             }
 
-            if(isSleeping) {
+            // Sleep energy regen: +20% / hour
+            if (isSleeping && petStage > 0) {
                 energy = Math.min(100, energy + (20 / 3600));
             }
 
-            if(health <= 0) {
+            // Death by health depletion (no automatic new generation)
+            if (health <= 0) {
                 isDead = true;
                 petStage = 5;
-                turnOffSleepingState();
-                document.getElementById('game-canvas').classList.remove('pet-idle-bounce');
-                document.getElementById('action-msg').innerText = i18n[currentLang].deathMsg;
-                clearInterval(gameTimer);
+                if (!simulated) {
+                    turnOffSleepingState();
+                    document.getElementById('game-canvas').classList.remove('pet-idle-bounce');
+                    document.getElementById('action-msg').innerText = i18n[currentLang].deathMsg;
+                    if (gameTimer) clearInterval(gameTimer);
+                }
             }
+        }
+
+        function catchUpRealTime() {
+            const nowSec = Math.floor(Date.now() / 1000);
+            if (!lastRealTimestamp) { lastRealTimestamp = nowSec; return; }
+
+            let elapsed = nowSec - lastRealTimestamp;
+            if (elapsed <= 0) return;
+
+            const MAX_CATCHUP = SECONDS_PER_DAY * 30; // 30 days
+            if (elapsed > MAX_CATCHUP) elapsed = MAX_CATCHUP;
+
+            for (let i = 0; i < elapsed; i++) {
+                lastRealTimestamp++;
+                stepOneSecond(true);
+                if (isDead) break;
+            }
+            lastRealTimestamp = nowSec;
+            checkStatsWarning();
+        }
+
+        function gameLoop() {
+            if(inRunnerMode) return;
+            if(isDead) return;
+
+            poopSmokeFrame++;
+
+            const nowSec = Math.floor(Date.now() / 1000);
+            let steps = nowSec - lastRealTimestamp;
+            if (steps < 1) steps = 1;
+            if (steps > SECONDS_PER_DAY * 30) steps = SECONDS_PER_DAY * 30;
+
+            for (let i = 0; i < steps; i++) {
+                lastRealTimestamp++;
+                stepOneSecond(i === steps - 1 ? false : true);
+                if (isDead) break;
+            }
+            lastRealTimestamp = nowSec;
 
             checkStatsWarning();
             updateDisplay();
             saveGameState();
         }
 
-        function triggerDeathAndRebirth() {
+        // Natural death of old age at end of Adult stage: generation +1, ask to adopt a
+        // new random pet with a name, then hatch a fresh egg with reset stats.
+        function triggerNaturalDeath(simulated) {
+            isDead = true;
+            petStage = 5;
+            if (simulated) {
+                if (!gameTimer) return;
+            }
             turnOffSleepingState();
-            document.getElementById('action-msg').innerText = i18n[currentLang].deathRebirthMsg;
-            
-            generation++;
-            currentPetIndex = Math.floor(Math.random() * 5);
-            petStage = 0;
-            ageInDays = 0;
-            secondsInCurrentStage = 0;
-            totalGameSeconds = 0;
-            hunger = 100;
-            happiness = 100;
-            health = 100;
-            energy = 100;
-            fitness = 100;
-            intelligence = 0;
-            cleanliness = 100;
-            isDirty = false;
-            isSick = false;
-            alarmPlayedThisWarning = false;
-
-            const mainCanvas = document.getElementById('game-canvas');
-            mainCanvas.classList.add('egg-wobble');
-            mainCanvas.classList.remove('pet-idle-bounce');
-
-            generatePoopSchedule();
-
+            if (gameTimer) clearInterval(gameTimer);
             updateDisplay();
-            saveGameState();
+
+            const t = i18n[currentLang];
+            document.getElementById('action-msg').innerText = t.deathRebirthMsg;
+
+            setTimeout(() => {
+                const newIndex = Math.floor(Math.random() * 5);
+                const defaultNames = ["SPIKE", "NIBBLE", "BUBBLE", "PUFF", "DINO"];
+                const proposedName = defaultNames[newIndex];
+
+                const accept = window.confirm(t.rebirthPrompt(proposedName));
+                if (!accept) {
+                    setActionMessage(t.rebirthDeclined);
+                    saveGameState();
+                    return;
+                }
+
+                let chosenName = window.prompt(t.rebirthNamePrompt, proposedName);
+                if (!chosenName || !chosenName.trim()) chosenName = proposedName;
+                chosenName = chosenName.trim().toUpperCase().slice(0, 10);
+
+                generation++;
+                currentPetIndex = newIndex;
+                petCustomName = chosenName;
+                petStage = 0;
+                ageInDays = 0;
+                secondsInCurrentStage = 0;
+                totalGameSeconds = 0;
+                lastRealTimestamp = Math.floor(Date.now() / 1000);
+                hunger = 40; happiness = 40; health = 40; energy = 40; fitness = 40; intelligence = 40; cleanliness = 40;
+                isDirty = false;
+                isSick = false;
+                isDead = false;
+                isSleeping = false;
+                alarmPlayedThisWarning = false;
+
+                generatePoopSchedule();
+                poopScheduleDay = cestDayIndex(Date.now());
+
+                const mainCanvas = document.getElementById('game-canvas');
+                mainCanvas.style.display = 'block';
+                mainCanvas.classList.add('egg-wobble');
+                mainCanvas.classList.remove('pet-idle-bounce');
+
+                updateBadgeProfile();
+                setActionMessage(t.rebirthDone(chosenName));
+                updateDisplay();
+                saveGameState();
+
+                if (gameTimer) clearInterval(gameTimer);
+                gameTimer = setInterval(gameLoop, 1000);
+            }, 300);
         }
 
         function toggleKitchenMenu() {
@@ -1876,6 +2060,7 @@
             menu.style.display = menu.style.display === 'none' ? 'flex' : 'none';
         }
 
+        // Meal: +40% Hunger. Snack: +20% Happiness, +20% Hunger, -20% Fitness.
         function feedPet(type) {
             if(isEatingAnimation || isCustomAnimation || isDead || petStage === 0 || inRunnerMode) return;
             isEatingAnimation = true;
@@ -1920,7 +2105,7 @@
             if(sleepTimer) clearTimeout(sleepTimer);
             document.getElementById('pet-display-box').classList.remove('lights-off');
             document.getElementById('zzz-layer').style.display = 'none';
-            document.getElementById('game-canvas').style.display = 'block';
+            if(!isDead) document.getElementById('game-canvas').style.display = 'block';
         }
 
         function interactArea(areaName) {
@@ -1941,7 +2126,8 @@
 
             switch(areaName) {
                 case 'Parco':
-                    happiness = Math.min(100, happiness + 40);
+                    // +20% Happiness, -20% Energy, -20% Cleanliness
+                    happiness = Math.min(100, happiness + 20);
                     energy = Math.max(0, energy - 20);
                     cleanliness = Math.max(0, cleanliness - 20);
                     isCustomAnimation = true;
@@ -1962,6 +2148,7 @@
                     break;
 
                 case 'Doccia':
+                    // Cleanliness -> 100, isDirty -> false, +20% Energy
                     energy = Math.min(100, energy + 20);
                     let showerMsg = isDirty ? i18n[currentLang].showerDirtyMsg : i18n[currentLang].showerCleanMsg;
                     isCustomAnimation = true;
@@ -1984,6 +2171,7 @@
                     break;
 
                 case 'Infermeria':
+                    // Health -> 100, Illness -> false
                     health = 100;
                     isSick = false;
                     let clinicMsg = i18n[currentLang].clinicSickMsg;
@@ -2005,15 +2193,19 @@
                     break;
 
                 case 'Palestra':
+                    // +20% Fitness, +20% Happiness, -20% Hunger, -20% Cleanliness, -20% Energy
                     fitness = Math.min(100, fitness + 20);
                     happiness = Math.min(100, happiness + 20);
                     hunger = Math.max(0, hunger - 20);
                     cleanliness = Math.max(0, cleanliness - 20);
                     energy = Math.max(0, energy - 20);
+                    updateDisplay();
+                    saveGameState();
                     startRunnerMode();
                     break;
 
                 case 'Studio':
+                    // +20% Intelligence, -20% Happiness
                     intelligence = Math.min(100, intelligence + 20);
                     happiness = Math.max(0, happiness - 20);
                     
@@ -2095,18 +2287,24 @@
 
         function handleRunnerInput(e) {
             if((e.code === 'Space' || e.code === 'ArrowUp') && inRunnerMode) {
+                e.preventDefault();
                 triggerJumpInRunner();
             }
         }
 
         function stopRunner() {
+            if(!inRunnerMode) {
+                document.getElementById('runner-container').style.display = 'none';
+                return;
+            }
             inRunnerMode = false;
             if(runnerAnimId) cancelAnimationFrame(runnerAnimId);
             window.removeEventListener('keydown', handleRunnerInput);
             document.getElementById('runner-container').style.display = 'none';
-            if(!isSleeping) {
+            if(!isSleeping && !isDead) {
                 document.getElementById('game-canvas').style.display = 'block';
             }
+            lastRealTimestamp = Math.floor(Date.now() / 1000);
             setActionMessage(i18n[currentLang].gymExitMsg);
             playHappyEndSound();
             saveGameState();
@@ -2119,6 +2317,7 @@
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+            // Speed and min distance both increase with score; random component added below.
             runnerSpeed = 3 + Math.floor(runnerScore / 50) * 0.5;
             minObstacleDistance = 90 + Math.floor(runnerScore / 50) * 10;
 
@@ -2131,19 +2330,16 @@
                 runnerJumping = false;
             }
 
-            if(Math.floor(runnerScore) % 15 === 0 && !runnerJumping) {
-                playBeep(180, 'square', 0.02);
-            }
-
             ctx.fillStyle = "#000";
             ctx.fillRect(0, 70, canvas.width, 2);
 
             const petYPos = 52 + runnerPetY;
-            ctx.fillRect(20, petYPos, 16, 16);
-            ctx.fillStyle = "#fff";
-            ctx.fillRect(22, petYPos + 2, 12, 12);
             ctx.fillStyle = "#000";
-            ctx.fillRect(24, petYPos + 4, 2, 2);
+            ctx.beginPath(); ctx.arc(28, petYPos + 8, 8, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = "#fff";
+            ctx.beginPath(); ctx.arc(28, petYPos + 8, 6, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = "#000";
+            ctx.beginPath(); ctx.arc(30, petYPos + 6, 1.5, 0, Math.PI*2); ctx.fill();
 
             const lastObstacle = runnerObstacles[runnerObstacles.length - 1];
             const distanceToLast = lastObstacle ? (200 - lastObstacle.x) : 999;
@@ -2157,9 +2353,11 @@
                 let obs = runnerObstacles[i];
                 obs.x -= runnerSpeed;
 
-                ctx.fillRect(obs.x, 70 - obs.height, obs.width, obs.height);
-                ctx.fillRect(obs.x - 2, 60, 2, 4);
-                ctx.fillRect(obs.x + obs.width, 56, 2, 4);
+                ctx.fillStyle = "#000";
+                ctx.fillRect(obs.x, 70 - obs.height + 3, obs.width, obs.height - 3);
+                ctx.beginPath(); ctx.arc(obs.x + obs.width/2, 70 - obs.height + 3, obs.width/2, Math.PI, 0); ctx.fill();
+                ctx.fillRect(obs.x - 2, 62, 2, 4);
+                ctx.fillRect(obs.x + obs.width, 58, 2, 4);
 
                 if(obs.x < 36 && obs.x + obs.width > 20 && petYPos + 16 > 70 - obs.height) {
                     playBeep(150, 'sawtooth', 0.2);
@@ -2182,6 +2380,7 @@
                 localStorage.setItem('dinomio_runner_highscore', runnerHighScore);
             }
 
+            ctx.fillStyle = "#000";
             ctx.font = '8px "Courier New"';
             ctx.fillText(`SCORE: ${runnerScore} HI: ${runnerHighScore}`, 90, 12);
 
@@ -2213,14 +2412,15 @@
             document.getElementById('mini-intelligence').innerText = getDotsRepresentation(intelligence);
         }
 
-        /* CORREZIONE BUG: Mappatura corretta dei pallini per valore (5 pallini totali) */
+        /* 5-dot mapping:
+           0%..<20% => 1 full ; 20%..<40% => 2 ; 40%..<60% => 3 ; 60%..<80% => 4 ; 80%..100% => 5 */
         function getDotsRepresentation(val) {
-            const roundedVal = Math.round(val);
-            if (roundedVal >= 80) return '●●●●●';
-            if (roundedVal >= 60) return '●●●●○';
-            if (roundedVal >= 40) return '●●●○○';
-            if (roundedVal >= 20) return '●●○○○';
-            if (roundedVal > 0)  return '●○○○○';
+            const v = Math.round(val);
+            if (v >= 80) return '●●●●●';
+            if (v >= 60) return '●●●●○';
+            if (v >= 40) return '●●●○○';
+            if (v >= 20) return '●●○○○';
+            if (v > 0)   return '●○○○○';
             return '○○○○○';
         }
 
@@ -2289,12 +2489,14 @@
             turnOffSleepingState();
             clearGameState();
             generation = 1;
+            isDead = false;
             alarmPlayedThisWarning = false;
             currentBgStyle = 'none';
             setBackgroundStyle('none');
             const mainCanvas = document.getElementById('game-canvas');
             mainCanvas.classList.remove('egg-wobble');
             mainCanvas.classList.remove('pet-idle-bounce');
+            mainCanvas.style.display = 'block';
             document.getElementById('gameplay-screen').style.display = 'none';
             document.getElementById('info-screen').style.display = 'none';
             document.getElementById('settings-screen').style.display = 'none';
@@ -2302,6 +2504,18 @@
             document.getElementById('choose-area-screen').style.display = 'none';
             document.getElementById('selection-screen').style.display = 'block';
         }
+
+        // Recompute time whenever the app returns to foreground (Android tab resume).
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && !isDead && petStage !== undefined) {
+                const gp = document.getElementById('gameplay-screen');
+                if (gp && gp.style.display !== 'none' && !inRunnerMode) {
+                    catchUpRealTime();
+                    updateDisplay();
+                    saveGameState();
+                }
+            }
+        });
 
         window.onload = initPreviews;
     </script>
