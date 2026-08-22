@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DinoMio - Original Tamagotchi Rules Edition</title>
+    <title>DinoMio - Pastel Cool Edition</title>
     <style>
         * {
             box-sizing: border-box;
@@ -14,12 +14,12 @@
         }
 
         body {
-            background-color: #1a1a1a;
+            background: linear-gradient(160deg, #1c2530 0%, #12181f 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            color: #000;
+            color: #3c4652;
         }
 
         .tamagotchi-container {
@@ -27,47 +27,48 @@
             max-width: 420px;
             height: 100vh;
             max-height: 750px;
-            background-color: #d8d8d8;
+            background: linear-gradient(150deg, #aebfd0 0%, #93a7bd 50%, #7d94ad 100%);
             border-radius: 40px;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            border: 6px solid #8c8c8c;
-            transition: background-color 0.3s, border-color 0.3s;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6), inset 0 2px 8px rgba(255,255,255,0.35);
+            border: 6px solid #6a809a;
+            transition: background 0.3s, border-color 0.3s;
         }
 
-        .tamagotchi-container.shell-blue { background-color: #3b82f6; border-color: #1d4ed8; }
-        .tamagotchi-container.shell-red { background-color: #ef4444; border-color: #b91c1c; }
-        .tamagotchi-container.shell-white { background-color: #f3f4f6; border-color: #d1d5db; }
-        .tamagotchi-container.shell-yellow { background-color: #eab308; border-color: #ca8a04; }
-        .tamagotchi-container.shell-pink { background-color: #f472b6; border-color: #db2777; }
-        .tamagotchi-container.shell-beige { background-color: #f5f5dc; border-color: #d2b48c; }
-        .tamagotchi-container.shell-lightblue { background-color: #38bdf8; border-color: #0284c7; }
+        .tamagotchi-container.shell-blue { background: linear-gradient(150deg, #9fc0e0 0%, #7ba3cf 100%); border-color: #5f88b5; }
+        .tamagotchi-container.shell-red { background: linear-gradient(150deg, #cf9a9a 0%, #b87e7e 100%); border-color: #9c6767; }
+        .tamagotchi-container.shell-white { background: linear-gradient(150deg, #dfe4ea 0%, #c4ccd6 100%); border-color: #a7b2bf; }
+        .tamagotchi-container.shell-yellow { background: linear-gradient(150deg, #d8c893 0%, #c4b277 100%); border-color: #a89a5f; }
+        .tamagotchi-container.shell-pink { background: linear-gradient(150deg, #c8a3b8 0%, #b088a0 100%); border-color: #946e86; }
+        .tamagotchi-container.shell-beige { background: linear-gradient(150deg, #cfc4ab 0%, #b8ac8e 100%); border-color: #9a8e70; }
+        .tamagotchi-container.shell-lightblue { background: linear-gradient(150deg, #9dc6d4 0%, #7dabbb 100%); border-color: #5f8c9c; }
 
         .lcd-screen {
             width: 100%;
             height: 100%;
-            background-color: #ffffff;
-            border: 4px solid #000000;
-            border-radius: 10px;
+            background: linear-gradient(180deg, #d6e2dc 0%, #c2d2ca 100%);
+            border: 4px solid #5f7a72;
+            border-radius: 12px;
             padding: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
             overflow-y: auto;
             position: relative;
-            transition: background-color 0.5s;
+            transition: background 0.5s;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.18);
         }
 
         h1, h2 {
             font-size: 0.9rem;
             text-align: center;
-            color: #000;
+            color: #3a4653;
             text-transform: uppercase;
             letter-spacing: 1px;
-            border-bottom: 2px solid #000;
+            border-bottom: 2px solid #6a809a;
             padding-bottom: 4px;
             margin-bottom: 6px;
             width: 100%;
@@ -94,30 +95,27 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background-color: #f0f0f0;
-            border: 2px solid #000;
+            background: linear-gradient(180deg, #eef2f5 0%, #dde5ea 100%);
+            border: 2px solid #a3b3c0;
             padding: 4px 8px;
-            border-radius: 4px;
+            border-radius: 10px;
         }
 
-        .pet-row-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .pet-row-info { display: flex; align-items: center; gap: 10px; }
 
         .pet-name-title {
             font-size: 0.75rem;
             font-weight: bold;
             text-transform: uppercase;
+            color: #3a4653;
         }
 
         .pet-inputs-container {
             width: 100%;
-            background: #e8e8e8;
-            border: 2px solid #000;
+            background: linear-gradient(180deg, #e8eef2 0%, #d6dfe6 100%);
+            border: 2px solid #a3b3c0;
             padding: 6px;
-            border-radius: 4px;
+            border-radius: 10px;
             margin-top: 4px;
             display: flex;
             flex-direction: column;
@@ -130,49 +128,38 @@
             justify-content: space-between;
             font-size: 0.65rem;
             font-weight: bold;
+            color: #3a4653;
         }
 
         .input-group input[type="text"] {
             width: 55%;
             padding: 2px 4px;
             font-size: 0.65rem;
-            border: 1px solid #000;
+            border: 1px solid #a3b3c0;
+            border-radius: 4px;
             font-family: inherit;
             text-transform: uppercase;
+            background: #f6f9fb;
         }
 
-        .gender-options {
-            display: flex;
-            gap: 8px;
-        }
-
-        .gender-options label {
-            font-size: 0.65rem;
-            font-weight: normal;
-            cursor: pointer;
-        }
+        .gender-options { display: flex; gap: 8px; }
+        .gender-options label { font-size: 0.65rem; font-weight: normal; cursor: pointer; }
 
         .select-pet-btn {
-            background: #000;
-            color: #fff;
+            background: linear-gradient(180deg, #7fb0c9 0%, #5a91b0 100%);
+            color: #12303d;
             border: none;
-            padding: 4px 8px;
+            padding: 4px 10px;
             font-size: 0.6rem;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 1px 1px 0px #000;
+            border-radius: 6px;
+            box-shadow: 0 2px 0 #3f7089;
         }
 
-        .select-pet-btn:active {
-            transform: translate(1px, 1px);
-            box-shadow: none;
-        }
+        .select-pet-btn:active { transform: translateY(2px); box-shadow: none; }
 
-        .pixel-art-canvas {
-            width: 32px;
-            height: 32px;
-            display: inline-block;
-        }
+        .pixel-art-canvas { width: 32px; height: 32px; display: inline-block; }
 
         .area-section {
             width: 100%;
@@ -183,32 +170,31 @@
             padding: 4px 0;
         }
 
-        .button-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-            width: 100%;
-        }
+        .button-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; width: 100%; }
 
         .area-btn {
-            background-color: #ffffff;
-            color: #000000;
-            border: 2px solid #000000;
-            border-radius: 4px;
+            background: linear-gradient(180deg, #eef2f5 0%, #dbe3ea 100%);
+            color: #3a4653;
+            border: 2px solid #a3b3c0;
+            border-radius: 10px;
             padding: 10px 4px;
             font-size: 0.65rem;
             font-weight: bold;
             cursor: pointer;
             text-align: center;
             text-transform: uppercase;
-            box-shadow: 2px 2px 0px #000000;
+            box-shadow: 0 3px 0 #b0bcc7;
             width: 100%;
         }
 
-        .area-btn:active {
-            transform: translate(1px, 1px);
-            box-shadow: none;
-        }
+        .area-btn:active { transform: translateY(3px); box-shadow: none; }
+
+        #btn-kitchen { background: linear-gradient(180deg,#d9cfa8 0%,#c6ba86 100%); border-color:#a89a5f; box-shadow:0 3px 0 #9a8c52; }
+        #btn-park { background: linear-gradient(180deg,#a8c8a8 0%,#88b088 100%); border-color:#6f9a6f; box-shadow:0 3px 0 #5f8a5f; }
+        #btn-gym { background: linear-gradient(180deg,#c9a0a0 0%,#b08484 100%); border-color:#946e6e; box-shadow:0 3px 0 #855f5f; }
+        #btn-clinic { background: linear-gradient(180deg,#9ec7c2 0%,#7dada7 100%); border-color:#5f918b; box-shadow:0 3px 0 #4f817b; }
+        #btn-shower { background: linear-gradient(180deg,#9fbdd6 0%,#7ba0bf 100%); border-color:#5f88a8; box-shadow:0 3px 0 #4f7898; }
+        #btn-study { background: linear-gradient(180deg,#a6a6c4 0%,#8686ac 100%); border-color:#6e6e94; box-shadow:0 3px 0 #5f5f85; }
 
         .gameplay-screen, .rules-screen, .info-screen, .settings-screen, .choose-area-screen {
             display: none;
@@ -223,11 +209,11 @@
             flex: 0.95;
             display: flex;
             flex-direction: column;
-            border: 2px solid #000;
-            background-color: #eaeaea;
+            border: 2px solid #7a9188;
+            background: linear-gradient(180deg, #e2ece7 0%, #d0ddd6 100%);
             padding: 4px;
             margin-bottom: 4px;
-            border-radius: 6px;
+            border-radius: 10px;
         }
 
         .frame-top-bar {
@@ -235,8 +221,9 @@
             justify-content: space-between;
             align-items: center;
             padding: 2px 4px;
-            background: #d0d0d0;
-            border-bottom: 2px solid #000;
+            background: linear-gradient(180deg,#c2d2ca 0%,#aec2b8 100%);
+            border-bottom: 2px solid #7a9188;
+            border-radius: 8px 8px 0 0;
             gap: 8px;
         }
 
@@ -245,8 +232,9 @@
             justify-content: space-between;
             align-items: center;
             padding: 2px 4px;
-            background: #d0d0d0;
-            border-top: 2px solid #000;
+            background: linear-gradient(180deg,#aec2b8 0%,#c2d2ca 100%);
+            border-top: 2px solid #7a9188;
+            border-radius: 0 0 8px 8px;
         }
 
         .top-icons-group {
@@ -270,13 +258,14 @@
             line-height: 1;
             letter-spacing: -1px;
             font-weight: bold;
+            color: #3a6154;
         }
 
         .pixel-pet-badge {
-            background: #000;
+            background: linear-gradient(180deg,#4f6d86 0%,#3c566c 100%);
             color: #fff;
-            padding: 2px 6px;
-            border-radius: 2px;
+            padding: 2px 8px;
+            border-radius: 8px;
             font-size: 0.6rem;
             font-weight: bold;
             letter-spacing: 0.5px;
@@ -286,12 +275,7 @@
             white-space: nowrap;
         }
 
-        #badge-pet-gender {
-            font-size: 0.9rem;
-            font-weight: 900;
-            margin-left: 2px;
-            line-height: 1;
-        }
+        #badge-pet-gender { font-size: 0.9rem; font-weight: 900; margin-left: 2px; line-height: 1; }
 
         .pet-display {
             flex: 1;
@@ -300,11 +284,11 @@
             align-items: center;
             justify-content: center;
             width: 100%;
-            border: 2px dashed #000;
-            background-color: #fafafa;
+            border: 2px dashed #7a9188;
+            background-color: #dde9e3;
             background-image: 
-                radial-gradient(rgba(0, 0, 0, 0.08) 20%, transparent 20%),
-                radial-gradient(rgba(0, 0, 0, 0.08) 20%, transparent 20%);
+                radial-gradient(rgba(90, 120, 110, 0.16) 20%, transparent 20%),
+                radial-gradient(rgba(90, 120, 110, 0.16) 20%, transparent 20%);
             background-size: 8px 8px;
             background-position: 0 0, 4px 4px;
             position: relative;
@@ -312,34 +296,24 @@
             cursor: pointer;
             user-select: none;
             -webkit-user-select: none;
+            border-radius: 8px;
         }
 
-        .pet-display.lights-off {
-            background-color: #000000 !important;
-            background-image: none !important;
-        }
+        .pet-display.lights-off { background-color: #10161d !important; background-image: none !important; }
 
         #bg-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1; pointer-events: none;
         }
 
         #game-canvas {
-            width: 128px;
-            height: 128px;
+            width: 128px; height: 128px;
             transition: transform 0.2s;
-            position: relative;
-            z-index: 2;
+            position: relative; z-index: 2;
         }
 
-        .pet-idle-bounce {
-            animation: bounceAndMove 3s infinite ease-in-out;
-        }
+        .pet-idle-bounce { animation: bounceAndMove 3s infinite ease-in-out; }
 
         @keyframes bounceAndMove {
             0%   { transform: translate(0, 0) scale(1, 1); }
@@ -349,9 +323,7 @@
             100% { transform: translate(0, 0) scale(1, 1); }
         }
 
-        .egg-wobble {
-            animation: wobble 0.5s infinite ease-in-out !important;
-        }
+        .egg-wobble { animation: wobble 0.5s infinite ease-in-out !important; }
 
         @keyframes wobble {
             0% { transform: rotate(0deg); }
@@ -360,180 +332,120 @@
             100% { transform: rotate(0deg); }
         }
 
-        #runner-container {
-            position: relative;
-            width: 100%;
-            height: 100px;
-            display: none;
-            z-index: 5;
-        }
+        #runner-container { position: relative; width: 100%; height: 100px; display: none; z-index: 5; }
 
         #runner-canvas {
-            width: 100%;
-            height: 100%;
-            background-color: #fff;
-            border: 1px solid #000;
+            width: 100%; height: 100%;
+            background: linear-gradient(180deg,#cfe0ea 0%,#b3ccdb 100%);
+            border: 1px solid #5f88a8;
+            border-radius: 6px;
         }
 
         .close-gym-btn {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            background-color: #000;
-            color: #fff;
-            border: 1px solid #fff;
-            font-weight: bold;
-            font-size: 0.6rem;
-            width: 18px;
-            height: 18px;
-            line-height: 14px;
-            text-align: center;
-            cursor: pointer;
-            z-index: 10;
+            position: absolute; top: 2px; right: 2px;
+            background: linear-gradient(180deg,#c47a7a 0%,#a85a5a 100%);
+            color: #fff; border: 1px solid #fff;
+            font-weight: bold; font-size: 0.6rem;
+            width: 18px; height: 18px; line-height: 14px;
+            text-align: center; cursor: pointer; z-index: 10;
+            border-radius: 4px;
         }
 
-        .poop-indicator {
-            position: absolute;
-            right: 12px;
-            bottom: 24px;
-            display: none;
-            z-index: 4;
-        }
+        .poop-indicator { position: absolute; right: 12px; bottom: 24px; display: none; z-index: 4; }
 
         .sick-indicator {
-            position: absolute;
-            right: 8px;
-            top: 8px;
-            font-size: 10px;
-            font-weight: bold;
-            z-index: 4;
+            position: absolute; right: 8px; top: 8px;
+            font-size: 10px; font-weight: bold; color: #a84a4a; z-index: 4;
         }
 
         .action-btn {
             margin-top: 5px;
-            background-color: #000000;
+            background: linear-gradient(180deg,#4f6d86 0%,#3c566c 100%);
             color: #ffffff;
             padding: 8px 12px;
             border: none;
             cursor: pointer;
             font-weight: bold;
             font-size: 0.65rem;
+            border-radius: 8px;
+            box-shadow: 0 3px 0 #2c4152;
         }
 
-        .kitchen-options {
-            display: flex;
-            gap: 6px;
-            width: 100%;
-            margin-top: 4px;
-            align-items: center;
-        }
+        .action-btn:active { transform: translateY(3px); box-shadow: none; }
 
-        .kitchen-options .kitchen-btn {
-            flex: 1;
-            padding: 6px 4px;
-            font-size: 0.6rem;
-        }
+        .kitchen-options { display: flex; gap: 6px; width: 100%; margin-top: 4px; align-items: center; }
+        .kitchen-options .kitchen-btn { flex: 1; padding: 6px 4px; font-size: 0.6rem; }
 
         .rules-content, .info-content, .settings-content {
             font-size: 0.65rem;
             text-align: left;
             line-height: 1.4;
-            border: 1px solid #000;
+            border: 1px solid #a3b3c0;
             padding: 8px;
-            background: #f9f9f9;
+            background: linear-gradient(180deg,#f2f6f8 0%,#e4ebef 100%);
             height: 100%;
             width: 100%;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 8px;
+            border-radius: 8px;
+            color: #3a4653;
         }
 
-        .stat-row {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+        .stat-row { display: flex; align-items: center; gap: 6px; }
 
-        .pixel-stat-icon {
-            width: 16px;
-            height: 16px;
-            image-rendering: pixelated;
-            flex-shrink: 0;
-        }
+        .pixel-stat-icon { width: 16px; height: 16px; image-rendering: pixelated; flex-shrink: 0; }
 
-        .settings-group {
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 6px;
-        }
+        .settings-group { border-bottom: 1px solid #c4ccd6; padding-bottom: 6px; }
+        .settings-group label { font-weight: bold; display: block; margin-bottom: 4px; }
 
-        .settings-group label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        .color-picker-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 4px;
-        }
+        .color-picker-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
 
         .color-btn {
             padding: 4px;
-            border: 1px solid #000;
+            border: 1px solid #8a97a5;
+            border-radius: 6px;
             font-size: 0.55rem;
             font-weight: bold;
             cursor: pointer;
             text-align: center;
+            color: #3a4653;
         }
 
-        .bg-picker-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-        }
+        .bg-picker-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
 
         .glossy-btn {
-            background: linear-gradient(180deg, #ffffff 0%, #e0e0e0 50%, #b0b0b0 100%);
-            color: #000;
-            border: 2px solid #000;
-            border-radius: 6px;
+            background: linear-gradient(180deg, #eef2f5 0%, #cdd8e0 50%, #a3b3c0 100%);
+            color: #3a4653;
+            border: 2px solid #8a97a5;
+            border-radius: 8px;
             padding: 6px 2px;
             font-size: 0.55rem;
             font-weight: bold;
             cursor: pointer;
             text-align: center;
-            box-shadow: 0 4px 0 #000, inset 0 1px 0 #fff;
+            box-shadow: 0 4px 0 #8a97a5, inset 0 1px 0 #fff;
             transition: all 0.1s ease;
             position: relative;
             text-transform: uppercase;
         }
 
-        .glossy-btn:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0 #000, inset 0 1px 0 #fff;
-        }
+        .glossy-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #8a97a5, inset 0 1px 0 #fff; }
 
         .glossy-btn.active-bg {
-            background: linear-gradient(180deg, #555 0%, #222 50%, #000 100%);
+            background: linear-gradient(180deg, #5a7690 0%, #47627a 50%, #3c566c 100%);
             color: #fff;
-            border-color: #000;
-            box-shadow: 0 2px 0 #000, inset 0 1px 0 #888;
+            border-color: #3c566c;
+            box-shadow: 0 2px 0 #2c4152, inset 0 1px 0 #7d94ad;
         }
 
-        .bottom-bar {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            gap: 6px;
-            margin-top: 4px;
-        }
+        .bottom-bar { width: 100%; display: flex; justify-content: space-between; gap: 6px; margin-top: 4px; }
 
         .info-btn {
             flex: 1;
             color: #ffffff;
-            border: 2px solid #000;
+            border: 2px solid #5f7a92;
             border-radius: 20px;
             padding: 8px 4px;
             font-size: 0.65rem;
@@ -541,35 +453,26 @@
             cursor: pointer;
             text-align: center;
             text-transform: uppercase;
-            box-shadow: 2px 2px 0px #000;
-            background: linear-gradient(180deg, #444 0%, #000 50%, #111 100%);
+            box-shadow: 0 3px 0 #3c566c;
+            background: linear-gradient(180deg, #6a869e 0%, #52708a 50%, #45627a 100%);
             transition: background 0.3s, color 0.3s;
         }
 
-        .info-btn:active {
-            transform: translate(1px, 1px);
-            box-shadow: none;
-        }
+        .info-btn:active { transform: translateY(3px); box-shadow: none; }
 
-        .tamagotchi-container.shell-blue .info-btn { background: linear-gradient(180deg, #60a5fa 0%, #3b82f6 50%, #1d4ed8 100%); color: #fff; }
-        .tamagotchi-container.shell-red .info-btn { background: linear-gradient(180deg, #f87171 0%, #ef4444 50%, #b91c1c 100%); color: #fff; }
-        .tamagotchi-container.shell-white .info-btn { background: linear-gradient(180deg, #ffffff 0%, #e5e7eb 50%, #9ca3af 100%); color: #000; }
-        .tamagotchi-container.shell-yellow .info-btn { background: linear-gradient(180deg, #fde047 0%, #eab308 50%, #ca8a04 100%); color: #000; }
-        .tamagotchi-container.shell-pink .info-btn { background: linear-gradient(180deg, #fbcfe8 0%, #f472b6 50%, #db2777 100%); color: #000; }
-        .tamagotchi-container.shell-beige .info-btn { background: linear-gradient(180deg, #ffffff 0%, #f5f5dc 50%, #d2b48c 100%); color: #000; }
-        .tamagotchi-container.shell-lightblue .info-btn { background: linear-gradient(180deg, #bae6fd 0%, #38bdf8 50%, #0284c7 100%); color: #000; }
+        .tamagotchi-container.shell-blue .info-btn { background: linear-gradient(180deg, #7ba3cf 0%, #5f88b5 100%); }
+        .tamagotchi-container.shell-red .info-btn { background: linear-gradient(180deg, #b87e7e 0%, #9c6767 100%); }
+        .tamagotchi-container.shell-white .info-btn { background: linear-gradient(180deg, #c4ccd6 0%, #a7b2bf 100%); color:#2c3540; }
+        .tamagotchi-container.shell-yellow .info-btn { background: linear-gradient(180deg, #c4b277 0%, #a89a5f 100%); color:#3a3418; }
+        .tamagotchi-container.shell-pink .info-btn { background: linear-gradient(180deg, #b088a0 0%, #946e86 100%); }
+        .tamagotchi-container.shell-beige .info-btn { background: linear-gradient(180deg, #b8ac8e 0%, #9a8e70 100%); color:#3a3420; }
+        .tamagotchi-container.shell-lightblue .info-btn { background: linear-gradient(180deg, #7dabbb 0%, #5f8c9c 100%); }
 
-        .zzz-container {
-            display: none;
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            pointer-events: none;
-            z-index: 6;
-        }
+        .zzz-container { display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 6; }
 
         .zzz-text {
             position: absolute;
-            color: #ffffff;
+            color: #9db8d0;
             font-weight: bold;
             font-size: 16px;
             animation: floatZ 2s infinite linear;
@@ -590,13 +493,13 @@
 <body>
 
     <svg style="display: none;">
-        <g id="icon-hun"><path d="M2 1h1v2H2zM5 0h1v2H5zM3 4h2v1H3zM1 3h6v2H1zM0 5h8v2H0zM1 7h6v1H1z" fill="#000"/></g>
-        <g id="icon-cln"><path d="M3 1h2v1H3zM2 2h4v1H2zM1 3h6v1H1zM3 4h2v1H3zM4 6h1v1H4zM2 6h1v1H2z" fill="#000"/></g>
-        <g id="icon-hap"><path d="M1 1h2v2H1zM5 1h2v2H5zM0 2h8v2H0zM1 4h6v2H1zM2 6h4v1H2zM3 7h2v1H3z" fill="#000"/></g>
-        <g id="icon-hlt"><path d="M3 0h2v8H3zM0 3h8v2H0z" fill="#000"/></g>
-        <g id="icon-nrg"><path d="M4 0l3 4H4l2 4-5-5h3z" fill="#000"/></g>
-        <g id="icon-fit"><path d="M0 2h2v4H0zM6 2h2v4H6zM2 3h4v2H2z" fill="#000"/></g>
-        <g id="icon-int"><path d="M4 0L0 2l4 2 4-2-4-2zM2 3.5v2.5c0 1 1 1.5 2 1.5s2-.5 2-1.5V3.5M7 2.5v3.5" fill="#000"/></g>
+        <g id="icon-hun"><path d="M2 1h1v2H2zM5 0h1v2H5zM3 4h2v1H3zM1 3h6v2H1zM0 5h8v2H0zM1 7h6v1H1z" fill="#b8823a"/></g>
+        <g id="icon-cln"><path d="M3 1h2v1H3zM2 2h4v1H2zM1 3h6v1H1zM3 4h2v1H3zM4 6h1v1H4zM2 6h1v1H2z" fill="#4a86b8"/></g>
+        <g id="icon-hap"><path d="M1 1h2v2H1zM5 1h2v2H5zM0 2h8v2H0zM1 4h6v2H1zM2 6h4v1H2zM3 7h2v1H3z" fill="#b89a3a"/></g>
+        <g id="icon-hlt"><path d="M3 0h2v8H3zM0 3h8v2H0z" fill="#b85a5a"/></g>
+        <g id="icon-nrg"><path d="M4 0l3 4H4l2 4-5-5h3z" fill="#5a9a5a"/></g>
+        <g id="icon-fit"><path d="M0 2h2v4H0zM6 2h2v4H6zM2 3h4v2H2z" fill="#6e6ea8"/></g>
+        <g id="icon-int"><path d="M4 0L0 2l4 2 4-2-4-2zM2 3.5v2.5c0 1 1 1.5 2 1.5s2-.5 2-1.5V3.5M7 2.5v3.5" fill="#4a9a8f"/></g>
     </svg>
 
     <div class="tamagotchi-container" id="shell-container">
@@ -699,7 +602,7 @@
                     <p><b id="lbl-gen">GENERAZIONE:</b> <span id="info-gen">1</span></p>
                     <p><b id="lbl-age">ETÀ:</b> <span id="info-age">0</span> <span id="lbl-days">giorni</span></p>
                     <p><b id="lbl-stage">STADIO:</b> <span id="info-stage">EGG</span></p>
-                    <hr style="margin: 6px 0;">
+                    <hr style="margin: 6px 0; border-color:#c4ccd6;">
                     
                     <div class="stat-row">
                         <svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-hun"/></svg>
@@ -756,20 +659,20 @@
                     <div class="settings-group">
                         <label id="lbl-shell-color">COLORE GUSCIO:</label>
                         <div class="color-picker-grid">
-                            <button class="color-btn" style="background:#d8d8d8;" onclick="setShellColor('default')">DEFAULT</button>
-                            <button class="color-btn" style="background:#3b82f6; color:#fff;" onclick="setShellColor('blue')">BLU</button>
-                            <button class="color-btn" style="background:#ef4444; color:#fff;" onclick="setShellColor('red')">ROSSO</button>
-                            <button class="color-btn" style="background:#ffffff;" onclick="setShellColor('white')">BIANCO</button>
-                            <button class="color-btn" style="background:#eab308;" onclick="setShellColor('yellow')">GIALLO</button>
-                            <button class="color-btn" style="background:#f472b6;" onclick="setShellColor('pink')">ROSA</button>
-                            <button class="color-btn" style="background:#f5f5dc;" onclick="setShellColor('beige')">BEIGE</button>
-                            <button class="color-btn" style="background:#38bdf8;" onclick="setShellColor('lightblue')">CELESTE</button>
+                            <button class="color-btn" style="background:#93a7bd;" onclick="setShellColor('default')">DEFAULT</button>
+                            <button class="color-btn" style="background:#7ba3cf;" onclick="setShellColor('blue')">BLU</button>
+                            <button class="color-btn" style="background:#b87e7e;" onclick="setShellColor('red')">ROSSO</button>
+                            <button class="color-btn" style="background:#c4ccd6;" onclick="setShellColor('white')">BIANCO</button>
+                            <button class="color-btn" style="background:#c4b277;" onclick="setShellColor('yellow')">GIALLO</button>
+                            <button class="color-btn" style="background:#b088a0;" onclick="setShellColor('pink')">ROSA</button>
+                            <button class="color-btn" style="background:#b8ac8e;" onclick="setShellColor('beige')">BEIGE</button>
+                            <button class="color-btn" style="background:#7dabbb;" onclick="setShellColor('lightblue')">CELESTE</button>
                         </div>
                     </div>
 
                     <div class="settings-group">
                         <label id="lbl-reset-opt">RESET PET:</label>
-                        <button class="action-btn" style="width: 100%; background: #b91c1c; color:#fff; margin-top:0;" id="btn-reset-game" onclick="resetGame()">RESET</button>
+                        <button class="action-btn" style="width: 100%; background: linear-gradient(180deg,#c47a7a,#a85a5a); box-shadow:0 3px 0 #8c4646; color:#fff; margin-top:0;" id="btn-reset-game" onclick="resetGame()">RESET</button>
                     </div>
                 </div>
                 <button class="action-btn" id="btn-back-settings" onclick="hideSettings()">TORNA AL GIOCO</button>
@@ -818,7 +721,7 @@
 
                         <canvas id="poop-canvas" width="32" height="32" class="poop-indicator"></canvas>
                         
-                        <div id="action-msg" style="font-size: 0.55rem; margin-top: 2px; position: relative; z-index: 3;">L'uovo si sta scaldando...</div>
+                        <div id="action-msg" style="font-size: 0.55rem; margin-top: 2px; position: relative; z-index: 3; color:#3a5f52;">L'uovo si sta scaldando...</div>
                     </div>
 
                     <div class="frame-bottom-bar">
@@ -876,14 +779,33 @@
         let petCustomName = "SPIKE";
         let petGender = "M";
 
+        // ===== PALETTE PASTELLO MASCHILE PER OGNI PET =====
+        const PET_PALETTE = [
+            { body: "#7fb0a3", belly: "#b9d6ce", spot: "#5a8f82", accent: "#4f8073" }, // SPIKE - verde-acqua/teal
+            { body: "#8aa6c9", belly: "#c2d3e6", spot: "#6182aa", accent: "#557499" }, // NIBBLE - blu ardesia
+            { body: "#7f9bc4", belly: "#bccadf", spot: "#5a78a8", accent: "#4f6c99" }, // BUBBLE - blu polvere
+            { body: "#c9b07f", belly: "#e2d3b0", spot: "#a8905a", accent: "#99824f" }, // PUFF - ambra/senape smorzata
+            { body: "#7f9e7f", belly: "#bcd0bc", spot: "#5a805a", accent: "#4f724f" }  // DINO - verde bosco tenue
+        ];
+        const EGG_COLORS = [
+            { sh:"#b3ccc5", hi:"#d6e6e1" },
+            { sh:"#b8c9de", hi:"#d8e3ee" },
+            { sh:"#b3c4de", hi:"#d4dfee" },
+            { sh:"#dccdaa", hi:"#eee3c9" },
+            { sh:"#b8c9b8", hi:"#d6e2d6" }
+        ];
+        const EYE_COLOR = "#28303a";
+        const CHEEK_COLOR = "rgba(90,130,160,0.28)";
+        const POOP_COLOR = "#8a5a2b";
+        const POOP_COLOR_DARK = "#6e4620";
+        const SMOKE_COLOR = "rgba(140,150,160,0.55)";
+
         function setActionMessage(msg, delay = 2000) {
             const msgElement = document.getElementById('action-msg');
             msgElement.innerText = msg;
             if (actionMsgTimer) clearTimeout(actionMsgTimer);
             if (petStage > 0 && msg) {
-                actionMsgTimer = setTimeout(() => {
-                    msgElement.innerText = "";
-                }, delay);
+                actionMsgTimer = setTimeout(() => { msgElement.innerText = ""; }, delay);
             }
         }
 
@@ -895,15 +817,8 @@
                 manualBtn: "MANUALE / REGOLE",
                 btnChooseAreaMenu: "SCEGLI AREA",
                 titleChooseArea: "SCEGLI LA TUA AREA",
-                areaBirth: "Nascita",
-                areaForest: "Bosco",
-                areaBeach: "Spiaggia",
-                areaCity: "Città",
-                areaMountain: "Montagna",
-                areaCastle: "Castello",
-                areaIsland: "Isola",
-                areaSpace: "Spazio",
-                areaMagic: "Magia",
+                areaBirth: "Nascita", areaForest: "Bosco", areaBeach: "Spiaggia", areaCity: "Città",
+                areaMountain: "Montagna", areaCastle: "Castello", areaIsland: "Isola", areaSpace: "Spazio", areaMagic: "Magia",
                 btnBackArea: "INDIETRO",
                 travelMsg: "Ti stai spostando in: ",
                 rulesTitle: "REGOLE REALI",
@@ -911,89 +826,37 @@
                 rulesContent: `<b>1. SCHIUSA E NASCITA:</b><p>L'uovo richiede soli 7 secondi per schiudersi! Il pet nasce con tutti i parametri vitali al 40%.</p><br><b>2. TEMPO REALE (SEMPRE ATTIVO):</b><p>Il tempo scorre anche ad app chiusa. Evoluzione: Baby→Toddler 3 giorni, Toddler→Teen 3 giorni, Teen→Adult 3 giorni. L'Adulto vive 3 giorni poi muore di vecchiaia (nuova generazione).</p><br><b>3. DECADIMENTO PARAMETRI:</b><p>Fame -20%/1h, Pulizia -20%/1h30, Felicità -20%/2h (da sveglio), Energia -20%/3h (da sveglio), Forma -20%/4h, Intelligenza -20%/3h.</p><br><b>4. CACCA E IGIENE:</b><p>Il pet fa la cacca 3 volte al giorno (7:00-22:00). La doccia rimette Pulizia al 100%.</p><br><b>5. MALATTIA E SALUTE:</b><p>Probabilità di malattia molto bassa. Da malato: -20% Salute/ora. Salute a 0% = morte definitiva (nessuna nuova generazione).</p><br><b>6. PALESTRA:</b><p>Usa il tasto [X] in alto a destra nella Palestra per uscire.</p><br><b>7. NANNA:</b><p>Dormendo: Felicità non cala, niente malattie, Energia +20%/ora. L'evoluzione continua comunque.</p>`,
                 infoTitle: "INFORMAZIONI PET",
                 infoBack: "TORNA AL GIOCO",
-                lblName: "NOME:",
-                lblGender: "GENERE:",
-                lblGen: "GENERAZIONE:",
-                lblAge: "ETÀ:",
-                lblDays: "giorni",
-                lblStage: "STADIO:",
-                lblHun: "FAME (HUN):",
-                lblCln: "PULIZIA (CLN):",
-                lblHap: "FELICITÀ (HAP):",
-                lblHlt: "SALUTE (HLT):",
-                lblNrg: "ENERGIA (NRG):",
-                lblFit: "FORMA FISICA (FIT):",
-                lblInt: "INTELLIGENZA (INT):",
-                settingsTitle: "IMPOSTAZIONI",
-                lblLang: "LINGUA / LANGUAGE:",
-                lblBgStyle: "SFONDO PIXEL-ART 8-BIT:",
-                lblShell: "COLORE GUSCIO:",
-                lblReset: "RESET PET:",
-                btnBackSettings: "TORNA AL GIOCO",
-                btnKitchen: "Cucina",
-                btnPark: "Parco",
-                btnGym: "Palestra",
-                btnClinic: "Infermeria",
-                btnShower: "Doccia",
-                btnStudy: "Studio",
-                btnMeal: "Pasto",
-                btnSnack: "Snack",
-                btnCloseKitchen: "Esci",
-                btnLight: "LUCE",
-                btnSettings: "IMPOSTAZIONI",
-                btnInfo: "INFO",
+                lblName: "NOME:", lblGender: "GENERE:", lblGen: "GENERAZIONE:", lblAge: "ETÀ:", lblDays: "giorni", lblStage: "STADIO:",
+                lblHun: "FAME (HUN):", lblCln: "PULIZIA (CLN):", lblHap: "FELICITÀ (HAP):", lblHlt: "SALUTE (HLT):",
+                lblNrg: "ENERGIA (NRG):", lblFit: "FORMA FISICA (FIT):", lblInt: "INTELLIGENZA (INT):",
+                settingsTitle: "IMPOSTAZIONI", lblLang: "LINGUA / LANGUAGE:", lblBgStyle: "SFONDO PIXEL-ART 8-BIT:",
+                lblShell: "COLORE GUSCIO:", lblReset: "RESET PET:", btnBackSettings: "TORNA AL GIOCO",
+                btnKitchen: "Cucina", btnPark: "Parco", btnGym: "Palestra", btnClinic: "Infermeria", btnShower: "Doccia", btnStudy: "Studio",
+                btnMeal: "Pasto", btnSnack: "Snack", btnCloseKitchen: "Esci", btnLight: "LUCE", btnSettings: "IMPOSTAZIONI", btnInfo: "INFO",
                 eggWarming: "L'uovo si sta scaldando...",
-                sickTag: "[MALATO!]",
-                poopTag: "[SPORCO!]",
-                wakeUpMsg: "Sveglia!",
-                poopMsg: "L'animaletto ha fatto la cacca!",
-                hatchedMsg: "L'uovo si è schiuso!",
-                evoMsg: "EVOLUZIONE COMPIUTA!",
-                deathMsg: "IL TUO PET È MORTO!",
-                deathRebirthMsg: "Il pet ci ha lasciati per vecchiaia...",
+                sickTag: "[MALATO!]", poopTag: "[SPORCO!]", wakeUpMsg: "Sveglia!",
+                poopMsg: "L'animaletto ha fatto la cacca!", hatchedMsg: "L'uovo si è schiuso!", evoMsg: "EVOLUZIONE COMPIUTA!",
+                deathMsg: "IL TUO PET È MORTO!", deathRebirthMsg: "Il pet ci ha lasciati per vecchiaia...",
                 rebirthPrompt: (name) => `Il tuo pet è morto di vecchiaia.\n\nÈ disponibile un nuovo pet: ${name}.\nVuoi adottarlo? (OK = Sì, Annulla = No)`,
                 rebirthNamePrompt: "Dai un nome al nuovo pet:",
                 rebirthDone: (name) => `È nato un nuovo UOVO: ${name}!`,
                 rebirthDeclined: "Nessun nuovo pet adottato.",
                 waitEggMsg: "Aspetta la schiusa dell'uovo!",
-                mealMsg: "Pasto consumato (Pollo)!",
-                snackMsg: "Snack gustato (Caramella)!",
-                parkMsg: "Parco! Felicità +1 Pallino",
-                showerDirtyMsg: "Doccia fatta! Tutto pulito.",
-                showerCleanMsg: "Pet lavato e profumato!",
-                clinicSickMsg: "Cura somministrata! Pet guarito.",
-                clinicOkMsg: "Controllo medico effettuato.",
+                mealMsg: "Pasto consumato (Pollo)!", snackMsg: "Snack gustato (Caramella)!",
+                parkMsg: "Parco! Felicità +1 Pallino", showerDirtyMsg: "Doccia fatta! Tutto pulito.", showerCleanMsg: "Pet lavato e profumato!",
+                clinicSickMsg: "Cura somministrata! Pet guarito.", clinicOkMsg: "Controllo medico effettuato.",
                 studyMsg: "Studio in corso! Intelligenza +1, Felicità -1",
-                lightOffMsg: "Luce spenta. Addormentamento...",
-                lightRestMsg: "Luce spenta. Riposo in corso...",
-                lightOnMsg: "Luce riaccesa!",
-                gymMsg: "PALESTRA! Salta i cactus [TAP/SPAZIO]",
-                gymExitMsg: "Uscito dalla Palestra.",
-                genderM: "♂ MASCHIO",
-                genderF: "♀ FEMMINA",
-                bgNone: "VUOTO",
-                bgSea: "MARE",
-                bgForest: "BOSCO",
-                bgCity: "CITTÀ",
-                bgSky: "CIELO",
-                bgSpace: "SPAZIO"
+                lightOffMsg: "Luce spenta. Addormentamento...", lightRestMsg: "Luce spenta. Riposo in corso...", lightOnMsg: "Luce riaccesa!",
+                gymMsg: "PALESTRA! Salta i cactus [TAP/SPAZIO]", gymExitMsg: "Uscito dalla Palestra.",
+                genderM: "♂ MASCHIO", genderF: "♀ FEMMINA",
+                bgNone: "VUOTO", bgSea: "MARE", bgForest: "BOSCO", bgCity: "CITTÀ", bgSky: "CIELO", bgSpace: "SPAZIO"
             },
             en: {
                 titleSel: "DINOMIO - SELECT PET",
-                lblInputName: "NAME:",
-                lblInputGender: "GENDER:",
-                manualBtn: "MANUAL / RULES",
-                btnChooseAreaMenu: "CHOOSE AREA",
+                lblInputName: "NAME:", lblInputGender: "GENDER:", manualBtn: "MANUAL / RULES", btnChooseAreaMenu: "CHOOSE AREA",
                 titleChooseArea: "CHOOSE YOUR AREA",
-                areaBirth: "Birth",
-                areaForest: "Forest",
-                areaBeach: "Beach",
-                areaCity: "City",
-                areaMountain: "Mountain",
-                areaCastle: "Castle",
-                areaIsland: "Island",
-                areaSpace: "Space",
-                areaMagic: "Magic",
+                areaBirth: "Birth", areaForest: "Forest", areaBeach: "Beach", areaCity: "City",
+                areaMountain: "Mountain", areaCastle: "Castle", areaIsland: "Island", areaSpace: "Space", areaMagic: "Magic",
                 btnBackArea: "BACK",
                 travelMsg: "Moving to: ",
                 rulesTitle: "REAL RULES",
@@ -1001,72 +864,30 @@
                 rulesContent: `<b>1. HATCHING & BIRTH:</b><p>The egg takes only 7 seconds to hatch! The pet is born with all vital stats at 40%.</p><br><b>2. REAL TIME (ALWAYS RUNNING):</b><p>Time runs even when the app is closed. Evolution: Baby→Toddler 3 days, Toddler→Teen 3 days, Teen→Adult 3 days. The Adult lives 3 days then dies of old age (new generation).</p><br><b>3. STAT DECAY:</b><p>Hunger -20%/1h, Cleanliness -20%/1h30, Happiness -20%/2h (awake), Energy -20%/3h (awake), Fitness -20%/4h, Intelligence -20%/3h.</p><br><b>4. POOP & HYGIENE:</b><p>The pet poops 3 times a day (7:00-22:00). Shower restores Cleanliness to 100%.</p><br><b>5. ILLNESS & HEALTH:</b><p>Illness chance is very low. When sick: -20% Health/hour. Health at 0% = permanent death (no new generation).</p><br><b>6. GYM:</b><p>Use the [X] button top right in the Gym to leave at any time.</p><br><b>7. NAP:</b><p>While sleeping: Happiness doesn't drop, no illness, Energy +20%/hour. Evolution still continues.</p>`,
                 infoTitle: "PET INFORMATION",
                 infoBack: "BACK TO GAME",
-                lblName: "NAME:",
-                lblGender: "GENDER:",
-                lblGen: "GENERATION:",
-                lblAge: "AGE:",
-                lblDays: "days",
-                lblStage: "STAGE:",
-                lblHun: "HUNGER (HUN):",
-                lblCln: "CLEANLINESS (CLN):",
-                lblHap: "HAPPINESS (HAP):",
-                lblHlt: "HEALTH (HLT):",
-                lblNrg: "ENERGY (NRG):",
-                lblFit: "FITNESS (FIT):",
-                lblInt: "INTELLIGENCE (INT):",
-                settingsTitle: "SETTINGS",
-                lblLang: "LANGUAGE / LINGUA:",
-                lblBgStyle: "8-BIT PIXEL-ART BG:",
-                lblShell: "SHELL COLOR:",
-                lblReset: "RESET PET:",
-                btnBackSettings: "BACK TO GAME",
-                btnKitchen: "Kitchen",
-                btnPark: "Park",
-                btnGym: "Gym",
-                btnClinic: "Clinic",
-                btnShower: "Shower",
-                btnStudy: "Study",
-                btnMeal: "Meal",
-                btnSnack: "Snack",
-                btnCloseKitchen: "Exit",
-                btnLight: "LIGHT",
-                btnSettings: "SETTINGS",
-                btnInfo: "INFO",
+                lblName: "NAME:", lblGender: "GENDER:", lblGen: "GENERATION:", lblAge: "AGE:", lblDays: "days", lblStage: "STAGE:",
+                lblHun: "HUNGER (HUN):", lblCln: "CLEANLINESS (CLN):", lblHap: "HAPPINESS (HAP):", lblHlt: "HEALTH (HLT):",
+                lblNrg: "ENERGY (NRG):", lblFit: "FITNESS (FIT):", lblInt: "INTELLIGENCE (INT):",
+                settingsTitle: "SETTINGS", lblLang: "LANGUAGE / LINGUA:", lblBgStyle: "8-BIT PIXEL-ART BG:",
+                lblShell: "SHELL COLOR:", lblReset: "RESET PET:", btnBackSettings: "BACK TO GAME",
+                btnKitchen: "Kitchen", btnPark: "Park", btnGym: "Gym", btnClinic: "Clinic", btnShower: "Shower", btnStudy: "Study",
+                btnMeal: "Meal", btnSnack: "Snack", btnCloseKitchen: "Exit", btnLight: "LIGHT", btnSettings: "SETTINGS", btnInfo: "INFO",
                 eggWarming: "The egg is warming up...",
-                sickTag: "[SICK!]",
-                poopTag: "[DIRTY!]",
-                wakeUpMsg: "Wake up!",
-                poopMsg: "The pet pooped!",
-                hatchedMsg: "The egg has hatched!",
-                evoMsg: "EVOLUTION COMPLETE!",
-                deathMsg: "YOUR PET DIED!",
-                deathRebirthMsg: "The pet left us of old age...",
+                sickTag: "[SICK!]", poopTag: "[DIRTY!]", wakeUpMsg: "Wake up!",
+                poopMsg: "The pet pooped!", hatchedMsg: "The egg has hatched!", evoMsg: "EVOLUTION COMPLETE!",
+                deathMsg: "YOUR PET DIED!", deathRebirthMsg: "The pet left us of old age...",
                 rebirthPrompt: (name) => `Your pet died of old age.\n\nA new pet is available: ${name}.\nDo you want to adopt it? (OK = Yes, Cancel = No)`,
                 rebirthNamePrompt: "Give the new pet a name:",
                 rebirthDone: (name) => `A new EGG is born: ${name}!`,
                 rebirthDeclined: "No new pet adopted.",
                 waitEggMsg: "Wait for the egg to hatch!",
-                mealMsg: "Meal eaten (Chicken)!",
-                snackMsg: "Snack enjoyed (Candy)!",
-                parkMsg: "Park! Happiness +1 Dot",
-                showerDirtyMsg: "Shower done! All clean.",
-                showerCleanMsg: "Pet washed and fresh!",
-                clinicSickMsg: "Medicine given! Pet cured.",
-                clinicOkMsg: "Medical check complete.",
+                mealMsg: "Meal eaten (Chicken)!", snackMsg: "Snack enjoyed (Candy)!",
+                parkMsg: "Park! Happiness +1 Dot", showerDirtyMsg: "Shower done! All clean.", showerCleanMsg: "Pet washed and fresh!",
+                clinicSickMsg: "Medicine given! Pet cured.", clinicOkMsg: "Medical check complete.",
                 studyMsg: "Studying! Intelligence +1, Happiness -1",
-                lightOffMsg: "Lights off. Falling asleep...",
-                lightRestMsg: "Lights off. Resting...",
-                lightOnMsg: "Lights back on!",
-                gymMsg: "GYM! Jump over cacti [TAP/SPACE]",
-                gymExitMsg: "Left the Gym.",
-                genderM: "♂ MALE",
-                genderF: "♀ FEMALE",
-                bgNone: "EMPTY",
-                bgSea: "SEA",
-                bgForest: "FOREST",
-                bgCity: "CITY",
-                bgSky: "SKY",
-                bgSpace: "SPACE"
+                lightOffMsg: "Lights off. Falling asleep...", lightRestMsg: "Lights off. Resting...", lightOnMsg: "Lights back on!",
+                gymMsg: "GYM! Jump over cacti [TAP/SPACE]", gymExitMsg: "Left the Gym.",
+                genderM: "♂ MALE", genderF: "♀ FEMALE",
+                bgNone: "EMPTY", bgSea: "SEA", bgForest: "FOREST", bgCity: "CITY", bgSky: "SKY", bgSpace: "SPACE"
             }
         };
 
@@ -1077,7 +898,6 @@
             document.getElementById('lbl-input-gender').innerText = t.lblInputGender;
             document.getElementById('btn-manual').innerText = t.manualBtn;
             document.getElementById('btn-choose-area-menu').innerText = t.btnChooseAreaMenu;
-            
             document.getElementById('title-choose-area').innerText = t.titleChooseArea;
             document.getElementById('area-birth').innerText = t.areaBirth;
             document.getElementById('area-forest').innerText = t.areaForest;
@@ -1089,7 +909,6 @@
             document.getElementById('area-space').innerText = t.areaSpace;
             document.getElementById('area-magic').innerText = t.areaMagic;
             document.getElementById('btn-back-area').innerText = t.btnBackArea;
-
             document.getElementById('title-rules').innerText = t.rulesTitle;
             document.getElementById('btn-back-sel').innerText = t.rulesBack;
             document.getElementById('rules-body').innerHTML = t.rulesContent;
@@ -1108,21 +927,18 @@
             document.getElementById('lbl-nrg').innerText = t.lblNrg;
             document.getElementById('lbl-fit').innerText = t.lblFit;
             document.getElementById('lbl-int').innerText = t.lblInt;
-
             document.getElementById('title-settings').innerText = t.settingsTitle;
             document.getElementById('lbl-lang').innerText = t.lblLang;
             document.getElementById('lbl-bg-style').innerText = t.lblBgStyle;
             document.getElementById('lbl-shell-color').innerText = t.lblShell;
             document.getElementById('lbl-reset-opt').innerText = t.lblReset;
             document.getElementById('btn-back-settings').innerText = t.btnBackSettings;
-
             document.getElementById('bg-btn-none').innerText = t.bgNone;
             document.getElementById('bg-btn-sea').innerText = t.bgSea;
             document.getElementById('bg-btn-forest').innerText = t.bgForest;
             document.getElementById('bg-btn-city').innerText = t.bgCity;
             document.getElementById('bg-btn-sky').innerText = t.bgSky;
             document.getElementById('bg-btn-space').innerText = t.bgSpace;
-
             document.getElementById('btn-kitchen').innerText = t.btnKitchen;
             document.getElementById('btn-park').innerText = t.btnPark;
             document.getElementById('btn-gym').innerText = t.btnGym;
@@ -1135,7 +951,6 @@
             document.getElementById('btn-light').innerText = t.btnLight;
             document.getElementById('btn-settings-main').innerText = t.btnSettings;
             document.getElementById('btn-info-main').innerText = t.btnInfo;
-
             document.getElementById('sick-tag').innerText = t.sickTag;
         }
 
@@ -1149,20 +964,16 @@
             currentShellColor = color;
             const shell = document.getElementById('shell-container');
             shell.className = 'tamagotchi-container';
-            if (color !== 'default') {
-                shell.classList.add(`shell-${color}`);
-            }
+            if (color !== 'default') { shell.classList.add(`shell-${color}`); }
             saveGameState();
         }
 
         function setBackgroundStyle(style) {
             currentBgStyle = style;
-            
             const buttons = document.querySelectorAll('.bg-picker-grid .glossy-btn');
             buttons.forEach(btn => btn.classList.remove('active-bg'));
             const activeBtn = document.getElementById(`bg-btn-${style}`);
             if (activeBtn) activeBtn.classList.add('active-bg');
-
             drawBackground();
             saveGameState();
         }
@@ -1173,74 +984,65 @@
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, 128, 128);
 
-            ctx.fillStyle = "#000000";
-
-            if (currentBgStyle === 'none') {
-                return;
-            } 
+            if (currentBgStyle === 'none') { return; } 
             else if (currentBgStyle === 'sea') {
-                ctx.fillRect(0, 96, 128, 1);
-                for(let x=0; x<128; x+=16) {
-                    ctx.fillRect(x, 104, 8, 1);
-                    ctx.fillRect(x+8, 116, 8, 1);
-                }
-                ctx.fillRect(40, 92, 48, 5);
-                ctx.fillRect(48, 88, 32, 4);
+                ctx.fillStyle = "#6ba8c9";
+                ctx.fillRect(0, 96, 128, 32);
+                ctx.fillStyle = "#8fc0da";
+                for(let x=0; x<128; x+=16) { ctx.fillRect(x, 104, 8, 2); ctx.fillRect(x+8, 116, 8, 2); }
+                ctx.fillStyle = "#d8c896";
+                ctx.fillRect(40, 92, 48, 6); ctx.fillRect(48, 88, 32, 4);
+                ctx.fillStyle = "#9a7a4e";
                 ctx.fillRect(62, 60, 4, 28);
-                ctx.fillRect(52, 56, 12, 4);
-                ctx.fillRect(64, 56, 12, 4);
-                ctx.fillRect(48, 60, 6, 4);
-                ctx.fillRect(74, 60, 6, 4);
-                ctx.fillRect(58, 52, 12, 4);
+                ctx.fillStyle = "#5a9a5a";
+                ctx.fillRect(52, 56, 12, 4); ctx.fillRect(64, 56, 12, 4);
+                ctx.fillRect(48, 60, 6, 4); ctx.fillRect(74, 60, 6, 4); ctx.fillRect(58, 52, 12, 4);
             } 
             else if (currentBgStyle === 'forest') {
-                ctx.fillRect(0, 112, 128, 2);
+                ctx.fillStyle = "#7fb87f";
+                ctx.fillRect(0, 112, 128, 16);
                 const treePositions = [8, 36, 72, 100];
                 treePositions.forEach(x => {
+                    ctx.fillStyle = "#8a6a42";
                     ctx.fillRect(x + 10, 88, 6, 24);
+                    ctx.fillStyle = "#4e8e4e";
                     ctx.fillRect(x + 2, 64, 22, 24);
                     ctx.fillRect(x + 6, 52, 14, 12);
                     ctx.fillRect(x + 10, 44, 6, 8);
-                    ctx.fillStyle = "#ffffff";
+                    ctx.fillStyle = "#6cae6c";
                     ctx.fillRect(x + 4, 72, 4, 4);
                     ctx.fillRect(x + 16, 80, 4, 4);
-                    ctx.fillStyle = "#000000";
                 });
             } 
             else if (currentBgStyle === 'city') {
-                ctx.fillRect(0, 116, 128, 2);
-                ctx.fillRect(4, 30, 24, 86);
-                ctx.fillRect(32, 50, 28, 66);
-                ctx.fillRect(64, 20, 26, 96);
-                ctx.fillRect(94, 60, 30, 56);
-
-                ctx.fillStyle = "#ffffff";
-                for(let y=36; y<100; y+=12) {
-                    ctx.fillRect(8, y, 6, 6);
-                    ctx.fillRect(18, y, 6, 6);
-                }
-                for(let y=56; y<100; y+=14) {
-                    ctx.fillRect(36, y, 8, 6);
-                    ctx.fillRect(48, y, 8, 6);
-                }
-                for(let y=26; y<100; y+=10) {
-                    ctx.fillRect(68, y, 6, 5);
-                    ctx.fillRect(80, y, 6, 5);
-                }
-                for(let y=66; y<100; y+=12) {
-                    ctx.fillRect(98, y, 8, 6);
-                    ctx.fillRect(112, y, 8, 6);
-                }
+                ctx.fillStyle = "#8a97a5";
+                ctx.fillRect(0, 116, 128, 12);
+                const buildings = [
+                    {x:4,y:30,w:24,h:86,c:"#7f92ad"},
+                    {x:32,y:50,w:28,h:66,c:"#6e82a0"},
+                    {x:64,y:20,w:26,h:96,c:"#8296b0"},
+                    {x:94,y:60,w:30,h:56,c:"#758aa8"}
+                ];
+                buildings.forEach(b => {
+                    ctx.fillStyle = b.c;
+                    ctx.fillRect(b.x, b.y, b.w, b.h);
+                    ctx.fillStyle = "#dcd39a";
+                    for(let y=b.y+6; y<b.y+b.h-6; y+=12) {
+                        ctx.fillRect(b.x+4, y, 5, 5);
+                        ctx.fillRect(b.x+b.w-9, y, 5, 5);
+                    }
+                });
             } 
             else if (currentBgStyle === 'sky') {
-                const clouds = [
-                    {x: 8, y: 16}, {x: 72, y: 32}, {x: 20, y: 68}, {x: 80, y: 84}
-                ];
+                const clouds = [ {x: 8, y: 16}, {x: 72, y: 32}, {x: 20, y: 68}, {x: 80, y: 84} ];
+                ctx.fillStyle = "#e6edf2";
                 clouds.forEach(c => {
                     ctx.fillRect(c.x + 8, c.y, 24, 6);
                     ctx.fillRect(c.x + 4, c.y + 6, 32, 6);
                     ctx.fillRect(c.x, c.y + 12, 40, 6);
                 });
+                ctx.fillStyle = "#d8c896";
+                ctx.beginPath(); ctx.arc(104, 22, 12, 0, Math.PI*2); ctx.fill();
             } 
             else if (currentBgStyle === 'space') {
                 const stars = [
@@ -1248,29 +1050,20 @@
                     {x: 25, y: 55}, {x: 70, y: 60}, {x: 105, y: 75}, {x: 15, y: 95},
                     {x: 55, y: 100}, {x: 85, y: 110}
                 ];
+                ctx.fillStyle = "#dcd39a";
                 stars.forEach((s, idx) => {
-                    if (idx % 2 === 0) {
-                        ctx.fillRect(s.x, s.y - 2, 2, 6);
-                        ctx.fillRect(s.x - 2, s.y, 6, 2);
-                    } else {
-                        ctx.fillRect(s.x, s.y, 2, 2);
-                    }
+                    if (idx % 2 === 0) { ctx.fillRect(s.x, s.y - 2, 2, 6); ctx.fillRect(s.x - 2, s.y, 6, 2); }
+                    else { ctx.fillRect(s.x, s.y, 2, 2); }
                 });
-                ctx.fillRect(96, 12, 16, 16);
-                ctx.fillStyle = "#ffffff";
-                ctx.fillRect(92, 10, 12, 20);
-                ctx.fillRect(96, 8, 12, 24);
+                ctx.fillStyle = "#8a97a5";
+                ctx.beginPath(); ctx.arc(100, 20, 12, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "#b3bdc9";
+                ctx.beginPath(); ctx.arc(96, 16, 4, 0, Math.PI*2); ctx.fill();
             }
         }
 
         let audioCtx = null;
-
-        function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-        }
-
+        function initAudio() { if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } }
         function playBeep(freq = 440, type = 'square', duration = 0.08) {
             initAudio();
             if(!audioCtx) return;
@@ -1280,135 +1073,64 @@
             osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
             gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + duration);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + duration);
         }
-
         document.addEventListener('click', function(e) {
-            if (e.target.tagName === 'BUTTON' || e.target.closest('button')) {
-                playBeep(600, 'square', 0.05);
-            }
+            if (e.target.tagName === 'BUTTON' || e.target.closest('button')) { playBeep(600, 'square', 0.05); }
         });
-
-        function playSyncopatedEggBeep() {
-            initAudio();
-            playBeep(220, 'square', 0.05);
-            setTimeout(() => playBeep(440, 'square', 0.04), 90);
-        }
-
+        function playSyncopatedEggBeep() { initAudio(); playBeep(220, 'square', 0.05); setTimeout(() => playBeep(440, 'square', 0.04), 90); }
         function playHappyEndSound() {
             initAudio();
             const notes = [523.25, 659.25, 783.99, 1046.50];
-            notes.forEach((freq, idx) => {
-                setTimeout(() => playBeep(freq, 'square', 0.1), idx * 80);
-            });
+            notes.forEach((freq, idx) => { setTimeout(() => playBeep(freq, 'square', 0.1), idx * 80); });
         }
 
         let alarmPlayedThisWarning = false;
-
         function playAlarmSound3Sec() {
             initAudio();
-            const noteDuration = 0.12;
-            const pause = 0.08;
-            const totalBeeps = 14;
+            const noteDuration = 0.12, pause = 0.08, totalBeeps = 14;
             for (let i = 0; i < totalBeeps; i++) {
                 const freq = (i % 2 === 0) ? 880 : 587.33;
-                setTimeout(() => {
-                    playBeep(freq, 'sawtooth', noteDuration);
-                }, i * (noteDuration + pause) * 1000);
+                setTimeout(() => { playBeep(freq, 'sawtooth', noteDuration); }, i * (noteDuration + pause) * 1000);
             }
         }
-
-        // Low-Stat Alarm: triggers if Hunger, Happiness, Health, Energy or Cleanliness < 50%.
-        // Plays once while the condition persists, re-arms when all are back >= 50%.
         function checkStatsWarning() {
             if (isDead || petStage === 0) return;
-
             const isLowParam = (hunger < 50 || happiness < 50 || health < 50 || energy < 50 || cleanliness < 50);
-
             if (isLowParam) {
-                if (!alarmPlayedThisWarning) {
-                    playAlarmSound3Sec();
-                    alarmPlayedThisWarning = true;
-                }
-            } else {
-                alarmPlayedThisWarning = false;
-            }
+                if (!alarmPlayedThisWarning) { playAlarmSound3Sec(); alarmPlayedThisWarning = true; }
+            } else { alarmPlayedThisWarning = false; }
         }
 
         let currentPetIndex = 0;
         let petStage = 0;
-        let hunger = 40;
-        let happiness = 40;
-        let health = 40;
-        let energy = 40;
-        let fitness = 40;
-        let intelligence = 40;
-        let cleanliness = 40;
-
+        let hunger = 40, happiness = 40, health = 40, energy = 40, fitness = 40, intelligence = 40, cleanliness = 40;
         let generation = 1;
-        let ageInDays = 0;
-        let secondsInCurrentStage = 0;
-        let totalGameSeconds = 0;
-
-        // Real-time anchor: absolute wall-clock second at which totalGameSeconds was last updated.
+        let ageInDays = 0, secondsInCurrentStage = 0, totalGameSeconds = 0;
         let lastRealTimestamp = 0;
-
-        let isDirty = false;
-        let isSick = false;
-        let isDead = false;
-        let isSleeping = false;
+        let isDirty = false, isSick = false, isDead = false, isSleeping = false;
         let sleepTimer = null;
-        let isEatingAnimation = false;
-        let isCustomAnimation = false;
+        let isEatingAnimation = false, isCustomAnimation = false;
         let gameTimer = null;
         let poopSmokeFrame = 0;
-
-        let inRunnerMode = false;
-        let runnerAnimId = null;
-        let runnerPetY = 0;
-        let runnerVY = 0;
-        let runnerJumping = false;
-        let runnerObstacles = [];
-        let runnerScore = 0;
+        let inRunnerMode = false, runnerAnimId = null;
+        let runnerPetY = 0, runnerVY = 0, runnerJumping = false;
+        let runnerObstacles = [], runnerScore = 0;
         let runnerHighScore = parseInt(localStorage.getItem('dinomio_runner_highscore') || '0');
-        let runnerSpeed = 3;
-        let minObstacleDistance = 90;
-
-        // Poop schedule: 3 random times per day (in seconds since midnight), between 07:00 and 22:00 CEST.
-        let poopSchedule = [];
-        let poopDoneToday = [false, false, false];
-        let poopScheduleDay = -1;
+        let runnerSpeed = 3, minObstacleDistance = 90;
+        let poopSchedule = [], poopDoneToday = [false, false, false], poopScheduleDay = -1;
 
         const stageNames = ["EGG", "BABY", "TODDLER", "TEEN", "ADULT", "DEAD"];
-
-        // Decay periods (in real seconds)
-        const DECAY = {
-            hunger: 3600,       // -20% / 1h
-            cleanliness: 5400,  // -20% / 1h30
-            happiness: 7200,    // -20% / 2h (awake)
-            energy: 10800,      // -20% / 3h (awake)
-            fitness: 14400,     // -20% / 4h
-            intelligence: 10800 // -20% / 3h
-        };
+        const DECAY = { hunger: 3600, cleanliness: 5400, happiness: 7200, energy: 10800, fitness: 14400, intelligence: 10800 };
         const SECONDS_PER_DAY = 86400;
 
-        // CEST = UTC+2. Returns seconds since local (CEST) midnight for a given epoch ms.
-        function cestSecondsOfDay(epochMs) {
-            const cestMs = epochMs + 2 * 3600 * 1000;
-            return Math.floor((cestMs / 1000) % SECONDS_PER_DAY);
-        }
-        function cestDayIndex(epochMs) {
-            const cestMs = epochMs + 2 * 3600 * 1000;
-            return Math.floor(cestMs / 1000 / SECONDS_PER_DAY);
-        }
+        function cestSecondsOfDay(epochMs) { const cestMs = epochMs + 2 * 3600 * 1000; return Math.floor((cestMs / 1000) % SECONDS_PER_DAY); }
+        function cestDayIndex(epochMs) { const cestMs = epochMs + 2 * 3600 * 1000; return Math.floor(cestMs / 1000 / SECONDS_PER_DAY); }
 
         function generatePoopSchedule() {
             poopSchedule = [];
-            const minSec = 7 * 3600;   // 07:00 CEST
-            const maxSec = 22 * 3600;  // 22:00 CEST
+            const minSec = 7 * 3600, maxSec = 22 * 3600;
             for(let i = 0; i < 3; i++) {
                 const randomSec = Math.floor(Math.random() * (maxSec - minSec)) + minSec;
                 poopSchedule.push(randomSec);
@@ -1419,21 +1141,13 @@
 
         function saveGameState() {
             const gameState = {
-                currentPetIndex,
-                petCustomName,
-                petGender,
-                petStage,
+                currentPetIndex, petCustomName, petGender, petStage,
                 hunger, happiness, health, energy, fitness, intelligence, cleanliness,
-                generation,
-                ageInDays,
-                secondsInCurrentStage,
-                totalGameSeconds,
-                lastRealTimestamp,
+                generation, ageInDays, secondsInCurrentStage, totalGameSeconds, lastRealTimestamp,
                 isDirty, isSick, isDead, isSleeping,
                 poopSchedule, poopDoneToday, poopScheduleDay,
                 currentLang, currentShellColor, currentBgStyle,
-                alarmPlayedThisWarning,
-                gameActive: true
+                alarmPlayedThisWarning, gameActive: true
             };
             localStorage.setItem('dinomio_save', JSON.stringify(gameState));
         }
@@ -1441,31 +1155,22 @@
         function loadGameState() {
             const savedData = localStorage.getItem('dinomio_save');
             if(!savedData) return false;
-
             try {
                 const state = JSON.parse(savedData);
                 if(!state.gameActive) return false;
-
                 currentPetIndex = state.currentPetIndex;
                 petCustomName = state.petCustomName || "SPIKE";
                 petGender = state.petGender || "M";
                 petStage = state.petStage;
-                hunger = state.hunger;
-                happiness = state.happiness;
-                health = state.health;
-                energy = state.energy;
-                fitness = state.fitness;
-                intelligence = state.intelligence;
+                hunger = state.hunger; happiness = state.happiness; health = state.health;
+                energy = state.energy; fitness = state.fitness; intelligence = state.intelligence;
                 cleanliness = state.cleanliness !== undefined ? state.cleanliness : 40;
                 generation = state.generation;
                 ageInDays = state.ageInDays;
                 secondsInCurrentStage = state.secondsInCurrentStage;
                 totalGameSeconds = state.totalGameSeconds;
                 lastRealTimestamp = state.lastRealTimestamp || Math.floor(Date.now() / 1000);
-                isDirty = state.isDirty;
-                isSick = state.isSick;
-                isDead = state.isDead;
-                isSleeping = state.isSleeping;
+                isDirty = state.isDirty; isSick = state.isSick; isDead = state.isDead; isSleeping = state.isSleeping;
                 poopSchedule = state.poopSchedule || [];
                 poopDoneToday = state.poopDoneToday || [false, false, false];
                 poopScheduleDay = state.poopScheduleDay !== undefined ? state.poopScheduleDay : -1;
@@ -1505,53 +1210,42 @@
                     mainCanvas.style.display = 'none';
                 }
 
-                // Catch up on all the real time elapsed while the app was closed.
                 catchUpRealTime();
-
                 updateDisplay();
 
                 if(gameTimer) clearInterval(gameTimer);
                 gameTimer = setInterval(gameLoop, 1000);
-
                 return true;
-            } catch(e) {
-                return false;
-            }
+            } catch(e) { return false; }
         }
 
-        function clearGameState() {
-            localStorage.removeItem('dinomio_save');
-        }
+        function clearGameState() { localStorage.removeItem('dinomio_save'); }
 
         function updateBadgeProfile() {
             document.getElementById('badge-pet-name').innerText = petCustomName;
             document.getElementById('badge-pet-gender').innerText = petGender === 'M' ? '♂' : '♀';
         }
 
-        // ---- ROUNDED / CUTE POOP SPRITE ----
+        // ---- CACCA MARRONE CON FUMETTO ----
         function drawPoopSprite(animFrame = 0) {
             const canvas = document.getElementById('poop-canvas');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, 32, 32);
-
             if (!isDirty) return;
 
-            ctx.fillStyle = "#000000";
-            ctx.beginPath();
-            ctx.ellipse(16, 27, 9, 4, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.ellipse(16, 22, 6.5, 3.5, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.ellipse(16, 18, 4, 2.8, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(16, 15, 1.6, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.fillStyle = POOP_COLOR;
+            ctx.beginPath(); ctx.ellipse(16, 27, 9, 4, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(16, 22, 6.5, 3.5, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(16, 18, 4, 2.8, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(16, 15, 1.6, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = POOP_COLOR_DARK;
+            ctx.beginPath(); ctx.ellipse(19, 27, 3, 2, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(18.5, 22, 2.2, 1.5, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = "rgba(255,255,255,0.5)";
+            ctx.beginPath(); ctx.arc(13, 21, 1, 0, Math.PI*2); ctx.fill();
 
-            ctx.globalAlpha = 0.6;
+            ctx.fillStyle = SMOKE_COLOR;
             const shift = animFrame % 2;
             if (shift === 0) {
                 ctx.beginPath(); ctx.arc(12, 11, 1.6, 0, Math.PI*2); ctx.fill();
@@ -1564,10 +1258,9 @@
                 ctx.beginPath(); ctx.arc(14, 8, 1.2, 0, Math.PI*2); ctx.fill();
                 ctx.beginPath(); ctx.arc(19, 6, 1.1, 0, Math.PI*2); ctx.fill();
             }
-            ctx.globalAlpha = 1;
         }
 
-        // ---- ROUNDED / CUTE PET SPRITE (with per-species evolution features) ----
+        // ---- PET A COLORI (palette maschile) con evoluzioni e macchie ----
         function drawPixelSprite(canvasId, type, stage, mouthOpen = false, overlayItem = null, animFrame = 0) {
             const canvas = typeof canvasId === 'string' ? document.getElementById(canvasId) : canvasId;
             if(!canvas) return;
@@ -1576,69 +1269,73 @@
             ctx.lineJoin = "round";
             ctx.lineCap = "round";
 
+            const pal = PET_PALETTE[type] || PET_PALETTE[0];
+
             function drawRoundBody(cx, cy, r) {
-                ctx.fillStyle = "#000000";
+                ctx.fillStyle = pal.accent;
+                ctx.beginPath(); ctx.arc(cx, cy, r + 0.8, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = pal.body;
                 ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = "#ffffff";
-                ctx.beginPath(); ctx.arc(cx, cy, Math.max(1, r - 2.2), 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = "#000000";
+                ctx.fillStyle = pal.belly;
+                ctx.beginPath(); ctx.ellipse(cx, cy + r*0.28, Math.max(1, r*0.62), Math.max(1, r*0.5), 0, 0, Math.PI * 2); ctx.fill();
+            }
+            function drawSpots(cx, cy, r) {
+                ctx.fillStyle = pal.spot;
+                ctx.beginPath(); ctx.arc(cx - r*0.45, cy - r*0.45, r*0.22, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(cx + r*0.5, cy - r*0.25, r*0.16, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(cx + r*0.15, cy + r*0.5, r*0.14, 0, Math.PI*2); ctx.fill();
             }
             function drawEar(cx, cy, r) {
-                ctx.fillStyle = "#000000";
+                ctx.fillStyle = pal.accent;
                 ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = pal.belly;
+                ctx.beginPath(); ctx.arc(cx, cy, Math.max(0.8, r*0.5), 0, Math.PI * 2); ctx.fill();
             }
             function drawFoot(cx, cy, rx, ry) {
-                ctx.fillStyle = "#000000";
+                ctx.fillStyle = pal.accent;
                 ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2); ctx.fill();
             }
-            // Two rounded legs under the body
             function drawLegs(cx, cy, r, spread = 0.5, len = 0.35, thick = 0.22) {
-                ctx.fillStyle = "#000000";
+                ctx.fillStyle = pal.accent;
                 ctx.fillRect(cx - r * spread - r*0.06, cy + r*0.7, r*0.12, r*0.6);
                 ctx.fillRect(cx + r * spread - r*0.06, cy + r*0.7, r*0.12, r*0.6);
                 drawFoot(cx - r * spread, cy + r * (0.9 + len), r * (thick + 0.12), r * (thick));
                 drawFoot(cx + r * spread, cy + r * (0.9 + len), r * (thick + 0.12), r * (thick));
             }
-            // Two rounded arms on the sides
             function drawArms(cx, cy, r) {
-                ctx.fillStyle = "#000000";
+                ctx.fillStyle = pal.accent;
                 ctx.fillRect(cx - r - r*0.35, cy - r*0.1, r*0.4, r*0.16);
                 drawFoot(cx - r - r*0.45, cy, r*0.2, r*0.2);
                 ctx.fillRect(cx + r - r*0.05, cy - r*0.1, r*0.4, r*0.16);
                 drawFoot(cx + r + r*0.45, cy, r*0.2, r*0.2);
             }
-            // Small tail poking out on the right
             function drawTail(cx, cy, r, len = 0.9) {
-                ctx.fillStyle = "#000000";
+                ctx.fillStyle = pal.accent;
                 drawFoot(cx + r * len, cy + r*0.4, r*0.3, r*0.18);
                 ctx.beginPath(); ctx.arc(cx + r * (len + 0.35), cy + r*0.4, r*0.16, 0, Math.PI*2); ctx.fill();
             }
-            // Rounded wings behind the body
             function drawWings(cx, cy, r, size = 0.6) {
-                ctx.fillStyle = "#000000";
+                ctx.fillStyle = pal.accent;
                 ctx.beginPath(); ctx.ellipse(cx - r*0.9, cy - r*0.2, r*size, r*(size*0.7), -0.5, 0, Math.PI*2); ctx.fill();
                 ctx.beginPath(); ctx.ellipse(cx + r*0.9, cy - r*0.2, r*size, r*(size*0.7), 0.5, 0, Math.PI*2); ctx.fill();
-                ctx.fillStyle = "#ffffff";
+                ctx.fillStyle = pal.belly;
                 ctx.beginPath(); ctx.ellipse(cx - r*0.9, cy - r*0.2, Math.max(1,r*size-1.4), Math.max(1,r*(size*0.7)-1.4), -0.5, 0, Math.PI*2); ctx.fill();
                 ctx.beginPath(); ctx.ellipse(cx + r*0.9, cy - r*0.2, Math.max(1,r*size-1.4), Math.max(1,r*(size*0.7)-1.4), 0.5, 0, Math.PI*2); ctx.fill();
-                ctx.fillStyle = "#000000";
             }
             function drawCuteFace(cx, cy, r, mOpen) {
-                const eyeDX = r * 0.42;
-                const eyeY = cy - r * 0.15;
-                const eyeR = Math.max(1.3, r * 0.16);
-                ctx.fillStyle = "#000000";
+                const eyeDX = r * 0.42, eyeY = cy - r * 0.15, eyeR = Math.max(1.3, r * 0.16);
+                ctx.fillStyle = EYE_COLOR;
                 ctx.beginPath(); ctx.arc(cx - eyeDX, eyeY, eyeR, 0, Math.PI*2); ctx.fill();
                 ctx.beginPath(); ctx.arc(cx + eyeDX, eyeY, eyeR, 0, Math.PI*2); ctx.fill();
                 ctx.fillStyle = "#ffffff";
-                ctx.beginPath(); ctx.arc(cx - eyeDX + eyeR*0.4, eyeY - eyeR*0.4, Math.max(0.5, eyeR*0.35), 0, Math.PI*2); ctx.fill();
-                ctx.beginPath(); ctx.arc(cx + eyeDX + eyeR*0.4, eyeY - eyeR*0.4, Math.max(0.5, eyeR*0.35 || eyeR*0.35), 0, Math.PI*2); ctx.fill();
-                ctx.fillStyle = "rgba(0,0,0,0.18)";
-                ctx.beginPath(); ctx.arc(cx - r*0.6, cy + r*0.18, r*0.16, 0, Math.PI*2); ctx.fill();
-                ctx.beginPath(); ctx.arc(cx + r*0.6, cy + r*0.18, r*0.16, 0, Math.PI*2); ctx.fill();
-                ctx.strokeStyle = "#000000"; ctx.lineWidth = 1.2;
+                ctx.beginPath(); ctx.arc(cx - eyeDX + eyeR*0.4, eyeY - eyeR*0.4, Math.max(0.5, eyeR*0.4), 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(cx + eyeDX + eyeR*0.4, eyeY - eyeR*0.4, Math.max(0.5, eyeR*0.4), 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = CHEEK_COLOR;
+                ctx.beginPath(); ctx.arc(cx - r*0.6, cy + r*0.2, r*0.17, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(cx + r*0.6, cy + r*0.2, r*0.17, 0, Math.PI*2); ctx.fill();
+                ctx.strokeStyle = EYE_COLOR; ctx.lineWidth = 1.2;
                 if (mOpen) {
-                    ctx.fillStyle = "#000000";
+                    ctx.fillStyle = "#8a4550";
                     ctx.beginPath(); ctx.arc(cx, cy + r*0.35, r*0.22, 0, Math.PI, false); ctx.fill();
                 } else {
                     ctx.beginPath();
@@ -1646,9 +1343,8 @@
                     ctx.stroke();
                 }
             }
-            // Back ridges/spikes for the dino
             function drawBackRidges(cx, cy, r, count) {
-                ctx.fillStyle = "#000000";
+                ctx.fillStyle = pal.accent;
                 for (let i = 0; i < count; i++) {
                     const t = (i / (count - 1)) - 0.5;
                     const px = cx + t * r * 1.4;
@@ -1663,19 +1359,19 @@
             }
 
             if (overlayItem === 'parco') {
-                ctx.fillStyle = "#000000";
+                ctx.fillStyle = "#5a9a5a";
                 ctx.fillRect(2, 18, 2, 8); ctx.fillRect(0, 10, 6, 8); ctx.fillRect(1, 8, 4, 2);
                 ctx.fillRect(28, 18, 2, 8); ctx.fillRect(26, 10, 6, 8); ctx.fillRect(27, 8, 4, 2);
-                ctx.fillRect(0, 26, 32, 1); ctx.fillRect(4, 25, 2, 1); ctx.fillRect(22, 25, 2, 1);
+                ctx.fillStyle = "#7fb87f";
+                ctx.fillRect(0, 26, 32, 2);
             }
 
-            // DEAD
             if (stage === 5) {
-                ctx.fillStyle = "#000000";
+                ctx.fillStyle = "#b3bac4";
                 ctx.beginPath(); ctx.arc(16, 16, 9, 0, Math.PI*2); ctx.fill();
-                ctx.fillStyle = "#ffffff";
+                ctx.fillStyle = "#dbe0e6";
                 ctx.beginPath(); ctx.arc(16, 16, 7, 0, Math.PI*2); ctx.fill();
-                ctx.strokeStyle = "#000000"; ctx.lineWidth = 1.2;
+                ctx.strokeStyle = "#5a616e"; ctx.lineWidth = 1.2;
                 ctx.beginPath();
                 ctx.moveTo(11,13); ctx.lineTo(14,16); ctx.moveTo(14,13); ctx.lineTo(11,16);
                 ctx.moveTo(18,13); ctx.lineTo(21,16); ctx.moveTo(21,13); ctx.lineTo(18,16);
@@ -1683,121 +1379,111 @@
                 return;
             }
 
-            // EGG (same for all species)
             if (stage === 0) {
-                ctx.fillStyle = "#000000";
+                const egg = EGG_COLORS[type] || EGG_COLORS[0];
+                ctx.fillStyle = egg.sh;
                 ctx.beginPath(); ctx.ellipse(16, 17, 9, 11, 0, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = "#ffffff";
+                ctx.fillStyle = egg.hi;
                 ctx.beginPath(); ctx.ellipse(16, 17, 7, 9, 0, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = "#000000";
-                ctx.beginPath(); ctx.arc(13, 14, 1.5, 0, Math.PI*2); ctx.fill();
-                ctx.beginPath(); ctx.arc(19, 18, 1.5, 0, Math.PI*2); ctx.fill();
-                ctx.beginPath(); ctx.arc(15, 21, 1.2, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = pal.spot;
+                ctx.beginPath(); ctx.arc(13, 14, 1.6, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(19, 18, 1.6, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(15, 21, 1.3, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "rgba(255,255,255,0.7)";
+                ctx.beginPath(); ctx.ellipse(13, 12, 1.6, 2.4, -0.5, 0, Math.PI*2); ctx.fill();
                 return;
             }
 
-            // ---- DINO (type 4): original dinosaur growth cycle ----
             if (type === 4) {
                 const r = 5.5 + stage * 1.7;
                 const cx = 16;
                 const cy = 18 + ((overlayItem === 'parco' && animFrame % 2 === 0) ? -2 : 0);
-
                 if (stage >= 3) drawTail(cx, cy, r, 1.0);
                 if (stage >= 2) drawLegs(cx, cy, r, 0.55, stage >= 4 ? 0.5 : 0.35, stage >= 4 ? 0.3 : 0.22);
                 if (stage >= 3) drawBackRidges(cx, cy, r, stage >= 4 ? 5 : 3);
-
-                if (stage >= 4) {
-                    ctx.fillStyle = "#000000";
-                    ctx.beginPath(); ctx.arc(cx, cy - r*0.7, r*0.55, 0, Math.PI*2); ctx.fill();
-                }
-
+                if (stage >= 4) { ctx.fillStyle = pal.body; ctx.beginPath(); ctx.arc(cx, cy - r*0.7, r*0.55, 0, Math.PI*2); ctx.fill(); }
                 drawRoundBody(cx, cy, r);
+                drawSpots(cx, cy, r);
                 drawCuteFace(cx, cy, r, mouthOpen);
                 drawActionOverlays(ctx, cx, cy, r, overlayItem, animFrame);
                 return;
             }
 
-            // ---- Body radius grows with stage for the other species ----
             let r = 6 + stage * 1.6;
             const cx = 16;
             const cy = 17 + ((overlayItem === 'parco' && animFrame % 2 === 0) ? -2 : 0);
 
             if (type === 0) {
-                // SPIKE: toddler +legs ; teen legs + small tail ; adult bigger.
                 if (stage >= 3) drawTail(cx, cy, r, 0.95);
                 if (stage >= 2) drawLegs(cx, cy, r, 0.5, stage >= 4 ? 0.45 : 0.35, stage >= 4 ? 0.26 : 0.22);
                 drawEar(cx + r * 0.85, cy - r * 0.7, r * 0.42);
             } else if (type === 1) {
-                // NIBBLE: toddler +legs ; teen +small wings ; adult bigger + bigger wings.
                 if (stage >= 3) drawWings(cx, cy, r, stage >= 4 ? 0.8 : 0.55);
                 if (stage >= 2) drawLegs(cx, cy, r, 0.5, 0.35, 0.22);
                 drawEar(cx - r * 0.9, cy - r * 0.6, r * 0.34);
                 drawEar(cx + r * 0.9, cy - r * 0.6, r * 0.34);
             } else if (type === 2) {
-                // BUBBLE: teen +two small legs + bigger ; adult bigger + bigger legs.
                 if (stage >= 3) drawLegs(cx, cy, r, 0.45, stage >= 4 ? 0.5 : 0.32, stage >= 4 ? 0.3 : 0.18);
                 drawEar(cx - r * 0.45, cy - r * 1.05, r * 0.26);
                 drawEar(cx + r * 0.45, cy - r * 1.05, r * 0.26);
             } else if (type === 3) {
-                // PUFF: teen +arms ; adult bigger.
                 if (stage >= 3) drawArms(cx, cy, r);
                 drawFoot(cx - r * 0.5, cy + r * 0.95, r * 0.32, r * 0.22);
                 drawFoot(cx + r * 0.5, cy + r * 0.95, r * 0.32, r * 0.22);
             }
 
             drawRoundBody(cx, cy, r);
+            drawSpots(cx, cy, r);
             drawCuteFace(cx, cy, r, mouthOpen);
             drawActionOverlays(ctx, cx, cy, r, overlayItem, animFrame);
         }
 
-        // Action overlays factored out so every species can reuse them.
         function drawActionOverlays(ctx, cx, cy, r, overlayItem, animFrame) {
             if(overlayItem === 'pasto') {
-                ctx.fillStyle = "#000000";
                 const rr = Math.max(1, 3 - animFrame);
-                if (rr > 0) { ctx.beginPath(); ctx.arc(3, 17, rr, 0, Math.PI*2); ctx.fill(); }
+                if (rr > 0) { ctx.fillStyle = "#b8823a"; ctx.beginPath(); ctx.arc(3, 17, rr, 0, Math.PI*2); ctx.fill(); }
             } else if(overlayItem === 'snack') {
-                ctx.fillStyle = "#000000";
                 const rr = Math.max(1, 3 - animFrame);
                 if (rr > 0) {
+                    ctx.fillStyle = "#c48a5a";
                     ctx.beginPath(); ctx.arc(4, 17, rr, 0, Math.PI*2); ctx.fill();
                     ctx.beginPath(); ctx.moveTo(4-rr,17-2); ctx.lineTo(4-rr-2,17); ctx.lineTo(4-rr,17+2); ctx.fill();
                     ctx.beginPath(); ctx.moveTo(4+rr,17-2); ctx.lineTo(4+rr+2,17); ctx.lineTo(4+rr,17+2); ctx.fill();
                 }
             }
             if(overlayItem === 'siringa' && (animFrame % 2 === 0)) {
-                ctx.fillStyle = "#000000";
+                ctx.fillStyle = "#6eb0c4";
                 ctx.fillRect(28, 2, 2, 3); ctx.fillRect(27, 5, 4, 1);
                 ctx.fillRect(28, 6, 2, 10);
+                ctx.fillStyle = "#4f90a4";
                 ctx.fillRect(28, 16, 2, 2); ctx.fillRect(28, 18, 1, 6);
             }
             if(overlayItem === 'doccia') {
-                ctx.fillStyle = "#000000";
+                ctx.fillStyle = "#d8c874";
                 const spongeX = 4 + (animFrame % 3) * 6;
                 ctx.beginPath(); ctx.arc(spongeX + 3, cy - r + 2, 3, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "#6ba8c9";
                 const rainY1 = (animFrame * 4) % 28;
                 const rainY2 = ((animFrame * 4) + 12) % 28;
-                ctx.beginPath(); ctx.arc(6, rainY1, 1, 0, Math.PI*2); ctx.fill();
-                ctx.beginPath(); ctx.arc(14, rainY2, 1, 0, Math.PI*2); ctx.fill();
-                ctx.beginPath(); ctx.arc(22, rainY1, 1, 0, Math.PI*2); ctx.fill();
-                ctx.beginPath(); ctx.arc(28, rainY2, 1, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(6, rainY1, 1.2, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(14, rainY2, 1.2, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(22, rainY1, 1.2, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(28, rainY2, 1.2, 0, Math.PI*2); ctx.fill();
             }
             if(overlayItem === 'studio') {
-                ctx.fillStyle = "#000000";
+                ctx.fillStyle = "#8a6a42";
                 ctx.fillRect(20, 20, 10, 8);
-                ctx.fillStyle = "#ffffff";
+                ctx.fillStyle = "#eee3c9";
                 ctx.fillRect(21, 21, 4, 6);
                 ctx.fillRect(25, 21, 4, 6);
-                ctx.fillStyle = "#000000";
+                ctx.fillStyle = "#8a6a42";
                 ctx.fillRect(24, 20, 1, 8);
-                if(animFrame % 2 === 0) ctx.fillRect(23, 22, 2, 4);
+                if(animFrame % 2 === 0) { ctx.fillStyle = "#a8865a"; ctx.fillRect(23, 22, 2, 4); }
             }
         }
 
         function initPreviews() {
-            for(let p = 0; p < 5; p++) {
-                drawPixelSprite(`p${p+1}_baby`, p, 1);
-            }
+            for(let p = 0; p < 5; p++) { drawPixelSprite(`p${p+1}_baby`, p, 1); }
             updateTexts();
             loadGameState();
         }
@@ -1805,31 +1491,20 @@
         function selectPet(index, defaultName) {
             const customInput = document.getElementById('custom-pet-name').value.trim();
             petCustomName = customInput ? customInput.toUpperCase() : defaultName;
-
             const selectedGenderRadio = document.querySelector('input[name="pet-gender"]:checked');
             petGender = selectedGenderRadio ? selectedGenderRadio.value : "M";
 
             currentPetIndex = index;
             petStage = 0;
             hunger = 40; happiness = 40; health = 40; energy = 40; fitness = 40; intelligence = 40; cleanliness = 40;
-            
-            ageInDays = 0;
-            secondsInCurrentStage = 0;
-            totalGameSeconds = 0;
+            ageInDays = 0; secondsInCurrentStage = 0; totalGameSeconds = 0;
             lastRealTimestamp = Math.floor(Date.now() / 1000);
-
-            isDirty = false;
-            isSick = false;
-            isDead = false;
-            isSleeping = false;
-            alarmPlayedThisWarning = false;
+            isDirty = false; isSick = false; isDead = false; isSleeping = false; alarmPlayedThisWarning = false;
             if(sleepTimer) clearTimeout(sleepTimer);
-            isEatingAnimation = false;
-            isCustomAnimation = false;
+            isEatingAnimation = false; isCustomAnimation = false;
 
             generatePoopSchedule();
             poopScheduleDay = cestDayIndex(Date.now());
-
             stopRunner();
 
             document.getElementById('selection-screen').style.display = 'none';
@@ -1851,45 +1526,35 @@
             drawBackground();
             updateDisplay();
             saveGameState();
-            
+
             if(gameTimer) clearInterval(gameTimer);
             gameTimer = setInterval(gameLoop, 1000);
         }
 
-        // Simulate a single game-second of decay/evolution/poop/illness.
         function stepOneSecond(simulated) {
             if (isDead) return;
-
             totalGameSeconds++;
             secondsInCurrentStage++;
-
             const nowMs = (lastRealTimestamp) * 1000;
             ageInDays = Math.floor(totalGameSeconds / SECONDS_PER_DAY);
-
             const THREE_DAYS = SECONDS_PER_DAY * 3;
 
             const dayIdx = cestDayIndex(nowMs);
-            if (dayIdx !== poopScheduleDay) {
-                generatePoopSchedule();
-                poopScheduleDay = dayIdx;
-            }
+            if (dayIdx !== poopScheduleDay) { generatePoopSchedule(); poopScheduleDay = dayIdx; }
             if (petStage > 0 && !isDirty) {
                 const secOfDay = cestSecondsOfDay(nowMs);
                 for (let i = 0; i < poopSchedule.length; i++) {
                     if (!poopDoneToday[i] && secOfDay >= poopSchedule[i]) {
-                        poopDoneToday[i] = true;
-                        isDirty = true;
+                        poopDoneToday[i] = true; isDirty = true;
                         if (!simulated) setActionMessage(i18n[currentLang].poopMsg);
                     }
                 }
             }
 
-            // Evolution (continues even while sleeping)
             if (petStage === 0) {
                 if (!simulated) playSyncopatedEggBeep();
                 if (secondsInCurrentStage >= 7) {
-                    petStage = 1;
-                    secondsInCurrentStage = 0;
+                    petStage = 1; secondsInCurrentStage = 0;
                     hunger = 40; happiness = 40; health = 40; energy = 40; fitness = 40; intelligence = 40; cleanliness = 40;
                     if (!simulated) {
                         const mainCanvas = document.getElementById('game-canvas');
@@ -1901,18 +1566,13 @@
                 }
             } else if (petStage >= 1 && petStage < 4) {
                 if (secondsInCurrentStage >= THREE_DAYS) {
-                    petStage++;
-                    secondsInCurrentStage = 0;
+                    petStage++; secondsInCurrentStage = 0;
                     if (!simulated) { setActionMessage(i18n[currentLang].evoMsg); playHappyEndSound(); }
                 }
             } else if (petStage === 4) {
-                if (secondsInCurrentStage >= THREE_DAYS) {
-                    triggerNaturalDeath(simulated);
-                    return;
-                }
+                if (secondsInCurrentStage >= THREE_DAYS) { triggerNaturalDeath(simulated); return; }
             }
 
-            // Stat decay (only after hatching)
             if (petStage > 0) {
                 if (totalGameSeconds % DECAY.hunger === 0)       hunger = Math.max(0, hunger - 20);
                 if (totalGameSeconds % DECAY.cleanliness === 0)  cleanliness = Math.max(0, cleanliness - 20);
@@ -1920,25 +1580,14 @@
                 if (!isSleeping && totalGameSeconds % DECAY.energy === 0)    energy = Math.max(0, energy - 20);
                 if (totalGameSeconds % DECAY.fitness === 0)      fitness = Math.max(0, fitness - 20);
                 if (totalGameSeconds % DECAY.intelligence === 0) intelligence = Math.max(0, intelligence - 20);
-
-                // Illness: not while sleeping. 2 in 864000 chance per second.
-                if (!isSick && !isSleeping && Math.random() < (2 / 864000)) {
-                    isSick = true;
-                }
-                if (isSick && totalGameSeconds % 3600 === 0) {
-                    health = Math.max(0, health - 20);
-                }
+                if (!isSick && !isSleeping && Math.random() < (2 / 864000)) { isSick = true; }
+                if (isSick && totalGameSeconds % 3600 === 0) { health = Math.max(0, health - 20); }
             }
 
-            // Sleep energy regen: +20% / hour
-            if (isSleeping && petStage > 0) {
-                energy = Math.min(100, energy + (20 / 3600));
-            }
+            if (isSleeping && petStage > 0) { energy = Math.min(100, energy + (20 / 3600)); }
 
-            // Death by health depletion (no automatic new generation)
             if (health <= 0) {
-                isDead = true;
-                petStage = 5;
+                isDead = true; petStage = 5;
                 if (!simulated) {
                     turnOffSleepingState();
                     document.getElementById('game-canvas').classList.remove('pet-idle-bounce');
@@ -1951,13 +1600,10 @@
         function catchUpRealTime() {
             const nowSec = Math.floor(Date.now() / 1000);
             if (!lastRealTimestamp) { lastRealTimestamp = nowSec; return; }
-
             let elapsed = nowSec - lastRealTimestamp;
             if (elapsed <= 0) return;
-
-            const MAX_CATCHUP = SECONDS_PER_DAY * 30; // 30 days
+            const MAX_CATCHUP = SECONDS_PER_DAY * 30;
             if (elapsed > MAX_CATCHUP) elapsed = MAX_CATCHUP;
-
             for (let i = 0; i < elapsed; i++) {
                 lastRealTimestamp++;
                 stepOneSecond(true);
@@ -1970,34 +1616,25 @@
         function gameLoop() {
             if(inRunnerMode) return;
             if(isDead) return;
-
             poopSmokeFrame++;
-
             const nowSec = Math.floor(Date.now() / 1000);
             let steps = nowSec - lastRealTimestamp;
             if (steps < 1) steps = 1;
             if (steps > SECONDS_PER_DAY * 30) steps = SECONDS_PER_DAY * 30;
-
             for (let i = 0; i < steps; i++) {
                 lastRealTimestamp++;
                 stepOneSecond(i === steps - 1 ? false : true);
                 if (isDead) break;
             }
             lastRealTimestamp = nowSec;
-
             checkStatsWarning();
             updateDisplay();
             saveGameState();
         }
 
-        // Natural death of old age at end of Adult stage: generation +1, ask to adopt a
-        // new random pet with a name, then hatch a fresh egg with reset stats.
         function triggerNaturalDeath(simulated) {
-            isDead = true;
-            petStage = 5;
-            if (simulated) {
-                if (!gameTimer) return;
-            }
+            isDead = true; petStage = 5;
+            if (simulated) { if (!gameTimer) return; }
             turnOffSleepingState();
             if (gameTimer) clearInterval(gameTimer);
             updateDisplay();
@@ -2011,11 +1648,7 @@
                 const proposedName = defaultNames[newIndex];
 
                 const accept = window.confirm(t.rebirthPrompt(proposedName));
-                if (!accept) {
-                    setActionMessage(t.rebirthDeclined);
-                    saveGameState();
-                    return;
-                }
+                if (!accept) { setActionMessage(t.rebirthDeclined); saveGameState(); return; }
 
                 let chosenName = window.prompt(t.rebirthNamePrompt, proposedName);
                 if (!chosenName || !chosenName.trim()) chosenName = proposedName;
@@ -2024,17 +1657,10 @@
                 generation++;
                 currentPetIndex = newIndex;
                 petCustomName = chosenName;
-                petStage = 0;
-                ageInDays = 0;
-                secondsInCurrentStage = 0;
-                totalGameSeconds = 0;
+                petStage = 0; ageInDays = 0; secondsInCurrentStage = 0; totalGameSeconds = 0;
                 lastRealTimestamp = Math.floor(Date.now() / 1000);
                 hunger = 40; happiness = 40; health = 40; energy = 40; fitness = 40; intelligence = 40; cleanliness = 40;
-                isDirty = false;
-                isSick = false;
-                isDead = false;
-                isSleeping = false;
-                alarmPlayedThisWarning = false;
+                isDirty = false; isSick = false; isDead = false; isSleeping = false; alarmPlayedThisWarning = false;
 
                 generatePoopSchedule();
                 poopScheduleDay = cestDayIndex(Date.now());
@@ -2060,35 +1686,26 @@
             menu.style.display = menu.style.display === 'none' ? 'flex' : 'none';
         }
 
-        // Meal: +40% Hunger. Snack: +20% Happiness, +20% Hunger, -20% Fitness.
         function feedPet(type) {
             if(isEatingAnimation || isCustomAnimation || isDead || petStage === 0 || inRunnerMode) return;
             isEatingAnimation = true;
-
             if(isSleeping) turnOffSleepingState();
-
             let step = 0;
             const canvas = document.getElementById('game-canvas');
-
             let msgText = "";
-            if(type === 'pasto') {
-                hunger = Math.min(100, hunger + 40);
-                msgText = i18n[currentLang].mealMsg;
-            } else {
+            if(type === 'pasto') { hunger = Math.min(100, hunger + 40); msgText = i18n[currentLang].mealMsg; }
+            else {
                 happiness = Math.min(100, happiness + 20);
                 hunger = Math.min(100, hunger + 20);
                 fitness = Math.max(0, fitness - 20);
                 msgText = i18n[currentLang].snackMsg;
             }
-
             const eatInterval = setInterval(() => {
                 step++;
                 const mouthOpen = (step % 2 !== 0);
                 const progress = Math.floor(step / 2);
-                
                 playBeep(350 + (step * 50), 'square', 0.05);
                 drawPixelSprite(canvas, currentPetIndex, petStage, mouthOpen, type, progress);
-
                 if(step >= 6) {
                     clearInterval(eatInterval);
                     isEatingAnimation = false;
@@ -2110,23 +1727,14 @@
 
         function interactArea(areaName) {
             if(isDead || isEatingAnimation || isCustomAnimation) return;
-            if(petStage === 0) {
-                setActionMessage(i18n[currentLang].waitEggMsg);
-                return;
-            }
-
+            if(petStage === 0) { setActionMessage(i18n[currentLang].waitEggMsg); return; }
             document.getElementById('kitchen-sub-menu').style.display = 'none';
             if(inRunnerMode && areaName !== 'Palestra') stopRunner();
-
-            if(areaName !== 'Luce' && isSleeping) {
-                turnOffSleepingState();
-            }
-
+            if(areaName !== 'Luce' && isSleeping) { turnOffSleepingState(); }
             const canvas = document.getElementById('game-canvas');
 
             switch(areaName) {
                 case 'Parco':
-                    // +20% Happiness, -20% Energy, -20% Cleanliness
                     happiness = Math.min(100, happiness + 20);
                     energy = Math.max(0, energy - 20);
                     cleanliness = Math.max(0, cleanliness - 20);
@@ -2137,18 +1745,13 @@
                         drawPixelSprite(canvas, currentPetIndex, petStage, false, 'parco', pStep);
                         pStep++;
                         if(pStep > 8) {
-                            clearInterval(parkInterval);
-                            isCustomAnimation = false;
-                            playHappyEndSound();
-                            setActionMessage(i18n[currentLang].parkMsg);
-                            updateDisplay();
-                            saveGameState();
+                            clearInterval(parkInterval); isCustomAnimation = false;
+                            playHappyEndSound(); setActionMessage(i18n[currentLang].parkMsg);
+                            updateDisplay(); saveGameState();
                         }
                     }, 250);
                     break;
-
                 case 'Doccia':
-                    // Cleanliness -> 100, isDirty -> false, +20% Energy
                     energy = Math.min(100, energy + 20);
                     let showerMsg = isDirty ? i18n[currentLang].showerDirtyMsg : i18n[currentLang].showerCleanMsg;
                     isCustomAnimation = true;
@@ -2158,22 +1761,15 @@
                         drawPixelSprite(canvas, currentPetIndex, petStage, false, 'doccia', bStep);
                         bStep++;
                         if(bStep > 8) {
-                            clearInterval(bathInterval);
-                            isCustomAnimation = false;
-                            isDirty = false;
-                            cleanliness = 100;
-                            playHappyEndSound();
-                            setActionMessage(showerMsg);
-                            updateDisplay();
-                            saveGameState();
+                            clearInterval(bathInterval); isCustomAnimation = false;
+                            isDirty = false; cleanliness = 100;
+                            playHappyEndSound(); setActionMessage(showerMsg);
+                            updateDisplay(); saveGameState();
                         }
                     }, 250);
                     break;
-
                 case 'Infermeria':
-                    // Health -> 100, Illness -> false
-                    health = 100;
-                    isSick = false;
+                    health = 100; isSick = false;
                     let clinicMsg = i18n[currentLang].clinicSickMsg;
                     isCustomAnimation = true;
                     let infStep = 0;
@@ -2182,33 +1778,24 @@
                         drawPixelSprite(canvas, currentPetIndex, petStage, false, 'siringa', infStep);
                         infStep++;
                         if(infStep >= 6) {
-                            clearInterval(infInterval);
-                            isCustomAnimation = false;
-                            playHappyEndSound();
-                            setActionMessage(clinicMsg);
-                            updateDisplay();
-                            saveGameState();
+                            clearInterval(infInterval); isCustomAnimation = false;
+                            playHappyEndSound(); setActionMessage(clinicMsg);
+                            updateDisplay(); saveGameState();
                         }
                     }, 500);
                     break;
-
                 case 'Palestra':
-                    // +20% Fitness, +20% Happiness, -20% Hunger, -20% Cleanliness, -20% Energy
                     fitness = Math.min(100, fitness + 20);
                     happiness = Math.min(100, happiness + 20);
                     hunger = Math.max(0, hunger - 20);
                     cleanliness = Math.max(0, cleanliness - 20);
                     energy = Math.max(0, energy - 20);
-                    updateDisplay();
-                    saveGameState();
+                    updateDisplay(); saveGameState();
                     startRunnerMode();
                     break;
-
                 case 'Studio':
-                    // +20% Intelligence, -20% Happiness
                     intelligence = Math.min(100, intelligence + 20);
                     happiness = Math.max(0, happiness - 20);
-                    
                     isCustomAnimation = true;
                     let sStep = 0;
                     const studyInterval = setInterval(() => {
@@ -2216,36 +1803,25 @@
                         drawPixelSprite(canvas, currentPetIndex, petStage, false, 'studio', sStep);
                         sStep++;
                         if(sStep > 8) {
-                            clearInterval(studyInterval);
-                            isCustomAnimation = false;
-                            playHappyEndSound();
-                            setActionMessage(i18n[currentLang].studyMsg);
-                            updateDisplay();
-                            saveGameState();
+                            clearInterval(studyInterval); isCustomAnimation = false;
+                            playHappyEndSound(); setActionMessage(i18n[currentLang].studyMsg);
+                            updateDisplay(); saveGameState();
                         }
                     }, 250);
                     break;
-
                 case 'Luce':
                     isSleeping = !isSleeping;
                     const displayBox = document.getElementById('pet-display-box');
                     const zzzLayer = document.getElementById('zzz-layer');
-
                     playBeep(isSleeping ? 300 : 600, 'square', 0.08);
-
                     if(isSleeping) {
                         displayBox.classList.add('lights-off');
                         canvas.style.display = 'none';
                         setActionMessage(i18n[currentLang].lightOffMsg);
-                        
                         if(sleepTimer) clearTimeout(sleepTimer);
                         sleepTimer = setTimeout(() => {
-                            if(isSleeping) {
-                                zzzLayer.style.display = 'block';
-                                setActionMessage(i18n[currentLang].lightRestMsg);
-                            }
+                            if(isSleeping) { zzzLayer.style.display = 'block'; setActionMessage(i18n[currentLang].lightRestMsg); }
                         }, 2000);
-
                     } else {
                         turnOffSleepingState();
                         setActionMessage(i18n[currentLang].lightOnMsg);
@@ -2260,27 +1836,18 @@
         function startRunnerMode() {
             inRunnerMode = true;
             document.getElementById('game-canvas').style.display = 'none';
-            const runnerContainer = document.getElementById('runner-container');
-            runnerContainer.style.display = 'block';
-            
+            document.getElementById('runner-container').style.display = 'block';
             setActionMessage(i18n[currentLang].gymMsg);
-
-            runnerPetY = 0;
-            runnerVY = 0;
-            runnerJumping = false;
-            runnerObstacles = [];
-            runnerScore = 0;
-            runnerSpeed = 3;
-            minObstacleDistance = 90;
-
+            runnerPetY = 0; runnerVY = 0; runnerJumping = false;
+            runnerObstacles = []; runnerScore = 0;
+            runnerSpeed = 3; minObstacleDistance = 90;
             window.addEventListener('keydown', handleRunnerInput);
             runnerLoop();
         }
 
         function triggerJumpInRunner() {
             if(inRunnerMode && !runnerJumping) {
-                runnerVY = -7;
-                runnerJumping = true;
+                runnerVY = -7; runnerJumping = true;
                 playBeep(450, 'square', 0.06);
             }
         }
@@ -2293,17 +1860,12 @@
         }
 
         function stopRunner() {
-            if(!inRunnerMode) {
-                document.getElementById('runner-container').style.display = 'none';
-                return;
-            }
+            if(!inRunnerMode) { document.getElementById('runner-container').style.display = 'none'; return; }
             inRunnerMode = false;
             if(runnerAnimId) cancelAnimationFrame(runnerAnimId);
             window.removeEventListener('keydown', handleRunnerInput);
             document.getElementById('runner-container').style.display = 'none';
-            if(!isSleeping && !isDead) {
-                document.getElementById('game-canvas').style.display = 'block';
-            }
+            if(!isSleeping && !isDead) { document.getElementById('game-canvas').style.display = 'block'; }
             lastRealTimestamp = Math.floor(Date.now() / 1000);
             setActionMessage(i18n[currentLang].gymExitMsg);
             playHappyEndSound();
@@ -2312,39 +1874,36 @@
 
         function runnerLoop() {
             if(!inRunnerMode) return;
-
             const canvas = document.getElementById('runner-canvas');
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Speed and min distance both increase with score; random component added below.
             runnerSpeed = 3 + Math.floor(runnerScore / 50) * 0.5;
             minObstacleDistance = 90 + Math.floor(runnerScore / 50) * 10;
 
             runnerPetY += runnerVY;
             runnerVY += 0.5;
+            if(runnerPetY >= 0) { runnerPetY = 0; runnerVY = 0; runnerJumping = false; }
 
-            if(runnerPetY >= 0) {
-                runnerPetY = 0;
-                runnerVY = 0;
-                runnerJumping = false;
-            }
-
-            ctx.fillStyle = "#000";
+            ctx.fillStyle = "#7fb87f";
+            ctx.fillRect(0, 70, canvas.width, 10);
+            ctx.fillStyle = "#5a9a5a";
             ctx.fillRect(0, 70, canvas.width, 2);
 
+            const pal = PET_PALETTE[currentPetIndex] || PET_PALETTE[0];
             const petYPos = 52 + runnerPetY;
-            ctx.fillStyle = "#000";
-            ctx.beginPath(); ctx.arc(28, petYPos + 8, 8, 0, Math.PI*2); ctx.fill();
-            ctx.fillStyle = "#fff";
-            ctx.beginPath(); ctx.arc(28, petYPos + 8, 6, 0, Math.PI*2); ctx.fill();
-            ctx.fillStyle = "#000";
-            ctx.beginPath(); ctx.arc(30, petYPos + 6, 1.5, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = pal.accent;
+            ctx.beginPath(); ctx.arc(28, petYPos + 8, 8.5, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = pal.body;
+            ctx.beginPath(); ctx.arc(28, petYPos + 8, 7, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = pal.spot;
+            ctx.beginPath(); ctx.arc(25, petYPos + 6, 1.6, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = EYE_COLOR;
+            ctx.beginPath(); ctx.arc(31, petYPos + 6, 1.5, 0, Math.PI*2); ctx.fill();
 
             const lastObstacle = runnerObstacles[runnerObstacles.length - 1];
             const distanceToLast = lastObstacle ? (200 - lastObstacle.x) : 999;
             const randomGap = Math.floor(Math.random() * 60) + minObstacleDistance;
-
             if(distanceToLast > randomGap && Math.random() < 0.03) {
                 runnerObstacles.push({ x: 200, width: 8, height: 16 });
             }
@@ -2352,8 +1911,7 @@
             for(let i = 0; i < runnerObstacles.length; i++) {
                 let obs = runnerObstacles[i];
                 obs.x -= runnerSpeed;
-
-                ctx.fillStyle = "#000";
+                ctx.fillStyle = "#4e8e4e";
                 ctx.fillRect(obs.x, 70 - obs.height + 3, obs.width, obs.height - 3);
                 ctx.beginPath(); ctx.arc(obs.x + obs.width/2, 70 - obs.height + 3, obs.width/2, Math.PI, 0); ctx.fill();
                 ctx.fillRect(obs.x - 2, 62, 2, 4);
@@ -2366,12 +1924,9 @@
                         localStorage.setItem('dinomio_runner_highscore', runnerHighScore);
                     }
                     setActionMessage(`PTS: ${runnerScore} | HI: ${runnerHighScore}`);
-                    stopRunner();
-                    updateDisplay();
-                    return;
+                    stopRunner(); updateDisplay(); return;
                 }
             }
-
             runnerObstacles = runnerObstacles.filter(o => o.x > -10);
 
             runnerScore++;
@@ -2380,7 +1935,7 @@
                 localStorage.setItem('dinomio_runner_highscore', runnerHighScore);
             }
 
-            ctx.fillStyle = "#000";
+            ctx.fillStyle = "#3a4653";
             ctx.font = '8px "Courier New"';
             ctx.fillText(`SCORE: ${runnerScore} HI: ${runnerHighScore}`, 90, 12);
 
@@ -2389,12 +1944,8 @@
 
         function updateDisplay() {
             const poopCanvas = document.getElementById('poop-canvas');
-            if (isDirty) {
-                poopCanvas.style.display = 'block';
-                drawPoopSprite(poopSmokeFrame);
-            } else {
-                poopCanvas.style.display = 'none';
-            }
+            if (isDirty) { poopCanvas.style.display = 'block'; drawPoopSprite(poopSmokeFrame); }
+            else { poopCanvas.style.display = 'none'; }
 
             document.getElementById('sick-tag').style.display = isSick ? 'block' : 'none';
 
@@ -2412,8 +1963,7 @@
             document.getElementById('mini-intelligence').innerText = getDotsRepresentation(intelligence);
         }
 
-        /* 5-dot mapping:
-           0%..<20% => 1 full ; 20%..<40% => 2 ; 40%..<60% => 3 ; 60%..<80% => 4 ; 80%..100% => 5 */
+        /* 5 pallini: 0-<20=1, 20-<40=2, 40-<60=3, 60-<80=4, 80-100=5 */
         function getDotsRepresentation(val) {
             const v = Math.round(val);
             if (v >= 80) return '●●●●●';
@@ -2438,7 +1988,6 @@
             document.getElementById('info-energy').innerText = getDotsRepresentation(energy);
             document.getElementById('info-fitness').innerText = getDotsRepresentation(fitness);
             document.getElementById('info-intelligence').innerText = getDotsRepresentation(intelligence);
-
             document.getElementById('gameplay-screen').style.display = 'none';
             document.getElementById('info-screen').style.display = 'flex';
         }
@@ -2447,37 +1996,30 @@
             document.getElementById('info-screen').style.display = 'none';
             document.getElementById('gameplay-screen').style.display = 'flex';
         }
-
         function showSettings() {
             document.getElementById('gameplay-screen').style.display = 'none';
             document.getElementById('settings-screen').style.display = 'flex';
         }
-
         function hideSettings() {
             document.getElementById('settings-screen').style.display = 'none';
             document.getElementById('gameplay-screen').style.display = 'flex';
         }
-
         function showRules() {
             document.getElementById('selection-screen').style.display = 'none';
             document.getElementById('rules-screen').style.display = 'flex';
         }
-
         function hideRules() {
             document.getElementById('rules-screen').style.display = 'none';
             document.getElementById('selection-screen').style.display = 'block';
         }
-
         function showChooseArea() {
             document.getElementById('selection-screen').style.display = 'none';
             document.getElementById('choose-area-screen').style.display = 'flex';
         }
-
         function hideChooseArea() {
             document.getElementById('choose-area-screen').style.display = 'none';
             document.getElementById('selection-screen').style.display = 'block';
         }
-
         function navigateToLocation(locationName) {
             playHappyEndSound();
             alert(i18n[currentLang].travelMsg + locationName);
@@ -2488,9 +2030,7 @@
             if(gameTimer) clearInterval(gameTimer);
             turnOffSleepingState();
             clearGameState();
-            generation = 1;
-            isDead = false;
-            alarmPlayedThisWarning = false;
+            generation = 1; isDead = false; alarmPlayedThisWarning = false;
             currentBgStyle = 'none';
             setBackgroundStyle('none');
             const mainCanvas = document.getElementById('game-canvas');
@@ -2505,7 +2045,6 @@
             document.getElementById('selection-screen').style.display = 'block';
         }
 
-        // Recompute time whenever the app returns to foreground (Android tab resume).
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden && !isDead && petStage !== undefined) {
                 const gp = document.getElementById('gameplay-screen');
