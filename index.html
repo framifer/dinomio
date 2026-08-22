@@ -38,13 +38,14 @@
             transition: background 0.3s, border-color 0.3s;
         }
 
-        .tamagotchi-container.shell-blue { background: linear-gradient(150deg, #9fc0e0 0%, #7ba3cf 100%); border-color: #5f88b5; }
-        .tamagotchi-container.shell-red { background: linear-gradient(150deg, #cf9a9a 0%, #b87e7e 100%); border-color: #9c6767; }
-        .tamagotchi-container.shell-white { background: linear-gradient(150deg, #dfe4ea 0%, #c4ccd6 100%); border-color: #a7b2bf; }
-        .tamagotchi-container.shell-yellow { background: linear-gradient(150deg, #d8c893 0%, #c4b277 100%); border-color: #a89a5f; }
-        .tamagotchi-container.shell-pink { background: linear-gradient(150deg, #c8a3b8 0%, #b088a0 100%); border-color: #946e86; }
-        .tamagotchi-container.shell-beige { background: linear-gradient(150deg, #cfc4ab 0%, #b8ac8e 100%); border-color: #9a8e70; }
-        .tamagotchi-container.shell-lightblue { background: linear-gradient(150deg, #9dc6d4 0%, #7dabbb 100%); border-color: #5f8c9c; }
+        /* Shell colors VIVIDI e ACCESI */
+        .tamagotchi-container.shell-blue { background: linear-gradient(150deg, #4da6ff 0%, #0066ff 100%); border-color: #0047b3; }
+        .tamagotchi-container.shell-red { background: linear-gradient(150deg, #ff5252 0%, #e60000 100%); border-color: #b30000; }
+        .tamagotchi-container.shell-white { background: linear-gradient(150deg, #ffffff 0%, #dfe6ee 100%); border-color: #b8c2ce; }
+        .tamagotchi-container.shell-yellow { background: linear-gradient(150deg, #ffe14d 0%, #ffcc00 100%); border-color: #d9a400; }
+        .tamagotchi-container.shell-pink { background: linear-gradient(150deg, #ff6ec7 0%, #ff1e9c 100%); border-color: #cc0077; }
+        .tamagotchi-container.shell-beige { background: linear-gradient(150deg, #f0dfb0 0%, #e0c878 100%); border-color: #c2a84f; }
+        .tamagotchi-container.shell-lightblue { background: linear-gradient(150deg, #5ce1ff 0%, #00c2ff 100%); border-color: #0095c7; }
 
         .lcd-screen {
             width: 100%;
@@ -460,13 +461,13 @@
 
         .info-btn:active { transform: translateY(3px); box-shadow: none; }
 
-        .tamagotchi-container.shell-blue .info-btn { background: linear-gradient(180deg, #7ba3cf 0%, #5f88b5 100%); }
-        .tamagotchi-container.shell-red .info-btn { background: linear-gradient(180deg, #b87e7e 0%, #9c6767 100%); }
-        .tamagotchi-container.shell-white .info-btn { background: linear-gradient(180deg, #c4ccd6 0%, #a7b2bf 100%); color:#2c3540; }
-        .tamagotchi-container.shell-yellow .info-btn { background: linear-gradient(180deg, #c4b277 0%, #a89a5f 100%); color:#3a3418; }
-        .tamagotchi-container.shell-pink .info-btn { background: linear-gradient(180deg, #b088a0 0%, #946e86 100%); }
-        .tamagotchi-container.shell-beige .info-btn { background: linear-gradient(180deg, #b8ac8e 0%, #9a8e70 100%); color:#3a3420; }
-        .tamagotchi-container.shell-lightblue .info-btn { background: linear-gradient(180deg, #7dabbb 0%, #5f8c9c 100%); }
+        .tamagotchi-container.shell-blue .info-btn { background: linear-gradient(180deg, #4da6ff 0%, #0066ff 100%); }
+        .tamagotchi-container.shell-red .info-btn { background: linear-gradient(180deg, #ff5252 0%, #e60000 100%); }
+        .tamagotchi-container.shell-white .info-btn { background: linear-gradient(180deg, #dfe6ee 0%, #b8c2ce 100%); color:#2c3540; }
+        .tamagotchi-container.shell-yellow .info-btn { background: linear-gradient(180deg, #ffe14d 0%, #ffcc00 100%); color:#5a4a00; }
+        .tamagotchi-container.shell-pink .info-btn { background: linear-gradient(180deg, #ff6ec7 0%, #ff1e9c 100%); }
+        .tamagotchi-container.shell-beige .info-btn { background: linear-gradient(180deg, #f0dfb0 0%, #e0c878 100%); color:#5a4e2e; }
+        .tamagotchi-container.shell-lightblue .info-btn { background: linear-gradient(180deg, #5ce1ff 0%, #00c2ff 100%); }
 
         .zzz-container { display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 6; }
 
@@ -660,13 +661,13 @@
                         <label id="lbl-shell-color">COLORE GUSCIO:</label>
                         <div class="color-picker-grid">
                             <button class="color-btn" style="background:#93a7bd;" onclick="setShellColor('default')">DEFAULT</button>
-                            <button class="color-btn" style="background:#7ba3cf;" onclick="setShellColor('blue')">BLU</button>
-                            <button class="color-btn" style="background:#b87e7e;" onclick="setShellColor('red')">ROSSO</button>
-                            <button class="color-btn" style="background:#c4ccd6;" onclick="setShellColor('white')">BIANCO</button>
-                            <button class="color-btn" style="background:#c4b277;" onclick="setShellColor('yellow')">GIALLO</button>
-                            <button class="color-btn" style="background:#b088a0;" onclick="setShellColor('pink')">ROSA</button>
-                            <button class="color-btn" style="background:#b8ac8e;" onclick="setShellColor('beige')">BEIGE</button>
-                            <button class="color-btn" style="background:#7dabbb;" onclick="setShellColor('lightblue')">CELESTE</button>
+                            <button class="color-btn" style="background:#0066ff; color:#fff;" onclick="setShellColor('blue')">BLU</button>
+                            <button class="color-btn" style="background:#e60000; color:#fff;" onclick="setShellColor('red')">ROSSO</button>
+                            <button class="color-btn" style="background:#ffffff;" onclick="setShellColor('white')">BIANCO</button>
+                            <button class="color-btn" style="background:#ffcc00;" onclick="setShellColor('yellow')">GIALLO</button>
+                            <button class="color-btn" style="background:#ff1e9c; color:#fff;" onclick="setShellColor('pink')">ROSA</button>
+                            <button class="color-btn" style="background:#e0c878;" onclick="setShellColor('beige')">BEIGE</button>
+                            <button class="color-btn" style="background:#00c2ff;" onclick="setShellColor('lightblue')">CELESTE</button>
                         </div>
                     </div>
 
@@ -823,7 +824,7 @@
                 travelMsg: "Ti stai spostando in: ",
                 rulesTitle: "REGOLE REALI",
                 rulesBack: "TORNA ALLA SELEZIONE",
-                rulesContent: `<b>1. SCHIUSA E NASCITA:</b><p>L'uovo richiede soli 7 secondi per schiudersi! Il pet nasce con tutti i parametri vitali al 40%.</p><br><b>2. TEMPO REALE (SEMPRE ATTIVO):</b><p>Il tempo scorre anche ad app chiusa. Evoluzione: Baby→Toddler 3 giorni, Toddler→Teen 3 giorni, Teen→Adult 3 giorni. L'Adulto vive 3 giorni poi muore di vecchiaia (nuova generazione).</p><br><b>3. DECADIMENTO PARAMETRI:</b><p>Fame -20%/1h, Pulizia -20%/1h30, Felicità -20%/2h (da sveglio), Energia -20%/3h (da sveglio), Forma -20%/4h, Intelligenza -20%/3h.</p><br><b>4. CACCA E IGIENE:</b><p>Il pet fa la cacca 3 volte al giorno (7:00-22:00). La doccia rimette Pulizia al 100%.</p><br><b>5. MALATTIA E SALUTE:</b><p>Probabilità di malattia molto bassa. Da malato: -20% Salute/ora. Salute a 0% = morte definitiva (nessuna nuova generazione).</p><br><b>6. PALESTRA:</b><p>Usa il tasto [X] in alto a destra nella Palestra per uscire.</p><br><b>7. NANNA:</b><p>Dormendo: Felicità non cala, niente malattie, Energia +20%/ora. L'evoluzione continua comunque.</p>`,
+                rulesContent: `<b>1. SCHIUSA E NASCITA:</b><p>L'uovo richiede soli 7 secondi per schiudersi! Il pet nasce con tutti i parametri vitali al 40%.</p><br><b>2. TEMPO REALE (SEMPRE ATTIVO):</b><p>Il tempo scorre anche ad app chiusa. Evoluzione: Baby→Toddler 3 giorni, Toddler→Teen 3 giorni, Teen→Adult 3 giorni. L'Adulto vive 3 giorni poi muore di vecchiaia (nuova generazione).</p><br><b>3. DECADIMENTO PARAMETRI:</b><p>Fame -20%/1h, Pulizia -20%/1h30, Felicità -20%/2h (da sveglio), Energia -20%/3h (da sveglio), Forma -20%/4h, Intelligenza -20%/3h.</p><br><b>4. CACCA E IGIENE:</b><p>Il pet fa la cacca 3 volte al giorno (7:00-22:00) e perde 3 pallini di Pulizia. La doccia rimette Pulizia al 100%.</p><br><b>5. MALATTIA E SALUTE:</b><p>Da malato: -20% Salute/ora. Salute a 0% = morte definitiva (nessuna nuova generazione). Non ci si ammala dormendo.</p><br><b>6. PALESTRA:</b><p>Usa il tasto [X] in alto a destra nella Palestra per uscire.</p><br><b>7. NANNA:</b><p>Dormendo: Felicità non cala, niente malattie, Energia +20%/ora. L'evoluzione continua comunque.</p>`,
                 infoTitle: "INFORMAZIONI PET",
                 infoBack: "TORNA AL GIOCO",
                 lblName: "NOME:", lblGender: "GENERE:", lblGen: "GENERAZIONE:", lblAge: "ETÀ:", lblDays: "giorni", lblStage: "STADIO:",
@@ -861,7 +862,7 @@
                 travelMsg: "Moving to: ",
                 rulesTitle: "REAL RULES",
                 rulesBack: "BACK TO SELECTION",
-                rulesContent: `<b>1. HATCHING & BIRTH:</b><p>The egg takes only 7 seconds to hatch! The pet is born with all vital stats at 40%.</p><br><b>2. REAL TIME (ALWAYS RUNNING):</b><p>Time runs even when the app is closed. Evolution: Baby→Toddler 3 days, Toddler→Teen 3 days, Teen→Adult 3 days. The Adult lives 3 days then dies of old age (new generation).</p><br><b>3. STAT DECAY:</b><p>Hunger -20%/1h, Cleanliness -20%/1h30, Happiness -20%/2h (awake), Energy -20%/3h (awake), Fitness -20%/4h, Intelligence -20%/3h.</p><br><b>4. POOP & HYGIENE:</b><p>The pet poops 3 times a day (7:00-22:00). Shower restores Cleanliness to 100%.</p><br><b>5. ILLNESS & HEALTH:</b><p>Illness chance is very low. When sick: -20% Health/hour. Health at 0% = permanent death (no new generation).</p><br><b>6. GYM:</b><p>Use the [X] button top right in the Gym to leave at any time.</p><br><b>7. NAP:</b><p>While sleeping: Happiness doesn't drop, no illness, Energy +20%/hour. Evolution still continues.</p>`,
+                rulesContent: `<b>1. HATCHING & BIRTH:</b><p>The egg takes only 7 seconds to hatch! The pet is born with all vital stats at 40%.</p><br><b>2. REAL TIME (ALWAYS RUNNING):</b><p>Time runs even when the app is closed. Evolution: Baby→Toddler 3 days, Toddler→Teen 3 days, Teen→Adult 3 days. The Adult lives 3 days then dies of old age (new generation).</p><br><b>3. STAT DECAY:</b><p>Hunger -20%/1h, Cleanliness -20%/1h30, Happiness -20%/2h (awake), Energy -20%/3h (awake), Fitness -20%/4h, Intelligence -20%/3h.</p><br><b>4. POOP & HYGIENE:</b><p>The pet poops 3 times a day (7:00-22:00) and loses 3 Cleanliness dots. Shower restores Cleanliness to 100%.</p><br><b>5. ILLNESS & HEALTH:</b><p>When sick: -20% Health/hour. Health at 0% = permanent death (no new generation). No illness while sleeping.</p><br><b>6. GYM:</b><p>Use the [X] button top right in the Gym to leave at any time.</p><br><b>7. NAP:</b><p>While sleeping: Happiness doesn't drop, no illness, Energy +20%/hour. Evolution still continues.</p>`,
                 infoTitle: "PET INFORMATION",
                 infoBack: "BACK TO GAME",
                 lblName: "NAME:", lblGender: "GENDER:", lblGen: "GENERATION:", lblAge: "AGE:", lblDays: "days", lblStage: "STAGE:",
@@ -986,17 +987,50 @@
 
             if (currentBgStyle === 'none') { return; } 
             else if (currentBgStyle === 'sea') {
-                ctx.fillStyle = "#5a94b0";
-                ctx.fillRect(0, 96, 128, 32);
-                ctx.fillStyle = "#7aacc4";
-                for(let x=0; x<128; x+=16) { ctx.fillRect(x, 104, 8, 2); ctx.fillRect(x+8, 116, 8, 2); }
-                ctx.fillStyle = "#c4b476";
-                ctx.fillRect(40, 92, 48, 6); ctx.fillRect(48, 88, 32, 4);
-                ctx.fillStyle = "#6a5230";
-                ctx.fillRect(62, 60, 4, 28);
-                ctx.fillStyle = "#4e8e4e";
-                ctx.fillRect(52, 56, 12, 4); ctx.fillRect(64, 56, 12, 4);
-                ctx.fillRect(48, 60, 6, 4); ctx.fillRect(74, 60, 6, 4); ctx.fillRect(58, 52, 12, 4);
+                // --- SFONDO MARE RICONOSCIBILE ---
+                // cielo azzurro
+                ctx.fillStyle = "#8fd4f0";
+                ctx.fillRect(0, 0, 128, 84);
+                // sole in alto a destra
+                ctx.fillStyle = "#ffe14d";
+                ctx.beginPath(); ctx.arc(104, 22, 12, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "#ffd000";
+                ctx.beginPath(); ctx.arc(104, 22, 8, 0, Math.PI*2); ctx.fill();
+                // raggi del sole
+                ctx.fillStyle = "#ffe14d";
+                ctx.fillRect(103, 4, 2, 6); ctx.fillRect(103, 34, 2, 6);
+                ctx.fillRect(86, 21, 6, 2); ctx.fillRect(116, 21, 6, 2);
+                // nuvoletta
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(20, 18, 22, 5); ctx.fillRect(16, 22, 30, 5);
+                // MARE (fascia inferiore) con gradiente a bande
+                ctx.fillStyle = "#1f7fc4";
+                ctx.fillRect(0, 84, 128, 44);
+                ctx.fillStyle = "#2a94d9";
+                ctx.fillRect(0, 84, 128, 14);
+                // onde bianche marcate
+                ctx.fillStyle = "#ffffff";
+                for(let x=0; x<128; x+=20) {
+                    ctx.fillRect(x, 90, 8, 2);
+                    ctx.fillRect(x+10, 100, 8, 2);
+                    ctx.fillRect(x+4, 112, 8, 2);
+                    ctx.fillRect(x+14, 122, 8, 2);
+                }
+                // riflesso del sole sull'acqua
+                ctx.fillStyle = "rgba(255,225,77,0.6)";
+                ctx.fillRect(100, 88, 8, 2); ctx.fillRect(101, 94, 6, 2); ctx.fillRect(102, 100, 4, 2);
+                // isoletta con palma al centro
+                ctx.fillStyle = "#e6cf82";
+                ctx.fillRect(44, 82, 40, 6);
+                ctx.fillRect(52, 78, 24, 4);
+                ctx.fillStyle = "#8a5a2b"; // tronco palma
+                ctx.fillRect(62, 58, 4, 22);
+                ctx.fillStyle = "#3fae4f"; // foglie palma
+                ctx.fillRect(50, 54, 14, 4);
+                ctx.fillRect(64, 54, 14, 4);
+                ctx.fillRect(46, 58, 8, 4);
+                ctx.fillRect(74, 58, 8, 4);
+                ctx.fillRect(56, 50, 16, 4);
             } 
             else if (currentBgStyle === 'forest') {
                 ctx.fillStyle = "#5a8a4e";
@@ -1124,6 +1158,10 @@
         const stageNames = ["EGG", "BABY", "TODDLER", "TEEN", "ADULT", "DEAD"];
         const DECAY = { hunger: 3600, cleanliness: 5400, happiness: 7200, energy: 10800, fitness: 14400, intelligence: 10800 };
         const SECONDS_PER_DAY = 86400;
+        // Probabilità malattia TRIPLICATA: da 2/864000 a 6/864000 (mai durante il sonno)
+        const ILLNESS_CHANCE_PER_SEC = 6 / 864000;
+        // Cacca: perdita di 3 pallini di pulizia (3 x 20% = 60%)
+        const POOP_CLEANLINESS_LOSS = 60;
 
         function cestSecondsOfDay(epochMs) { const cestMs = epochMs + 2 * 3600 * 1000; return Math.floor((cestMs / 1000) % SECONDS_PER_DAY); }
         function cestDayIndex(epochMs) { const cestMs = epochMs + 2 * 3600 * 1000; return Math.floor(cestMs / 1000 / SECONDS_PER_DAY); }
@@ -1516,7 +1554,10 @@
                 const secOfDay = cestSecondsOfDay(nowMs);
                 for (let i = 0; i < poopSchedule.length; i++) {
                     if (!poopDoneToday[i] && secOfDay >= poopSchedule[i]) {
-                        poopDoneToday[i] = true; isDirty = true;
+                        poopDoneToday[i] = true;
+                        isDirty = true;
+                        // Cacca: -3 pallini di pulizia
+                        cleanliness = Math.max(0, cleanliness - POOP_CLEANLINESS_LOSS);
                         if (!simulated) setActionMessage(i18n[currentLang].poopMsg);
                     }
                 }
@@ -1551,7 +1592,8 @@
                 if (!isSleeping && totalGameSeconds % DECAY.energy === 0)    energy = Math.max(0, energy - 20);
                 if (totalGameSeconds % DECAY.fitness === 0)      fitness = Math.max(0, fitness - 20);
                 if (totalGameSeconds % DECAY.intelligence === 0) intelligence = Math.max(0, intelligence - 20);
-                if (!isSick && !isSleeping && Math.random() < (2 / 864000)) { isSick = true; }
+                // Malattia: probabilità triplicata, mai durante il sonno
+                if (!isSick && !isSleeping && Math.random() < ILLNESS_CHANCE_PER_SEC) { isSick = true; }
                 if (isSick && totalGameSeconds % 3600 === 0) { health = Math.max(0, health - 20); }
             }
 
