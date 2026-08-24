@@ -332,6 +332,14 @@
             100% { transform: rotate(0deg); }
         }
 
+        /* Animazione "malato": pet leggermente schiacciato e tremante */
+        .pet-sick-anim { animation: sickSquish 1.2s infinite ease-in-out !important; }
+        @keyframes sickSquish {
+            0%   { transform: translateY(4px) scale(1.06, 0.88); }
+            50%  { transform: translateY(5px) scale(1.10, 0.84) rotate(-2deg); }
+            100% { transform: translateY(4px) scale(1.06, 0.88) rotate(2deg); }
+        }
+
         #runner-container { position: relative; width: 100%; height: 100px; display: none; z-index: 5; }
 
         #runner-canvas {
@@ -640,6 +648,11 @@
                 <h2 id="title-settings">IMPOSTAZIONI</h2>
                 <div class="settings-content">
                     <div class="settings-group">
+                        <label id="lbl-reset-opt">RESET PET:</label>
+                        <button class="action-btn" style="width: 100%; background: linear-gradient(180deg,#c47a7a,#a85a5a); box-shadow:0 3px 0 #8c4646; color:#fff; margin-top:0;" id="btn-reset-game" onclick="resetGame()">RESET</button>
+                    </div>
+
+                    <div class="settings-group">
                         <label id="lbl-lang">LINGUA / LANGUAGE:</label>
                         <button class="action-btn" style="width: 100%; margin-top:0;" onclick="toggleLanguage()" id="btn-lang-toggle">Italiano / English</button>
                     </div>
@@ -668,11 +681,6 @@
                             <button class="color-btn" style="background:#e0c878;" onclick="setShellColor('beige')">BEIGE</button>
                             <button class="color-btn" style="background:#00c2ff;" onclick="setShellColor('lightblue')">CELESTE</button>
                         </div>
-                    </div>
-
-                    <div class="settings-group">
-                        <label id="lbl-reset-opt">RESET PET:</label>
-                        <button class="action-btn" style="width: 100%; background: linear-gradient(180deg,#c47a7a,#a85a5a); box-shadow:0 3px 0 #8c4646; color:#fff; margin-top:0;" id="btn-reset-game" onclick="resetGame()">RESET</button>
                     </div>
                 </div>
                 <button class="action-btn" id="btn-back-settings" onclick="hideSettings()">TORNA AL GIOCO</button>
@@ -747,8 +755,8 @@
                 <div class="area-section">
                     <div class="button-grid">
                         <button class="area-btn" id="btn-kitchen" onclick="toggleKitchenMenu()">Cucina</button>
-                        <button class="area-btn" id="btn-park" onclick="interactArea('Parco')">Parco</button>
-                        <button class="area-btn" id="btn-gym" onclick="interactArea('Palestra')">Palestra</button>
+                        <button class="area-btn" id="btn-park" onclick="toggleFunMenu()">Svago</button>
+                        <button class="area-btn" id="btn-gym" onclick="toggleGymMenu()">Palestra</button>
                         <button class="area-btn" id="btn-clinic" onclick="interactArea('Infermeria')">Infermeria</button>
                         <button class="area-btn" id="btn-shower" onclick="interactArea('Doccia')">Doccia</button>
                         <button class="area-btn" id="btn-study" onclick="interactArea('Studio')">Studio</button>
@@ -757,6 +765,16 @@
                         <button class="area-btn kitchen-btn" id="btn-meal" onclick="feedPet('pasto')">Pasto</button>
                         <button class="area-btn kitchen-btn" id="btn-snack" onclick="feedPet('snack')">Snack</button>
                         <button class="area-btn kitchen-btn" id="btn-close-kitchen" onclick="toggleKitchenMenu()">Esci</button>
+                    </div>
+                    <div id="fun-sub-menu" class="kitchen-options" style="display: none;">
+                        <button class="area-btn kitchen-btn" id="btn-park-play" onclick="interactArea('Parco')">Parco</button>
+                        <button class="area-btn kitchen-btn" id="btn-cuddle" onclick="interactArea('Coccole')">Coccole</button>
+                        <button class="area-btn kitchen-btn" id="btn-close-fun" onclick="toggleFunMenu()">X</button>
+                    </div>
+                    <div id="gym-sub-menu" class="kitchen-options" style="display: none;">
+                        <button class="area-btn kitchen-btn" id="btn-gym-play" onclick="interactArea('Palestra')">Gioca</button>
+                        <button class="area-btn kitchen-btn" id="btn-gym-record" onclick="showGymRecord()">Record</button>
+                        <button class="area-btn kitchen-btn" id="btn-close-gym" onclick="toggleGymMenu()">X</button>
                     </div>
                 </div>
 
@@ -823,7 +841,7 @@
                 travelMsg: "Ti stai spostando in: ",
                 rulesTitle: "REGOLE REALI",
                 rulesBack: "TORNA ALLA SELEZIONE",
-                rulesContent: `<b>1. SCHIUSA E NASCITA:</b><p>L'uovo richiede soli 7 secondi per schiudersi! Il pet nasce con tutti i parametri vitali al 40%.</p><br><b>2. TEMPO REALE (SEMPRE ATTIVO):</b><p>Il tempo scorre anche ad app chiusa. Evoluzione: Baby→Toddler 3 giorni, Toddler→Teen 3 giorni, Teen→Adult 3 giorni. L'Adulto vive 3 giorni poi muore di vecchiaia (nuova generazione).</p><br><b>3. DECADIMENTO PARAMETRI:</b><p>Fame -20%/1h, Pulizia -20%/1h30, Felicità -20%/2h (da sveglio), Energia -20%/3h (da sveglio), Forma -20%/4h, Intelligenza -20%/3h.</p><br><b>4. CACCA E IGIENE:</b><p>Il pet fa la cacca 3 volte al giorno (7:00-22:00) e perde 3 pallini di Pulizia. La doccia rimette Pulizia al 100%.</p><br><b>5. MALATTIA E SALUTE:</b><p>Da malato: -20% Salute/ora. Salute a 0% = morte definitiva (nessuna nuova generazione). Non ci si ammala dormendo.</p><br><b>6. PALESTRA:</b><p>Usa il tasto [X] in alto a destra nella Palestra per uscire.</p><br><b>7. NANNA:</b><p>Dormendo: Felicità non cala, niente malattie, Energia +20%/ora. L'evoluzione continua comunque.</p>`,
+                rulesContent: `<b>1. SCHIUSA E NASCITA:</b><p>L'uovo richiede soli 7 secondi per schiudersi! Il pet nasce con tutti i parametri vitali al 40%.</p><br><b>2. TEMPO REALE (SEMPRE ATTIVO):</b><p>Il tempo scorre anche ad app chiusa. Evoluzione: Baby→Toddler 3 giorni, Toddler→Teen 3 giorni, Teen→Adult 3 giorni. L'Adulto vive 3 giorni poi muore di vecchiaia (nuova generazione).</p><br><b>3. DECADIMENTO PARAMETRI:</b><p>Fame -20%/1h, Pulizia -20%/1h30, Felicità -20%/2h (da sveglio), Energia -20%/3h (da sveglio), Forma -20%/4h, Intelligenza -20%/3h.</p><br><b>4. CACCA E IGIENE:</b><p>Il pet fa la cacca 3 volte al giorno (7:00-22:00) e perde 3 pallini di Pulizia. La doccia rimette Pulizia al 100%.</p><br><b>5. MALATTIA E SALUTE:</b><p>Da malato: occhi a X e -20% Salute/ora. Salute a 0% = morte definitiva. Non ci si ammala dormendo.</p><br><b>6. SVAGO:</b><p>Nell'area Svago puoi scegliere Parco o Coccole. Usa [X] per uscire.</p><br><b>7. PALESTRA:</b><p>Puoi giocare al minigioco o vedere il punteggio record. Usa [X] nel minigioco per uscire.</p><br><b>8. NANNA:</b><p>Dormendo: Felicità non cala, niente malattie, Energia +20%/ora. L'evoluzione continua comunque.</p>`,
                 infoTitle: "INFORMAZIONI PET",
                 infoBack: "TORNA AL GIOCO",
                 lblName: "NOME:", lblGender: "GENERE:", lblGen: "GENERAZIONE:", lblAge: "ETÀ:", lblDays: "giorni", lblStage: "STADIO:",
@@ -831,7 +849,7 @@
                 lblNrg: "ENERGIA (NRG):", lblFit: "FORMA FISICA (FIT):", lblInt: "INTELLIGENZA (INT):",
                 settingsTitle: "IMPOSTAZIONI", lblLang: "LINGUA / LANGUAGE:", lblBgStyle: "SFONDO PIXEL-ART 8-BIT:",
                 lblShell: "COLORE GUSCIO:", lblReset: "RESET PET:", btnBackSettings: "TORNA AL GIOCO",
-                btnKitchen: "Cucina", btnPark: "Parco", btnGym: "Palestra", btnClinic: "Infermeria", btnShower: "Doccia", btnStudy: "Studio",
+                btnKitchen: "Cucina", btnPark: "Svago", btnGym: "Palestra", btnClinic: "Infermeria", btnShower: "Doccia", btnStudy: "Studio",
                 btnMeal: "Pasto", btnSnack: "Snack", btnCloseKitchen: "Esci", btnLight: "LUCE", btnSettings: "IMPOSTAZIONI", btnInfo: "INFO",
                 eggWarming: "L'uovo si sta scaldando...",
                 sickTag: "[MALATO!]", poopTag: "[SPORCO!]", wakeUpMsg: "Sveglia!",
@@ -843,11 +861,13 @@
                 rebirthDeclined: "Nessun nuovo pet adottato.",
                 waitEggMsg: "Aspetta la schiusa dell'uovo!",
                 mealMsg: "Pasto consumato (Pollo)!", snackMsg: "Snack gustato (Caramella)!",
-                parkMsg: "Parco! Felicità +1 Pallino", showerDirtyMsg: "Doccia fatta! Tutto pulito.", showerCleanMsg: "Pet lavato e profumato!",
+                parkMsg: "Parco! Felicità +1 Pallino", cuddleMsg: "Coccole! Felicità +1 Pallino",
+                showerDirtyMsg: "Doccia fatta! Tutto pulito.", showerCleanMsg: "Pet lavato e profumato!",
                 clinicSickMsg: "Cura somministrata! Pet guarito.", clinicOkMsg: "Controllo medico effettuato.",
                 studyMsg: "Studio in corso! Intelligenza +1, Felicità -1",
                 lightOffMsg: "Luce spenta. Addormentamento...", lightRestMsg: "Luce spenta. Riposo in corso...", lightOnMsg: "Luce riaccesa!",
                 gymMsg: "PALESTRA! Salta i cactus [TAP/SPAZIO]", gymExitMsg: "Uscito dalla Palestra.",
+                gymRecordMsg: (hi) => `PUNTEGGIO RECORD: ${hi}`,
                 genderM: "♂ MASCHIO", genderF: "♀ FEMMINA",
                 bgNone: "VUOTO", bgSea: "MARE", bgForest: "BOSCO", bgCity: "CITTÀ", bgSky: "CIELO", bgSpace: "SPAZIO"
             },
@@ -861,7 +881,7 @@
                 travelMsg: "Moving to: ",
                 rulesTitle: "REAL RULES",
                 rulesBack: "BACK TO SELECTION",
-                rulesContent: `<b>1. HATCHING & BIRTH:</b><p>The egg takes only 7 seconds to hatch! The pet is born with all vital stats at 40%.</p><br><b>2. REAL TIME (ALWAYS RUNNING):</b><p>Time runs even when the app is closed. Evolution: Baby→Toddler 3 days, Toddler→Teen 3 days, Teen→Adult 3 days. The Adult lives 3 days then dies of old age (new generation).</p><br><b>3. STAT DECAY:</b><p>Hunger -20%/1h, Cleanliness -20%/1h30, Happiness -20%/2h (awake), Energy -20%/3h (awake), Fitness -20%/4h, Intelligence -20%/3h.</p><br><b>4. POOP & HYGIENE:</b><p>The pet poops 3 times a day (7:00-22:00) and loses 3 Cleanliness dots. Shower restores Cleanliness to 100%.</p><br><b>5. ILLNESS & HEALTH:</b><p>When sick: -20% Health/hour. Health at 0% = permanent death (no new generation). No illness while sleeping.</p><br><b>6. GYM:</b><p>Use the [X] button top right in the Gym to leave at any time.</p><br><b>7. NAP:</b><p>While sleeping: Happiness doesn't drop, no illness, Energy +20%/hour. Evolution still continues.</p>`,
+                rulesContent: `<b>1. HATCHING & BIRTH:</b><p>The egg takes only 7 seconds to hatch! The pet is born with all vital stats at 40%.</p><br><b>2. REAL TIME (ALWAYS RUNNING):</b><p>Time runs even when the app is closed. Evolution: Baby→Toddler 3 days, Toddler→Teen 3 days, Teen→Adult 3 days. The Adult lives 3 days then dies of old age (new generation).</p><br><b>3. STAT DECAY:</b><p>Hunger -20%/1h, Cleanliness -20%/1h30, Happiness -20%/2h (awake), Energy -20%/3h (awake), Fitness -20%/4h, Intelligence -20%/3h.</p><br><b>4. POOP & HYGIENE:</b><p>The pet poops 3 times a day (7:00-22:00) and loses 3 Cleanliness dots. Shower restores Cleanliness to 100%.</p><br><b>5. ILLNESS & HEALTH:</b><p>When sick: X eyes and -20% Health/hour. Health at 0% = permanent death. No illness while sleeping.</p><br><b>6. FUN:</b><p>In the Fun area choose Park or Cuddles. Use [X] to exit.</p><br><b>7. GYM:</b><p>Play the minigame or view the high score. Use [X] in the minigame to exit.</p><br><b>8. NAP:</b><p>While sleeping: Happiness doesn't drop, no illness, Energy +20%/hour. Evolution still continues.</p>`,
                 infoTitle: "PET INFORMATION",
                 infoBack: "BACK TO GAME",
                 lblName: "NAME:", lblGender: "GENDER:", lblGen: "GENERATION:", lblAge: "AGE:", lblDays: "days", lblStage: "STAGE:",
@@ -869,7 +889,7 @@
                 lblNrg: "ENERGY (NRG):", lblFit: "FITNESS (FIT):", lblInt: "INTELLIGENCE (INT):",
                 settingsTitle: "SETTINGS", lblLang: "LANGUAGE / LINGUA:", lblBgStyle: "8-BIT PIXEL-ART BG:",
                 lblShell: "SHELL COLOR:", lblReset: "RESET PET:", btnBackSettings: "BACK TO GAME",
-                btnKitchen: "Kitchen", btnPark: "Park", btnGym: "Gym", btnClinic: "Clinic", btnShower: "Shower", btnStudy: "Study",
+                btnKitchen: "Kitchen", btnPark: "Fun", btnGym: "Gym", btnClinic: "Clinic", btnShower: "Shower", btnStudy: "Study",
                 btnMeal: "Meal", btnSnack: "Snack", btnCloseKitchen: "Exit", btnLight: "LIGHT", btnSettings: "SETTINGS", btnInfo: "INFO",
                 eggWarming: "The egg is warming up...",
                 sickTag: "[SICK!]", poopTag: "[DIRTY!]", wakeUpMsg: "Wake up!",
@@ -881,11 +901,13 @@
                 rebirthDeclined: "No new pet adopted.",
                 waitEggMsg: "Wait for the egg to hatch!",
                 mealMsg: "Meal eaten (Chicken)!", snackMsg: "Snack enjoyed (Candy)!",
-                parkMsg: "Park! Happiness +1 Dot", showerDirtyMsg: "Shower done! All clean.", showerCleanMsg: "Pet washed and fresh!",
+                parkMsg: "Park! Happiness +1 Dot", cuddleMsg: "Cuddles! Happiness +1 Dot",
+                showerDirtyMsg: "Shower done! All clean.", showerCleanMsg: "Pet washed and fresh!",
                 clinicSickMsg: "Medicine given! Pet cured.", clinicOkMsg: "Medical check complete.",
                 studyMsg: "Studying! Intelligence +1, Happiness -1",
                 lightOffMsg: "Lights off. Falling asleep...", lightRestMsg: "Lights off. Resting...", lightOnMsg: "Lights back on!",
                 gymMsg: "GYM! Jump over cacti [TAP/SPACE]", gymExitMsg: "Left the Gym.",
+                gymRecordMsg: (hi) => `HIGH SCORE: ${hi}`,
                 genderM: "♂ MALE", genderF: "♀ FEMALE",
                 bgNone: "EMPTY", bgSea: "SEA", bgForest: "FOREST", bgCity: "CITY", bgSky: "SKY", bgSpace: "SPACE"
             }
@@ -1148,8 +1170,8 @@
         const stageNames = ["EGG", "BABY", "TODDLER", "TEEN", "ADULT", "DEAD"];
         const DECAY = { hunger: 3600, cleanliness: 5400, happiness: 7200, energy: 10800, fitness: 14400, intelligence: 10800 };
         const SECONDS_PER_DAY = 86400;
-        // Probabilità malattia TRIPLICATA: da 2/864000 a 6/864000 (mai durante il sonno)
-        const ILLNESS_CHANCE_PER_SEC = 6 / 864000;
+        // Probabilità malattia: 200/864000 (mai durante il sonno)
+        const ILLNESS_CHANCE_PER_SEC = 200 / 864000;
         // Cacca: perdita di 3 pallini di pulizia (3 x 20% = 60%)
         const POOP_CLEANLINESS_LOSS = 60;
 
@@ -1231,6 +1253,7 @@
                     mainCanvas.classList.add('pet-idle-bounce');
                     document.getElementById('action-msg').innerText = "";
                 }
+                applySickAnimClass();
 
                 if(isSleeping && !isDead) {
                     document.getElementById('pet-display-box').classList.add('lights-off');
@@ -1252,6 +1275,21 @@
         function updateBadgeProfile() {
             document.getElementById('badge-pet-name').innerText = petCustomName;
             document.getElementById('badge-pet-gender').innerText = petGender === 'M' ? '♂' : '♀';
+        }
+
+        // Applica/rimuove l'animazione "schiacciato" quando malato (solo da schiuso e sveglio)
+        function applySickAnimClass() {
+            const mainCanvas = document.getElementById('game-canvas');
+            if (!mainCanvas) return;
+            if (isSick && !isDead && petStage > 0 && petStage < 5 && !isSleeping) {
+                mainCanvas.classList.add('pet-sick-anim');
+                mainCanvas.classList.remove('pet-idle-bounce');
+            } else {
+                mainCanvas.classList.remove('pet-sick-anim');
+                if (petStage > 0 && petStage < 5 && !isSleeping) {
+                    mainCanvas.classList.add('pet-idle-bounce');
+                }
+            }
         }
 
         // ---- CACCA MARRONE 8-BIT CON FUMETTO ----
@@ -1284,8 +1322,8 @@
             }
         }
 
-        // ---- SPRITE 8-BIT STILE GBA (pixel a blocchi, outline, ombra piatta) ----
-        function drawPixelSprite(canvasId, type, stage, mouthOpen = false, overlayItem = null, animFrame = 0) {
+        // ---- SPRITE 8-BIT STILE GBA. sick=true => occhi a X + corpo schiacciato ----
+        function drawPixelSprite(canvasId, type, stage, mouthOpen = false, overlayItem = null, animFrame = 0, sick = false) {
             const canvas = typeof canvasId === 'string' ? document.getElementById(canvasId) : canvasId;
             if(!canvas) return;
             const ctx = canvas.getContext('2d');
@@ -1293,6 +1331,7 @@
             ctx.imageSmoothingEnabled = false;
 
             const pal = PET_PALETTE[type] || PET_PALETTE[0];
+            const squish = (sick && stage > 0 && stage < 5); // schiacciato a terra da malato
 
             function px(x, y, w, h, c) { ctx.fillStyle = c; ctx.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h)); }
 
@@ -1362,10 +1401,25 @@
                 px(cx - r*0.9 - ww, cy - r*0.4, ww, wh, pal.light);
                 px(cx + r*0.9, cy - r*0.4, ww, wh, pal.light);
             }
+            function drawXEye(exc, eyc, sz) {
+                const h = Math.max(2, Math.round(sz));
+                ctx.strokeStyle = EYE_COLOR;
+                ctx.lineWidth = 1.4;
+                ctx.beginPath();
+                ctx.moveTo(exc - h/2, eyc - h/2); ctx.lineTo(exc + h/2, eyc + h/2);
+                ctx.moveTo(exc + h/2, eyc - h/2); ctx.lineTo(exc - h/2, eyc + h/2);
+                ctx.stroke();
+            }
             function drawFace(cx, cy, r, mOpen) {
                 const eyeDX = Math.round(r*0.42);
                 const eyeY = Math.round(cy - r*0.1);
                 const eSize = Math.max(2, Math.round(r*0.24));
+                if (sick) {
+                    drawXEye(cx - eyeDX, eyeY, r*0.34);
+                    drawXEye(cx + eyeDX, eyeY, r*0.34);
+                    px(cx - 2, cy + r*0.36, 4, 1, EYE_COLOR); // boccuccia
+                    return;
+                }
                 px(cx - eyeDX - eSize/2, eyeY - eSize/2, eSize, eSize, EYE_COLOR);
                 px(cx + eyeDX - eSize/2, eyeY - eSize/2, eSize, eSize, EYE_COLOR);
                 px(cx - eyeDX - eSize/2, eyeY - eSize/2, 1, 1, "#e8ecf0");
@@ -1409,13 +1463,14 @@
             }
 
             if (type === 4) {
-                const r = 5.5 + stage * 1.7;
+                let r = 5.5 + stage * 1.7;
                 const cx = 16;
-                const cy = 18 + ((overlayItem === 'parco' && animFrame % 2 === 0) ? -2 : 0);
+                let cy = 18 + ((overlayItem === 'parco' && animFrame % 2 === 0) ? -2 : 0);
+                if (squish) { r *= 1.12; cy += 3; }
                 if (stage >= 3) drawTail(cx, cy, r, 1.0);
                 if (stage >= 2) drawLegs(cx, cy, r, 0.55, stage >= 4 ? 0.5 : 0.35, stage >= 4 ? 0.3 : 0.22);
                 if (stage >= 3) drawBackRidges(cx, cy, r, stage >= 4 ? 5 : 3);
-                if (stage >= 4) { px(cx-r*0.4, cy-r*1.1, r*0.8, r*0.5, pal.body); }
+                if (stage >= 4 && !squish) { px(cx-r*0.4, cy-r*1.1, r*0.8, r*0.5, pal.body); }
                 drawBlockBody(cx, cy, r);
                 drawSpots(cx, cy, r);
                 drawFace(cx, cy, r, mouthOpen);
@@ -1425,7 +1480,8 @@
 
             let r = 6 + stage * 1.6;
             const cx = 16;
-            const cy = 17 + ((overlayItem === 'parco' && animFrame % 2 === 0) ? -2 : 0);
+            let cy = 17 + ((overlayItem === 'parco' && animFrame % 2 === 0) ? -2 : 0);
+            if (squish) { r *= 1.12; cy += 3; }
 
             if (type === 0) {
                 if (stage >= 3) drawTail(cx, cy, r, 0.95);
@@ -1479,6 +1535,21 @@
                 px(24,20,1,8,"#6a4f2f");
                 if(animFrame % 2 === 0) px(23,22,2,4,"#8a6a42");
             }
+            // COCCOLE: mano che accarezza + cuore che pulsa
+            if(overlayItem === 'coccole') {
+                const handX = 1 + (animFrame % 3) * 2;
+                px(handX, cy - 2, 5, 4, "#e0b48a");
+                px(handX + 5, cy - 3, 2, 6, "#e0b48a");
+                px(handX - 1, cy + 2, 2, 3, "#e0b48a");
+                px(handX, cy - 2, 5, 1, "#c99a6a");
+                const beat = (animFrame % 2 === 0);
+                const hx = 22, hy = 4, hs = beat ? 3 : 2;
+                ctx.fillStyle = "#e0506a";
+                ctx.fillRect(hx, hy, hs, hs);
+                ctx.fillRect(hx + hs + 1, hy, hs, hs);
+                ctx.fillRect(hx, hy + hs, hs*2 + 1, hs);
+                ctx.fillRect(hx + Math.floor(hs*0.6), hy + hs*2, hs, hs);
+            }
         }
 
         function initPreviews() {
@@ -1513,10 +1584,13 @@
             document.getElementById('settings-screen').style.display = 'none';
             document.getElementById('gameplay-screen').style.display = 'flex';
             document.getElementById('kitchen-sub-menu').style.display = 'none';
+            document.getElementById('fun-sub-menu').style.display = 'none';
+            document.getElementById('gym-sub-menu').style.display = 'none';
 
             const mainCanvas = document.getElementById('game-canvas');
             mainCanvas.classList.add('egg-wobble');
             mainCanvas.classList.remove('pet-idle-bounce');
+            mainCanvas.classList.remove('pet-sick-anim');
             mainCanvas.style.display = 'block';
 
             document.getElementById('action-msg').innerText = i18n[currentLang].eggWarming;
@@ -1540,7 +1614,6 @@
 
             const dayIdx = cestDayIndex(nowMs);
             if (dayIdx !== poopScheduleDay) { generatePoopSchedule(); poopScheduleDay = dayIdx; }
-            // --- CACCA: gli orari già passati vengono consumati insieme e producono UNA sola cacca (fix doppia pulizia) ---
             if (petStage > 0 && !isDirty) {
                 const secOfDay = cestSecondsOfDay(nowMs);
                 let pooped = false;
@@ -1586,7 +1659,7 @@
                 if (!isSleeping && totalGameSeconds % DECAY.energy === 0)    energy = Math.max(0, energy - 20);
                 if (totalGameSeconds % DECAY.fitness === 0)      fitness = Math.max(0, fitness - 20);
                 if (totalGameSeconds % DECAY.intelligence === 0) intelligence = Math.max(0, intelligence - 20);
-                // Malattia: probabilità triplicata, mai durante il sonno
+                // Malattia: 200/864000 al secondo, mai durante il sonno
                 if (!isSick && !isSleeping && Math.random() < ILLNESS_CHANCE_PER_SEC) { isSick = true; }
                 if (isSick && totalGameSeconds % 3600 === 0) { health = Math.max(0, health - 20); }
             }
@@ -1598,6 +1671,7 @@
                 if (!simulated) {
                     turnOffSleepingState();
                     document.getElementById('game-canvas').classList.remove('pet-idle-bounce');
+                    document.getElementById('game-canvas').classList.remove('pet-sick-anim');
                     document.getElementById('action-msg').innerText = i18n[currentLang].deathMsg;
                     if (gameTimer) clearInterval(gameTimer);
                 }
@@ -1635,6 +1709,7 @@
             }
             lastRealTimestamp = nowSec;
             checkStatsWarning();
+            applySickAnimClass();
             updateDisplay();
             saveGameState();
         }
@@ -1676,6 +1751,7 @@
                 mainCanvas.style.display = 'block';
                 mainCanvas.classList.add('egg-wobble');
                 mainCanvas.classList.remove('pet-idle-bounce');
+                mainCanvas.classList.remove('pet-sick-anim');
 
                 updateBadgeProfile();
                 setActionMessage(t.rebirthDone(chosenName));
@@ -1687,10 +1763,40 @@
             }, 300);
         }
 
+        function closeAllSubMenus(except) {
+            ['kitchen-sub-menu','fun-sub-menu','gym-sub-menu'].forEach(id => {
+                if (id !== except) document.getElementById(id).style.display = 'none';
+            });
+        }
+
         function toggleKitchenMenu() {
             if(isDead || petStage === 0 || inRunnerMode) return;
             const menu = document.getElementById('kitchen-sub-menu');
-            menu.style.display = menu.style.display === 'none' ? 'flex' : 'none';
+            const willShow = menu.style.display === 'none';
+            closeAllSubMenus('kitchen-sub-menu');
+            menu.style.display = willShow ? 'flex' : 'none';
+        }
+
+        function toggleFunMenu() {
+            if(isDead || petStage === 0 || inRunnerMode) return;
+            const menu = document.getElementById('fun-sub-menu');
+            const willShow = menu.style.display === 'none';
+            closeAllSubMenus('fun-sub-menu');
+            menu.style.display = willShow ? 'flex' : 'none';
+        }
+
+        function toggleGymMenu() {
+            if(isDead || petStage === 0 || inRunnerMode) return;
+            const menu = document.getElementById('gym-sub-menu');
+            const willShow = menu.style.display === 'none';
+            closeAllSubMenus('gym-sub-menu');
+            menu.style.display = willShow ? 'flex' : 'none';
+        }
+
+        function showGymRecord() {
+            if(isDead || petStage === 0) return;
+            setActionMessage(i18n[currentLang].gymRecordMsg(runnerHighScore), 3000);
+            playHappyEndSound();
         }
 
         function feedPet(type) {
@@ -1712,7 +1818,7 @@
                 const mouthOpen = (step % 2 !== 0);
                 const progress = Math.floor(step / 2);
                 playBeep(350 + (step * 50), 'square', 0.05);
-                drawPixelSprite(canvas, currentPetIndex, petStage, mouthOpen, type, progress);
+                drawPixelSprite(canvas, currentPetIndex, petStage, mouthOpen, type, progress, isSick);
                 if(step >= 6) {
                     clearInterval(eatInterval);
                     isEatingAnimation = false;
@@ -1735,7 +1841,7 @@
         function interactArea(areaName) {
             if(isDead || isEatingAnimation || isCustomAnimation) return;
             if(petStage === 0) { setActionMessage(i18n[currentLang].waitEggMsg); return; }
-            document.getElementById('kitchen-sub-menu').style.display = 'none';
+            closeAllSubMenus();
             if(inRunnerMode && areaName !== 'Palestra') stopRunner();
             if(areaName !== 'Luce' && isSleeping) { turnOffSleepingState(); }
             const canvas = document.getElementById('game-canvas');
@@ -1749,11 +1855,27 @@
                     let pStep = 0;
                     const parkInterval = setInterval(() => {
                         playBeep(400 + (pStep % 2 * 150), 'square', 0.06);
-                        drawPixelSprite(canvas, currentPetIndex, petStage, false, 'parco', pStep);
+                        drawPixelSprite(canvas, currentPetIndex, petStage, false, 'parco', pStep, isSick);
                         pStep++;
                         if(pStep > 8) {
                             clearInterval(parkInterval); isCustomAnimation = false;
                             playHappyEndSound(); setActionMessage(i18n[currentLang].parkMsg);
+                            updateDisplay(); saveGameState();
+                        }
+                    }, 250);
+                    break;
+                case 'Coccole':
+                    happiness = Math.min(100, happiness + 20);
+                    isCustomAnimation = true;
+                    let cStep = 0;
+                    const cuddleTotal = 16; // 16 x 250ms = 4 secondi
+                    const cuddleInterval = setInterval(() => {
+                        if(cStep % 2 === 0) playBeep(520 + (cStep % 4 * 40), 'sine', 0.05);
+                        drawPixelSprite(canvas, currentPetIndex, petStage, false, 'coccole', cStep, isSick);
+                        cStep++;
+                        if(cStep >= cuddleTotal) {
+                            clearInterval(cuddleInterval); isCustomAnimation = false;
+                            playHappyEndSound(); setActionMessage(i18n[currentLang].cuddleMsg);
                             updateDisplay(); saveGameState();
                         }
                     }, 250);
@@ -1765,7 +1887,7 @@
                     let bStep = 0;
                     const bathInterval = setInterval(() => {
                         playBeep(600 - (bStep * 30), 'square', 0.05);
-                        drawPixelSprite(canvas, currentPetIndex, petStage, false, 'doccia', bStep);
+                        drawPixelSprite(canvas, currentPetIndex, petStage, false, 'doccia', bStep, isSick);
                         bStep++;
                         if(bStep > 8) {
                             clearInterval(bathInterval); isCustomAnimation = false;
@@ -1782,10 +1904,11 @@
                     let infStep = 0;
                     const infInterval = setInterval(() => {
                         playBeep(500 + (infStep % 2 * 200), 'triangle', 0.08);
-                        drawPixelSprite(canvas, currentPetIndex, petStage, false, 'siringa', infStep);
+                        drawPixelSprite(canvas, currentPetIndex, petStage, false, 'siringa', infStep, false);
                         infStep++;
                         if(infStep >= 6) {
                             clearInterval(infInterval); isCustomAnimation = false;
+                            applySickAnimClass();
                             playHappyEndSound(); setActionMessage(clinicMsg);
                             updateDisplay(); saveGameState();
                         }
@@ -1807,7 +1930,7 @@
                     let sStep = 0;
                     const studyInterval = setInterval(() => {
                         playBeep(450 + (sStep % 2 * 100), 'square', 0.06);
-                        drawPixelSprite(canvas, currentPetIndex, petStage, false, 'studio', sStep);
+                        drawPixelSprite(canvas, currentPetIndex, petStage, false, 'studio', sStep, isSick);
                         sStep++;
                         if(sStep > 8) {
                             clearInterval(studyInterval); isCustomAnimation = false;
@@ -1824,6 +1947,7 @@
                     if(isSleeping) {
                         displayBox.classList.add('lights-off');
                         canvas.style.display = 'none';
+                        canvas.classList.remove('pet-sick-anim');
                         setActionMessage(i18n[currentLang].lightOffMsg);
                         if(sleepTimer) clearTimeout(sleepTimer);
                         sleepTimer = setTimeout(() => {
@@ -1831,6 +1955,7 @@
                         }, 2000);
                     } else {
                         turnOffSleepingState();
+                        applySickAnimClass();
                         setActionMessage(i18n[currentLang].lightOnMsg);
                         playHappyEndSound();
                         updateDisplay();
@@ -1959,7 +2084,7 @@
 
             if(!isEatingAnimation && !isCustomAnimation && !inRunnerMode) {
                 const canvas = document.getElementById('game-canvas');
-                drawPixelSprite(canvas, currentPetIndex, petStage);
+                drawPixelSprite(canvas, currentPetIndex, petStage, false, null, 0, isSick);
             }
 
             document.getElementById('mini-hunger').innerText = getDotsRepresentation(hunger);
@@ -2044,6 +2169,7 @@
             const mainCanvas = document.getElementById('game-canvas');
             mainCanvas.classList.remove('egg-wobble');
             mainCanvas.classList.remove('pet-idle-bounce');
+            mainCanvas.classList.remove('pet-sick-anim');
             mainCanvas.style.display = 'block';
             document.getElementById('gameplay-screen').style.display = 'none';
             document.getElementById('info-screen').style.display = 'none';
@@ -2058,6 +2184,7 @@
                 const gp = document.getElementById('gameplay-screen');
                 if (gp && gp.style.display !== 'none' && !inRunnerMode) {
                     catchUpRealTime();
+                    applySickAnimClass();
                     updateDisplay();
                     saveGameState();
                 }
