@@ -332,7 +332,6 @@
             100% { transform: rotate(0deg); }
         }
 
-        /* Animazione "malato": pet leggermente schiacciato e tremante */
         .pet-sick-anim { animation: sickSquish 1.2s infinite ease-in-out !important; }
         @keyframes sickSquish {
             0%   { transform: translateY(4px) scale(1.06, 0.88); }
@@ -340,10 +339,26 @@
             100% { transform: translateY(4px) scale(1.06, 0.88) rotate(2deg); }
         }
 
-        #runner-container { position: relative; width: 100%; height: 100px; display: none; z-index: 5; }
+        #runner-container, #race-container {
+            position: relative; width: 100%; height: 100px; display: none; z-index: 5;
+        }
+        /* Il gioco Cattura ora è molto più alto e con i controlli sotto */
+        #catch-container {
+            position: absolute; inset: 0; display: none; z-index: 7;
+            flex-direction: column; align-items: center; justify-content: flex-start;
+            background: linear-gradient(180deg,#eaf3fb 0%,#dbe9f5 100%);
+            padding: 4px;
+        }
 
-        #runner-canvas {
+        #runner-canvas, #race-canvas {
             width: 100%; height: 100%;
+            background: linear-gradient(180deg,#cfe0ea 0%,#b3ccdb 100%);
+            border: 1px solid #5f88a8;
+            border-radius: 6px;
+        }
+        #catch-canvas {
+            width: 100%;
+            flex: 1;
             background: linear-gradient(180deg,#cfe0ea 0%,#b3ccdb 100%);
             border: 1px solid #5f88a8;
             border-radius: 6px;
@@ -358,6 +373,21 @@
             text-align: center; cursor: pointer; z-index: 10;
             border-radius: 4px;
         }
+
+        /* Frecce direzionali FUORI dal rettangolo di gioco, larghe */
+        .catch-dpad {
+            width: 100%;
+            display: flex; justify-content: space-between; gap: 8px;
+            margin-top: 4px; flex-shrink: 0;
+        }
+        .catch-dpad button {
+            flex: 1; height: 40px;
+            background: linear-gradient(180deg,#7fb0c9 0%,#5a91b0 100%);
+            color: #12303d; border: 2px solid #3f7089; border-radius: 8px;
+            font-weight: bold; font-size: 1.3rem; cursor: pointer;
+            box-shadow: 0 3px 0 #3f7089;
+        }
+        .catch-dpad button:active { transform: translateY(3px); box-shadow: none; }
 
         .poop-indicator { position: absolute; right: 12px; bottom: 24px; display: none; z-index: 4; }
 
@@ -381,8 +411,8 @@
 
         .action-btn:active { transform: translateY(3px); box-shadow: none; }
 
-        .kitchen-options { display: flex; gap: 6px; width: 100%; margin-top: 4px; align-items: center; }
-        .kitchen-options .kitchen-btn { flex: 1; padding: 6px 4px; font-size: 0.6rem; }
+        .kitchen-options { display: flex; gap: 6px; width: 100%; margin-top: 4px; align-items: center; flex-wrap: wrap; }
+        .kitchen-options .kitchen-btn { flex: 1; padding: 6px 4px; font-size: 0.6rem; min-width: 40px; }
 
         .rules-content, .info-content, .settings-content {
             font-size: 0.65rem;
@@ -407,6 +437,25 @@
 
         .settings-group { border-bottom: 1px solid #c4ccd6; padding-bottom: 6px; }
         .settings-group label { font-weight: bold; display: block; margin-bottom: 4px; }
+
+        .rank-table { width: 100%; border-collapse: collapse; font-size: 0.62rem; margin-top: 4px; }
+        .rank-table th, .rank-table td { border: 1px solid #c4ccd6; padding: 2px 4px; text-align: left; }
+        .rank-table th { background: #d4ede0; }
+        .rank-row-self { background: #fff3c4; font-weight: bold; }
+
+        .race-prompt-overlay {
+            display: none; position: absolute; inset: 0; z-index: 30;
+            background: rgba(20,26,34,0.75);
+            align-items: center; justify-content: center;
+        }
+        .race-prompt-box {
+            background: linear-gradient(180deg,#f2f6f8 0%,#e4ebef 100%);
+            border: 3px solid #5f7a92; border-radius: 12px;
+            padding: 14px; width: 80%; max-width: 300px; text-align: center;
+            color: #3a4653; font-size: 0.72rem; box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+        }
+        .race-prompt-box .rp-buttons { display: flex; gap: 8px; margin-top: 12px; }
+        .race-prompt-box .rp-buttons button { flex: 1; }
 
         .color-picker-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
 
@@ -640,6 +689,12 @@
                         <svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-int"/></svg>
                         <p><b id="lbl-int">INTELLIGENZA (INT):</b> <span id="info-intelligence">○○○○○</span></p>
                     </div>
+                    <hr style="margin: 6px 0; border-color:#c4ccd6;">
+                    <p style="font-weight:bold;">🏆 CLASSIFICA GARE</p>
+                    <table class="rank-table">
+                        <thead><tr><th>#</th><th>NOME</th><th>PUNTI</th></tr></thead>
+                        <tbody id="rank-tbody"></tbody>
+                    </table>
                 </div>
                 <button class="action-btn" id="btn-back-game" onclick="hideInfo()">TORNA AL GIOCO</button>
             </div>
@@ -721,6 +776,19 @@
                             <canvas id="runner-canvas" width="200" height="80"></canvas>
                         </div>
 
+                        <div id="catch-container">
+                            <button class="close-gym-btn" onclick="event.stopPropagation(); stopCatchGame();">X</button>
+                            <canvas id="catch-canvas" width="200" height="150"></canvas>
+                            <div class="catch-dpad">
+                                <button onmousedown="event.stopPropagation(); setCatchDir(-1)" ontouchstart="event.stopPropagation(); setCatchDir(-1)" onmouseup="setCatchDir(0)" ontouchend="setCatchDir(0)" onmouseleave="setCatchDir(0)">◀</button>
+                                <button onmousedown="event.stopPropagation(); setCatchDir(1)" ontouchstart="event.stopPropagation(); setCatchDir(1)" onmouseup="setCatchDir(0)" ontouchend="setCatchDir(0)" onmouseleave="setCatchDir(0)">▶</button>
+                            </div>
+                        </div>
+
+                        <div id="race-container">
+                            <canvas id="race-canvas" width="200" height="80"></canvas>
+                        </div>
+
                         <div class="zzz-container" id="zzz-layer">
                             <div class="zzz-text">Z</div>
                             <div class="zzz-text">z</div>
@@ -730,6 +798,16 @@
                         <canvas id="poop-canvas" width="32" height="32" class="poop-indicator"></canvas>
                         
                         <div id="action-msg" style="font-size: 0.55rem; margin-top: 2px; position: relative; z-index: 3; color:#3a5f52;">L'uovo si sta scaldando...</div>
+
+                        <div id="race-prompt" class="race-prompt-overlay">
+                            <div class="race-prompt-box">
+                                <div id="race-prompt-text">C'è una gara! Vuoi partecipare?</div>
+                                <div class="rp-buttons">
+                                    <button class="action-btn" style="margin-top:0;" onclick="answerRace(true)">SÌ</button>
+                                    <button class="action-btn" style="margin-top:0; background:linear-gradient(180deg,#c47a7a,#a85a5a); box-shadow:0 3px 0 #8c4646;" onclick="answerRace(false)">NO</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="frame-bottom-bar">
@@ -769,6 +847,7 @@
                     <div id="fun-sub-menu" class="kitchen-options" style="display: none;">
                         <button class="area-btn kitchen-btn" id="btn-park-play" onclick="interactArea('Parco')">Parco</button>
                         <button class="area-btn kitchen-btn" id="btn-cuddle" onclick="interactArea('Coccole')">Coccole</button>
+                        <button class="area-btn kitchen-btn" id="btn-catch-play" onclick="startCatchGame()">Gioco</button>
                         <button class="area-btn kitchen-btn" id="btn-close-fun" onclick="toggleFunMenu()">X</button>
                     </div>
                     <div id="gym-sub-menu" class="kitchen-options" style="display: none;">
@@ -797,13 +876,12 @@
         let petCustomName = "SPIKE";
         let petGender = "M";
 
-        // ===== PALETTE 8-BIT STILE GBA (naturale/desaturata) =====
         const PET_PALETTE = [
-            { outline:"#264d3a", body:"#5a9e6e", shade:"#3f7a52", light:"#8fc99e", spot:"#2f5f42" }, // SPIKE - verde erba
-            { outline:"#2a3d5c", body:"#5a7ab0", shade:"#3f5a8a", light:"#93aed6", spot:"#33507a" }, // NIBBLE - blu acciaio
-            { outline:"#3a2f52", body:"#7a6aa0", shade:"#5a4f7f", light:"#a99cc4", spot:"#4f4270" }, // BUBBLE - viola-ardesia
-            { outline:"#5c3f24", body:"#b08a4f", shade:"#8a693a", light:"#d6b884", spot:"#6e5230" }, // PUFF - ocra/marrone
-            { outline:"#3a3320", body:"#8a8f4f", shade:"#6a6e3a", light:"#b8bc84", spot:"#565a2f" }  // DINO - verde oliva/kaki
+            { outline:"#264d3a", body:"#5a9e6e", shade:"#3f7a52", light:"#8fc99e", spot:"#2f5f42" },
+            { outline:"#2a3d5c", body:"#5a7ab0", shade:"#3f5a8a", light:"#93aed6", spot:"#33507a" },
+            { outline:"#3a2f52", body:"#7a6aa0", shade:"#5a4f7f", light:"#a99cc4", spot:"#4f4270" },
+            { outline:"#5c3f24", body:"#b08a4f", shade:"#8a693a", light:"#d6b884", spot:"#6e5230" },
+            { outline:"#3a3320", body:"#8a8f4f", shade:"#6a6e3a", light:"#b8bc84", spot:"#565a2f" }
         ];
         const EGG_COLORS = [
             { sh:"#c9c2a8", hi:"#e6e0cc", out:"#7a7458" },
@@ -817,6 +895,8 @@
         const POOP_COLOR = "#7a5228";
         const POOP_COLOR_DARK = "#5a3c1c";
         const SMOKE_COLOR = "rgba(120,124,130,0.5)";
+
+        const RIVAL_NAMES = ["ZORBO","TILLY","GROK","MIMSY","FANGO","LULU","BONK","PIXO","REXO","NUBBY","ZAZA","WOMP"];
 
         function setActionMessage(msg, delay = 2000) {
             const msgElement = document.getElementById('action-msg');
@@ -841,7 +921,7 @@
                 travelMsg: "Ti stai spostando in: ",
                 rulesTitle: "REGOLE REALI",
                 rulesBack: "TORNA ALLA SELEZIONE",
-                rulesContent: `<b>1. SCHIUSA E NASCITA:</b><p>L'uovo richiede soli 7 secondi per schiudersi! Il pet nasce con tutti i parametri vitali al 40%.</p><br><b>2. TEMPO REALE (SEMPRE ATTIVO):</b><p>Il tempo scorre anche ad app chiusa. Evoluzione: Baby→Toddler 3 giorni, Toddler→Teen 3 giorni, Teen→Adult 3 giorni. L'Adulto vive 3 giorni poi muore di vecchiaia (nuova generazione).</p><br><b>3. DECADIMENTO PARAMETRI:</b><p>Fame -20%/1h, Pulizia -20%/1h30, Felicità -20%/2h (da sveglio), Energia -20%/3h (da sveglio), Forma -20%/4h, Intelligenza -20%/3h.</p><br><b>4. CACCA E IGIENE:</b><p>Il pet fa la cacca 3 volte al giorno (7:00-22:00) e perde 3 pallini di Pulizia. La doccia rimette Pulizia al 100%.</p><br><b>5. MALATTIA E SALUTE:</b><p>Da malato: occhi a X e -20% Salute/ora. Salute a 0% = morte definitiva. Non ci si ammala dormendo.</p><br><b>6. SVAGO:</b><p>Nell'area Svago puoi scegliere Parco o Coccole. Usa [X] per uscire.</p><br><b>7. PALESTRA:</b><p>Puoi giocare al minigioco o vedere il punteggio record. Usa [X] nel minigioco per uscire.</p><br><b>8. NANNA:</b><p>Dormendo: Felicità non cala, niente malattie, Energia +20%/ora. L'evoluzione continua comunque.</p>`,
+                rulesContent: `<b>1. SCHIUSA E NASCITA:</b><p>L'uovo richiede soli 7 secondi per schiudersi! Il pet nasce con tutti i parametri vitali al 40%.</p><br><b>2. TEMPO REALE (SEMPRE ATTIVO):</b><p>Il tempo scorre anche ad app chiusa. Evoluzione: Baby→Toddler 3 giorni, Toddler→Teen 3 giorni, Teen→Adult 3 giorni.</p><br><b>3. DECADIMENTO PARAMETRI:</b><p>Fame -20%/1h, Pulizia -20%/1h30, Felicità -20%/2h (da sveglio), Energia -20%/3h (da sveglio), Forma -20%/4h, Intelligenza -20%/3h.</p><br><b>4. CACCA E IGIENE:</b><p>Il pet fa la cacca 3 volte al giorno e perde 3 pallini di Pulizia. La doccia rimette Pulizia al 100%.</p><br><b>5. MALATTIA:</b><p>Da malato: occhi a X e -20% Salute/ora. Non ci si ammala dormendo.</p><br><b>6. SVAGO:</b><p>Parco, Coccole o il Gioco cattura-oggetti. Usa [X] per uscire.</p><br><b>7. PALESTRA:</b><p>Gioca al minigioco o vedi il record.</p><br><b>8. GARE:</b><p>Ogni 2 giorni puoi partecipare a una gara. Vinci se la Forma è al 95-100%, altrimenti è casuale. Guarda la classifica in INFO (tutti partono da 0).</p><br><b>9. NANNA:</b><p>Dormendo: Felicità non cala, niente malattie, Energia +20%/ora.</p>`,
                 infoTitle: "INFORMAZIONI PET",
                 infoBack: "TORNA AL GIOCO",
                 lblName: "NOME:", lblGender: "GENERE:", lblGen: "GENERAZIONE:", lblAge: "ETÀ:", lblDays: "giorni", lblStage: "STADIO:",
@@ -868,6 +948,13 @@
                 lightOffMsg: "Luce spenta. Addormentamento...", lightRestMsg: "Luce spenta. Riposo in corso...", lightOnMsg: "Luce riaccesa!",
                 gymMsg: "PALESTRA! Salta i cactus [TAP/SPAZIO]", gymExitMsg: "Uscito dalla Palestra.",
                 gymRecordMsg: (hi) => `PUNTEGGIO RECORD: ${hi}`,
+                racePrompt: (rival) => `C'è una gara contro ${rival}! Vuoi partecipare?`,
+                raceDeclined: "Gara rifiutata! Forma -20%, scendi in classifica.",
+                raceWin: (rival) => `Hai battuto ${rival}! Felicità +2, +2 punti!`,
+                raceLose: (rival) => `${rival} ti ha battuto! Felicità -2.`,
+                raceDraw: (rival) => `Pareggio con ${rival}! +1 punto.`,
+                catchMsg: "GIOCO! Prendi il buono, evita il cattivo! ◀ ▶",
+                catchOverMsg: (s) => `GIOCO FINITO! Punti: ${s}`,
                 genderM: "♂ MASCHIO", genderF: "♀ FEMMINA",
                 bgNone: "VUOTO", bgSea: "MARE", bgForest: "BOSCO", bgCity: "CITTÀ", bgSky: "CIELO", bgSpace: "SPAZIO"
             },
@@ -881,7 +968,7 @@
                 travelMsg: "Moving to: ",
                 rulesTitle: "REAL RULES",
                 rulesBack: "BACK TO SELECTION",
-                rulesContent: `<b>1. HATCHING & BIRTH:</b><p>The egg takes only 7 seconds to hatch! The pet is born with all vital stats at 40%.</p><br><b>2. REAL TIME (ALWAYS RUNNING):</b><p>Time runs even when the app is closed. Evolution: Baby→Toddler 3 days, Toddler→Teen 3 days, Teen→Adult 3 days. The Adult lives 3 days then dies of old age (new generation).</p><br><b>3. STAT DECAY:</b><p>Hunger -20%/1h, Cleanliness -20%/1h30, Happiness -20%/2h (awake), Energy -20%/3h (awake), Fitness -20%/4h, Intelligence -20%/3h.</p><br><b>4. POOP & HYGIENE:</b><p>The pet poops 3 times a day (7:00-22:00) and loses 3 Cleanliness dots. Shower restores Cleanliness to 100%.</p><br><b>5. ILLNESS & HEALTH:</b><p>When sick: X eyes and -20% Health/hour. Health at 0% = permanent death. No illness while sleeping.</p><br><b>6. FUN:</b><p>In the Fun area choose Park or Cuddles. Use [X] to exit.</p><br><b>7. GYM:</b><p>Play the minigame or view the high score. Use [X] in the minigame to exit.</p><br><b>8. NAP:</b><p>While sleeping: Happiness doesn't drop, no illness, Energy +20%/hour. Evolution still continues.</p>`,
+                rulesContent: `<b>1. HATCHING:</b><p>The egg hatches in 7 seconds! Born with all vital stats at 40%.</p><br><b>2. REAL TIME:</b><p>Time runs even when closed. Evolution every 3 days.</p><br><b>3. STAT DECAY:</b><p>Hunger -20%/1h, Cleanliness -20%/1h30, Happiness -20%/2h, Energy -20%/3h, Fitness -20%/4h, Intelligence -20%/3h.</p><br><b>4. POOP:</b><p>Poops 3 times/day, -3 Cleanliness dots. Shower restores it.</p><br><b>5. ILLNESS:</b><p>When sick: X eyes and -20% Health/hour. No illness while sleeping.</p><br><b>6. FUN:</b><p>Park, Cuddles or the catch mini-game. Use [X] to exit.</p><br><b>7. GYM:</b><p>Play or view the high score.</p><br><b>8. RACES:</b><p>Every 2 days you can race. You win if Fitness is 95-100%, otherwise random. See ranking in INFO (all start at 0).</p><br><b>9. NAP:</b><p>Sleeping: no happiness loss, no illness, Energy +20%/hour.</p>`,
                 infoTitle: "PET INFORMATION",
                 infoBack: "BACK TO GAME",
                 lblName: "NAME:", lblGender: "GENDER:", lblGen: "GENERATION:", lblAge: "AGE:", lblDays: "days", lblStage: "STAGE:",
@@ -908,6 +995,13 @@
                 lightOffMsg: "Lights off. Falling asleep...", lightRestMsg: "Lights off. Resting...", lightOnMsg: "Lights back on!",
                 gymMsg: "GYM! Jump over cacti [TAP/SPACE]", gymExitMsg: "Left the Gym.",
                 gymRecordMsg: (hi) => `HIGH SCORE: ${hi}`,
+                racePrompt: (rival) => `A race against ${rival}! Do you want to join?`,
+                raceDeclined: "Race declined! Fitness -20%, ranking down.",
+                raceWin: (rival) => `You beat ${rival}! Happiness +2, +2 points!`,
+                raceLose: (rival) => `${rival} beat you! Happiness -2.`,
+                raceDraw: (rival) => `Draw with ${rival}! +1 point.`,
+                catchMsg: "GAME! Catch the good, dodge the bad! ◀ ▶",
+                catchOverMsg: (s) => `GAME OVER! Score: ${s}`,
                 genderM: "♂ MALE", genderF: "♀ FEMALE",
                 bgNone: "EMPTY", bgSea: "SEA", bgForest: "FOREST", bgCity: "CITY", bgSky: "SKY", bgSpace: "SPACE"
             }
@@ -1131,6 +1225,11 @@
             const notes = [523.25, 659.25, 783.99, 1046.50];
             notes.forEach((freq, idx) => { setTimeout(() => playBeep(freq, 'square', 0.1), idx * 80); });
         }
+        function playSadSound() {
+            initAudio();
+            const notes = [392, 349.23, 293.66];
+            notes.forEach((freq, idx) => { setTimeout(() => playBeep(freq, 'square', 0.12), idx * 100); });
+        }
 
         let alarmPlayedThisWarning = false;
         function playAlarmSound3Sec() {
@@ -1167,12 +1266,23 @@
         let runnerSpeed = 3, minObstacleDistance = 90;
         let poopSchedule = [], poopDoneToday = [false, false, false], poopScheduleDay = -1;
 
+        // ===== GARE / CLASSIFICA =====
+        let leaderboard = [];
+        let myRacePoints = 0;
+        let lastRaceDay = -1;       // ultimo blocco-gara gestito (assegnazione punti avversari + prompt)
+        let raceActive = false;
+        let currentRival = "";
+
+        // ===== GIOCO CATTURA =====
+        let inCatchMode = false, catchAnimId = null;
+        let catchPetX = 92, catchDir = 0;
+        let catchItems = [], catchBadCount = 0, catchScore = 0;
+        let catchSpeed = 1.1, catchSpawnTimer = 0, catchFrame = 0;
+
         const stageNames = ["EGG", "BABY", "TODDLER", "TEEN", "ADULT", "DEAD"];
         const DECAY = { hunger: 3600, cleanliness: 5400, happiness: 7200, energy: 10800, fitness: 14400, intelligence: 10800 };
         const SECONDS_PER_DAY = 86400;
-        // Probabilità malattia: 200/864000 (mai durante il sonno)
         const ILLNESS_CHANCE_PER_SEC = 200 / 864000;
-        // Cacca: perdita di 3 pallini di pulizia (3 x 20% = 60%)
         const POOP_CLEANLINESS_LOSS = 60;
 
         function cestSecondsOfDay(epochMs) { const cestMs = epochMs + 2 * 3600 * 1000; return Math.floor((cestMs / 1000) % SECONDS_PER_DAY); }
@@ -1189,6 +1299,12 @@
             poopDoneToday = [false, false, false];
         }
 
+        // 9 avversari, tutti partono da ZERO punti
+        function generateLeaderboard() {
+            const names = [...RIVAL_NAMES].sort(() => Math.random() - 0.5).slice(0, 9);
+            leaderboard = names.map(n => ({ name: n, points: 0 }));
+        }
+
         function saveGameState() {
             const gameState = {
                 currentPetIndex, petCustomName, petGender, petStage,
@@ -1197,7 +1313,9 @@
                 isDirty, isSick, isDead, isSleeping,
                 poopSchedule, poopDoneToday, poopScheduleDay,
                 currentLang, currentShellColor, currentBgStyle,
-                alarmPlayedThisWarning, gameActive: true
+                alarmPlayedThisWarning,
+                leaderboard, myRacePoints, lastRaceDay,
+                gameActive: true
             };
             localStorage.setItem('dinomio_save', JSON.stringify(gameState));
         }
@@ -1228,6 +1346,11 @@
                 currentShellColor = state.currentShellColor || 'default';
                 currentBgStyle = state.currentBgStyle || 'none';
                 alarmPlayedThisWarning = state.alarmPlayedThisWarning || false;
+                leaderboard = (state.leaderboard && state.leaderboard.length) ? state.leaderboard : [];
+                myRacePoints = state.myRacePoints || 0;
+                lastRaceDay = state.lastRaceDay !== undefined ? state.lastRaceDay : -1;
+
+                if (leaderboard.length === 0) generateLeaderboard();
 
                 setShellColor(currentShellColor);
                 setBackgroundStyle(currentBgStyle);
@@ -1263,6 +1386,7 @@
 
                 catchUpRealTime();
                 updateDisplay();
+                maybeShowRacePrompt();
 
                 if(gameTimer) clearInterval(gameTimer);
                 gameTimer = setInterval(gameLoop, 1000);
@@ -1277,7 +1401,6 @@
             document.getElementById('badge-pet-gender').innerText = petGender === 'M' ? '♂' : '♀';
         }
 
-        // Applica/rimuove l'animazione "schiacciato" quando malato (solo da schiuso e sveglio)
         function applySickAnimClass() {
             const mainCanvas = document.getElementById('game-canvas');
             if (!mainCanvas) return;
@@ -1292,7 +1415,6 @@
             }
         }
 
-        // ---- CACCA MARRONE 8-BIT CON FUMETTO ----
         function drawPoopSprite(animFrame = 0) {
             const canvas = document.getElementById('poop-canvas');
             if (!canvas) return;
@@ -1322,7 +1444,6 @@
             }
         }
 
-        // ---- SPRITE 8-BIT STILE GBA. sick=true => occhi a X + corpo schiacciato ----
         function drawPixelSprite(canvasId, type, stage, mouthOpen = false, overlayItem = null, animFrame = 0, sick = false) {
             const canvas = typeof canvasId === 'string' ? document.getElementById(canvasId) : canvasId;
             if(!canvas) return;
@@ -1331,7 +1452,7 @@
             ctx.imageSmoothingEnabled = false;
 
             const pal = PET_PALETTE[type] || PET_PALETTE[0];
-            const squish = (sick && stage > 0 && stage < 5); // schiacciato a terra da malato
+            const squish = (sick && stage > 0 && stage < 5);
 
             function px(x, y, w, h, c) { ctx.fillStyle = c; ctx.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h)); }
 
@@ -1340,21 +1461,18 @@
                 const x = Math.round(cx - r);
                 const y = Math.round(cy - r);
                 const cut = Math.max(1, Math.round(r * 0.28));
-
                 px(x - 1, y + cut, s + 2, s - cut*2 + 2, pal.outline);
                 px(x + cut - 1, y - 1, s - cut*2 + 2, s + 2, pal.outline);
                 px(x + cut - 1, y + cut - 1, 2, 2, pal.outline);
                 px(x + s - cut - 1, y + cut - 1, 2, 2, pal.outline);
                 px(x + cut - 1, y + s - cut - 1, 2, 2, pal.outline);
                 px(x + s - cut - 1, y + s - cut - 1, 2, 2, pal.outline);
-
                 px(x, y + cut, s, s - cut*2, pal.body);
                 px(x + cut, y, s - cut*2, s, pal.body);
                 px(x + cut, y + cut, cut, cut, pal.body);
                 px(x + s - cut*2, y + cut, cut, cut, pal.body);
                 px(x + cut, y + s - cut*2, cut, cut, pal.body);
                 px(x + s - cut*2, y + s - cut*2, cut, cut, pal.body);
-
                 px(x + cut, y + cut, Math.max(1, Math.round(s*0.28)), Math.max(1, Math.round(s*0.18)), pal.light);
                 px(x + cut, y + s - Math.max(2, Math.round(s*0.22)), s - cut*2, Math.max(1, Math.round(s*0.18)), pal.shade);
             }
@@ -1417,7 +1535,7 @@
                 if (sick) {
                     drawXEye(cx - eyeDX, eyeY, r*0.34);
                     drawXEye(cx + eyeDX, eyeY, r*0.34);
-                    px(cx - 2, cy + r*0.36, 4, 1, EYE_COLOR); // boccuccia
+                    px(cx - 2, cy + r*0.36, 4, 1, EYE_COLOR);
                     return;
                 }
                 px(cx - eyeDX - eSize/2, eyeY - eSize/2, eSize, eSize, EYE_COLOR);
@@ -1535,7 +1653,6 @@
                 px(24,20,1,8,"#6a4f2f");
                 if(animFrame % 2 === 0) px(23,22,2,4,"#8a6a42");
             }
-            // COCCOLE: mano che accarezza + cuore che pulsa
             if(overlayItem === 'coccole') {
                 const handX = 1 + (animFrame % 3) * 2;
                 px(handX, cy - 2, 5, 4, "#e0b48a");
@@ -1575,6 +1692,9 @@
 
             generatePoopSchedule();
             poopScheduleDay = cestDayIndex(Date.now());
+            generateLeaderboard();
+            myRacePoints = 0;
+            lastRaceDay = 0; // blocco-gara iniziale già "gestito"
             stopRunner();
 
             document.getElementById('selection-screen').style.display = 'none';
@@ -1659,7 +1779,6 @@
                 if (!isSleeping && totalGameSeconds % DECAY.energy === 0)    energy = Math.max(0, energy - 20);
                 if (totalGameSeconds % DECAY.fitness === 0)      fitness = Math.max(0, fitness - 20);
                 if (totalGameSeconds % DECAY.intelligence === 0) intelligence = Math.max(0, intelligence - 20);
-                // Malattia: 200/864000 al secondo, mai durante il sonno
                 if (!isSick && !isSleeping && Math.random() < ILLNESS_CHANCE_PER_SEC) { isSick = true; }
                 if (isSick && totalGameSeconds % 3600 === 0) { health = Math.max(0, health - 20); }
             }
@@ -1695,7 +1814,7 @@
         }
 
         function gameLoop() {
-            if(inRunnerMode) return;
+            if(inRunnerMode || inCatchMode || raceActive) return;
             if(isDead) return;
             poopSmokeFrame++;
             const nowSec = Math.floor(Date.now() / 1000);
@@ -1711,6 +1830,7 @@
             checkStatsWarning();
             applySickAnimClass();
             updateDisplay();
+            maybeShowRacePrompt();
             saveGameState();
         }
 
@@ -1746,6 +1866,9 @@
 
                 generatePoopSchedule();
                 poopScheduleDay = cestDayIndex(Date.now());
+                generateLeaderboard();
+                myRacePoints = 0;
+                lastRaceDay = 0;
 
                 const mainCanvas = document.getElementById('game-canvas');
                 mainCanvas.style.display = 'block';
@@ -1763,6 +1886,162 @@
             }, 300);
         }
 
+        // ===== GARE =====
+        // Gli avversari ricevono punti UNA sola volta per blocco-gara (ogni 2 giorni).
+        function awardRivalRacePoints() {
+            if (!leaderboard || leaderboard.length === 0) return;
+            leaderboard.forEach(r => {
+                const res = Math.random();
+                if (res < 0.45) r.points += 2;        // vittoria
+                else if (res < 0.55) r.points += 1;   // pareggio
+                // sconfitta: +0
+            });
+        }
+
+        function raceDayIndex() {
+            // "una volta ogni due giorni"
+            return Math.floor(totalGameSeconds / (SECONDS_PER_DAY * 2));
+        }
+
+        function maybeShowRacePrompt() {
+            if (isDead || petStage === 0 || petStage === 5 || isSleeping) return;
+            if (raceActive || inRunnerMode || inCatchMode) return;
+            const rd = raceDayIndex();
+            if (rd > lastRaceDay) {
+                lastRaceDay = rd;
+                // Gli avversari guadagnano punti SOLO ora (una volta ogni 2 giorni)
+                awardRivalRacePoints();
+                currentRival = RIVAL_NAMES[Math.floor(Math.random() * RIVAL_NAMES.length)];
+                document.getElementById('race-prompt-text').innerText = i18n[currentLang].racePrompt(currentRival);
+                document.getElementById('race-prompt').style.display = 'flex';
+                playSyncopatedEggBeep();
+                saveGameState();
+            }
+        }
+
+        function answerRace(accepted) {
+            document.getElementById('race-prompt').style.display = 'none';
+            if (!accepted) {
+                fitness = Math.max(0, fitness - 20);
+                myRacePoints = Math.max(0, myRacePoints - 1);
+                playSadSound();
+                setActionMessage(i18n[currentLang].raceDeclined, 2500);
+                updateDisplay();
+                saveGameState();
+                return;
+            }
+            startRaceAnimation();
+        }
+
+        function startRaceAnimation() {
+            raceActive = true;
+            document.getElementById('game-canvas').style.display = 'none';
+            document.getElementById('race-container').style.display = 'block';
+
+            let outcome;
+            if (fitness >= 95) outcome = 'win';
+            else {
+                const r = Math.random();
+                if (r < 0.45) outcome = 'win';
+                else if (r < 0.90) outcome = 'lose';
+                else outcome = 'draw';
+            }
+
+            const canvas = document.getElementById('race-canvas');
+            const ctx = canvas.getContext('2d');
+            const pal = PET_PALETTE[currentPetIndex] || PET_PALETTE[0];
+            const rivalPal = PET_PALETTE[Math.floor(Math.random() * PET_PALETTE.length)];
+
+            const durationMs = 10000;
+            const start = Date.now();
+            const finishX = 176;
+            const startX = 8;
+            let raceRAF = null;
+
+            function draw() {
+                const elapsed = Date.now() - start;
+                const p = Math.min(1, elapsed / durationMs);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = "#5a8a4e"; ctx.fillRect(0, 62, canvas.width, 18);
+                ctx.fillStyle = "#3f7a42"; ctx.fillRect(0, 62, canvas.width, 2);
+                for (let y = 20; y < 62; y += 6) {
+                    ctx.fillStyle = (Math.floor(y/6) % 2 === 0) ? "#3a4653" : "#e4ebef";
+                    ctx.fillRect(finishX + 6, y, 4, 6);
+                }
+
+                let myP = p, rivalP = p;
+                if (outcome === 'win') { myP = Math.min(1, p * 1.05); rivalP = p * 0.92; }
+                else if (outcome === 'lose') { myP = p * 0.92; rivalP = Math.min(1, p * 1.05); }
+                const bob = Math.sin(elapsed / 90) * 2;
+
+                const myX = startX + myP * (finishX - startX);
+                const rivalX = startX + rivalP * (finishX - startX);
+
+                drawMiniRacer(ctx, myX, 30 + bob, pal);
+                drawMiniRacer(ctx, rivalX, 48 - bob, rivalPal);
+
+                ctx.fillStyle = "#3a4653"; ctx.font = '8px "Courier New"';
+                ctx.fillText(petCustomName, 4, 12);
+                ctx.fillText(currentRival, 100, 12);
+
+                if (elapsed < durationMs) {
+                    raceRAF = requestAnimationFrame(draw);
+                } else {
+                    finishRace(outcome);
+                }
+            }
+            draw();
+            playSyncopatedEggBeep();
+        }
+
+        function drawMiniRacer(ctx, x, y, pal) {
+            ctx.fillStyle = pal.outline; ctx.fillRect(x-1, y-1, 14, 14);
+            ctx.fillStyle = pal.body; ctx.fillRect(x, y, 12, 12);
+            ctx.fillStyle = pal.light; ctx.fillRect(x+2, y+2, 4, 3);
+            ctx.fillStyle = EYE_COLOR; ctx.fillRect(x+8, y+4, 2, 2);
+        }
+
+        function finishRace(outcome) {
+            raceActive = false;
+            document.getElementById('race-container').style.display = 'none';
+            if (!isDead) document.getElementById('game-canvas').style.display = 'block';
+
+            const t = i18n[currentLang];
+            if (outcome === 'win') {
+                happiness = Math.min(100, happiness + 40);
+                myRacePoints += 2;
+                playHappyEndSound();
+                setActionMessage(t.raceWin(currentRival), 3000);
+            } else if (outcome === 'lose') {
+                happiness = Math.max(0, happiness - 40);
+                playSadSound();
+                setActionMessage(t.raceLose(currentRival), 3000);
+            } else {
+                myRacePoints += 1;
+                setActionMessage(t.raceDraw(currentRival), 3000);
+            }
+            lastRealTimestamp = Math.floor(Date.now() / 1000);
+            applySickAnimClass();
+            updateDisplay();
+            saveGameState();
+        }
+
+        function renderLeaderboard() {
+            const tbody = document.getElementById('rank-tbody');
+            if (!tbody) return;
+            const all = leaderboard.map(r => ({ name: r.name, points: r.points, self: false }));
+            all.push({ name: petCustomName, points: myRacePoints, self: true });
+            all.sort((a, b) => b.points - a.points);
+            tbody.innerHTML = "";
+            all.forEach((row, i) => {
+                const tr = document.createElement('tr');
+                if (row.self) tr.className = 'rank-row-self';
+                tr.innerHTML = `<td>${i+1}</td><td>${row.name}</td><td>${row.points}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
         function closeAllSubMenus(except) {
             ['kitchen-sub-menu','fun-sub-menu','gym-sub-menu'].forEach(id => {
                 if (id !== except) document.getElementById(id).style.display = 'none';
@@ -1770,7 +2049,7 @@
         }
 
         function toggleKitchenMenu() {
-            if(isDead || petStage === 0 || inRunnerMode) return;
+            if(isDead || petStage === 0 || inRunnerMode || inCatchMode || raceActive) return;
             const menu = document.getElementById('kitchen-sub-menu');
             const willShow = menu.style.display === 'none';
             closeAllSubMenus('kitchen-sub-menu');
@@ -1778,7 +2057,7 @@
         }
 
         function toggleFunMenu() {
-            if(isDead || petStage === 0 || inRunnerMode) return;
+            if(isDead || petStage === 0 || inRunnerMode || inCatchMode || raceActive) return;
             const menu = document.getElementById('fun-sub-menu');
             const willShow = menu.style.display === 'none';
             closeAllSubMenus('fun-sub-menu');
@@ -1786,7 +2065,7 @@
         }
 
         function toggleGymMenu() {
-            if(isDead || petStage === 0 || inRunnerMode) return;
+            if(isDead || petStage === 0 || inRunnerMode || inCatchMode || raceActive) return;
             const menu = document.getElementById('gym-sub-menu');
             const willShow = menu.style.display === 'none';
             closeAllSubMenus('gym-sub-menu');
@@ -1800,7 +2079,7 @@
         }
 
         function feedPet(type) {
-            if(isEatingAnimation || isCustomAnimation || isDead || petStage === 0 || inRunnerMode) return;
+            if(isEatingAnimation || isCustomAnimation || isDead || petStage === 0 || inRunnerMode || inCatchMode || raceActive) return;
             isEatingAnimation = true;
             if(isSleeping) turnOffSleepingState();
             let step = 0;
@@ -1839,10 +2118,11 @@
         }
 
         function interactArea(areaName) {
-            if(isDead || isEatingAnimation || isCustomAnimation) return;
+            if(isDead || isEatingAnimation || isCustomAnimation || raceActive) return;
             if(petStage === 0) { setActionMessage(i18n[currentLang].waitEggMsg); return; }
             closeAllSubMenus();
             if(inRunnerMode && areaName !== 'Palestra') stopRunner();
+            if(inCatchMode) stopCatchGame();
             if(areaName !== 'Luce' && isSleeping) { turnOffSleepingState(); }
             const canvas = document.getElementById('game-canvas');
 
@@ -1868,7 +2148,7 @@
                     happiness = Math.min(100, happiness + 20);
                     isCustomAnimation = true;
                     let cStep = 0;
-                    const cuddleTotal = 16; // 16 x 250ms = 4 secondi
+                    const cuddleTotal = 16;
                     const cuddleInterval = setInterval(() => {
                         if(cStep % 2 === 0) playBeep(520 + (cStep % 4 * 40), 'sine', 0.05);
                         drawPixelSprite(canvas, currentPetIndex, petStage, false, 'coccole', cStep, isSick);
@@ -1965,6 +2245,7 @@
             }
         }
 
+        // ===== PALESTRA RUNNER (più lento) =====
         function startRunnerMode() {
             inRunnerMode = true;
             document.getElementById('game-canvas').style.display = 'none';
@@ -1972,7 +2253,7 @@
             setActionMessage(i18n[currentLang].gymMsg);
             runnerPetY = 0; runnerVY = 0; runnerJumping = false;
             runnerObstacles = []; runnerScore = 0;
-            runnerSpeed = 3; minObstacleDistance = 90;
+            runnerSpeed = 2; minObstacleDistance = 110;
             window.addEventListener('keydown', handleRunnerInput);
             runnerLoop();
         }
@@ -2010,8 +2291,8 @@
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            runnerSpeed = 3 + Math.floor(runnerScore / 50) * 0.5;
-            minObstacleDistance = 90 + Math.floor(runnerScore / 50) * 10;
+            runnerSpeed = 2 + Math.floor(runnerScore / 80) * 0.35;
+            minObstacleDistance = 110 + Math.floor(runnerScore / 80) * 8;
 
             runnerPetY += runnerVY;
             runnerVY += 0.5;
@@ -2075,6 +2356,133 @@
             runnerAnimId = requestAnimationFrame(runnerLoop);
         }
 
+        // ===== GIOCO CATTURA (area alta, controlli fuori dal rettangolo) =====
+        function setCatchDir(d) { catchDir = d; }
+
+        function startCatchGame() {
+            if(isDead || petStage === 0 || inRunnerMode || raceActive) return;
+            closeAllSubMenus();
+            if(isSleeping) turnOffSleepingState();
+            inCatchMode = true;
+            document.getElementById('game-canvas').style.display = 'none';
+            document.getElementById('catch-container').style.display = 'flex';
+            setActionMessage(i18n[currentLang].catchMsg, 2500);
+            const canvas = document.getElementById('catch-canvas');
+            catchPetX = Math.floor(canvas.width / 2) - 8; catchDir = 0;
+            catchItems = []; catchBadCount = 0; catchScore = 0;
+            catchSpeed = 1.1; catchSpawnTimer = 0; catchFrame = 0;
+            catchLoop();
+        }
+
+        function stopCatchGame() {
+            if(!inCatchMode) { document.getElementById('catch-container').style.display = 'none'; return; }
+            inCatchMode = false;
+            if(catchAnimId) cancelAnimationFrame(catchAnimId);
+            document.getElementById('catch-container').style.display = 'none';
+            if(!isSleeping && !isDead) { document.getElementById('game-canvas').style.display = 'block'; }
+            lastRealTimestamp = Math.floor(Date.now() / 1000);
+            setActionMessage(i18n[currentLang].catchOverMsg(catchScore), 3000);
+            saveGameState();
+        }
+
+        function drawCatchItem(ctx, it) {
+            const x = it.x, y = it.y;
+            if (it.kind === 'meat') {
+                ctx.fillStyle = "#c98a4a"; ctx.fillRect(x, y, 8, 6);
+                ctx.fillStyle = "#f2f2f2"; ctx.fillRect(x+6, y+5, 3, 4);
+            } else if (it.kind === 'candy') {
+                ctx.fillStyle = "#f27fb0"; ctx.fillRect(x+2, y, 6, 6);
+                ctx.fillRect(x, y+1, 2, 4); ctx.fillRect(x+8, y+1, 2, 4);
+            } else if (it.kind === 'heart') {
+                ctx.fillStyle = "#e0506a";
+                ctx.fillRect(x, y, 3, 3); ctx.fillRect(x+5, y, 3, 3);
+                ctx.fillRect(x, y+3, 8, 3); ctx.fillRect(x+2, y+6, 4, 2);
+            } else if (it.kind === 'star') {
+                ctx.fillStyle = "#ffd54a";
+                ctx.fillRect(x+3, y, 2, 8); ctx.fillRect(x, y+3, 8, 2);
+            } else if (it.kind === 'arrow') {
+                ctx.fillStyle = "#4a4f56";
+                ctx.fillRect(x+3, y, 2, 8); ctx.fillRect(x+1, y+2, 6, 2);
+            } else if (it.kind === 'skull') {
+                ctx.fillStyle = "#d6d6de"; ctx.fillRect(x, y, 8, 6);
+                ctx.fillStyle = "#2a2a2a"; ctx.fillRect(x+1, y+2, 2, 2); ctx.fillRect(x+5, y+2, 2, 2);
+                ctx.fillStyle = "#d6d6de"; ctx.fillRect(x+2, y+6, 4, 2);
+            } else if (it.kind === 'poop') {
+                ctx.fillStyle = POOP_COLOR; ctx.fillRect(x, y+4, 8, 4); ctx.fillRect(x+2, y+1, 4, 3);
+            }
+        }
+
+        const CATCH_GOOD = ['meat','candy','heart','star'];
+        const CATCH_BAD = ['arrow','skull','poop'];
+
+        function catchLoop() {
+            if(!inCatchMode) return;
+            const canvas = document.getElementById('catch-canvas');
+            const ctx = canvas.getContext('2d');
+            const W = canvas.width, H = canvas.height;
+            ctx.clearRect(0, 0, W, H);
+            catchFrame++;
+
+            // accelerazione dolce col punteggio (rallentata perché l'area è più alta)
+            catchSpeed = 1.0 + Math.min(1.3, catchScore * 0.025);
+
+            ctx.fillStyle = "#5a8a4e"; ctx.fillRect(0, H-10, W, 10);
+
+            catchPetX += catchDir * 3.4;
+            if (catchPetX < 4) catchPetX = 4;
+            if (catchPetX > W - 20) catchPetX = W - 20;
+
+            const pal = PET_PALETTE[currentPetIndex] || PET_PALETTE[0];
+            const py = H - 26;
+            ctx.fillStyle = pal.outline; ctx.fillRect(catchPetX-1, py-1, 18, 18);
+            ctx.fillStyle = pal.body; ctx.fillRect(catchPetX, py, 16, 16);
+            ctx.fillStyle = pal.light; ctx.fillRect(catchPetX+2, py+2, 5, 4);
+            ctx.fillStyle = EYE_COLOR; ctx.fillRect(catchPetX+5, py+6, 2, 2); ctx.fillRect(catchPetX+10, py+6, 2, 2);
+
+            catchSpawnTimer++;
+            const spawnEvery = Math.max(26, 52 - Math.floor(catchScore / 2));
+            if (catchSpawnTimer >= spawnEvery) {
+                catchSpawnTimer = 0;
+                const isGood = Math.random() < 0.62;
+                const kind = isGood
+                    ? CATCH_GOOD[Math.floor(Math.random() * CATCH_GOOD.length)]
+                    : CATCH_BAD[Math.floor(Math.random() * CATCH_BAD.length)];
+                catchItems.push({ x: Math.floor(Math.random() * (W - 14)) + 2, y: -8, kind, good: isGood });
+            }
+
+            for (let i = catchItems.length - 1; i >= 0; i--) {
+                const it = catchItems[i];
+                it.y += catchSpeed + 0.5;
+                drawCatchItem(ctx, it);
+
+                if (it.y + 8 >= py && it.y <= py + 16 && it.x + 8 >= catchPetX && it.x <= catchPetX + 16) {
+                    if (it.good) {
+                        catchScore++;
+                        playBeep(700, 'square', 0.05);
+                    } else {
+                        catchBadCount++;
+                        playBeep(160, 'sawtooth', 0.12);
+                    }
+                    catchItems.splice(i, 1);
+                    continue;
+                }
+                if (it.y > H) catchItems.splice(i, 1);
+            }
+
+            ctx.fillStyle = "#3a4653"; ctx.font = '9px "Courier New"';
+            ctx.fillText(`PT:${catchScore}  X:${catchBadCount}/3`, 4, 12);
+
+            if (catchBadCount >= 3) {
+                playSadSound();
+                if (catchScore > 0) happiness = Math.min(100, happiness + Math.min(40, catchScore * 4));
+                stopCatchGame();
+                updateDisplay();
+                return;
+            }
+
+            catchAnimId = requestAnimationFrame(catchLoop);
+        }
+
         function updateDisplay() {
             const poopCanvas = document.getElementById('poop-canvas');
             if (isDirty) { poopCanvas.style.display = 'block'; drawPoopSprite(poopSmokeFrame); }
@@ -2082,7 +2490,7 @@
 
             document.getElementById('sick-tag').style.display = isSick ? 'block' : 'none';
 
-            if(!isEatingAnimation && !isCustomAnimation && !inRunnerMode) {
+            if(!isEatingAnimation && !isCustomAnimation && !inRunnerMode && !inCatchMode && !raceActive) {
                 const canvas = document.getElementById('game-canvas');
                 drawPixelSprite(canvas, currentPetIndex, petStage, false, null, 0, isSick);
             }
@@ -2096,7 +2504,6 @@
             document.getElementById('mini-intelligence').innerText = getDotsRepresentation(intelligence);
         }
 
-        /* 5 pallini: 0-<20=1, 20-<40=2, 40-<60=3, 60-<80=4, 80-100=5 */
         function getDotsRepresentation(val) {
             const v = Math.round(val);
             if (v >= 80) return '●●●●●';
@@ -2121,6 +2528,7 @@
             document.getElementById('info-energy').innerText = getDotsRepresentation(energy);
             document.getElementById('info-fitness').innerText = getDotsRepresentation(fitness);
             document.getElementById('info-intelligence').innerText = getDotsRepresentation(intelligence);
+            renderLeaderboard();
             document.getElementById('gameplay-screen').style.display = 'none';
             document.getElementById('info-screen').style.display = 'flex';
         }
@@ -2160,10 +2568,15 @@
 
         function resetGame() {
             stopRunner();
+            if(inCatchMode) stopCatchGame();
             if(gameTimer) clearInterval(gameTimer);
             turnOffSleepingState();
+            document.getElementById('race-prompt').style.display = 'none';
+            raceActive = false;
+            document.getElementById('race-container').style.display = 'none';
             clearGameState();
             generation = 1; isDead = false; alarmPlayedThisWarning = false;
+            leaderboard = []; myRacePoints = 0; lastRaceDay = -1;
             currentBgStyle = 'none';
             setBackgroundStyle('none');
             const mainCanvas = document.getElementById('game-canvas');
@@ -2182,10 +2595,11 @@
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden && !isDead && petStage !== undefined) {
                 const gp = document.getElementById('gameplay-screen');
-                if (gp && gp.style.display !== 'none' && !inRunnerMode) {
+                if (gp && gp.style.display !== 'none' && !inRunnerMode && !inCatchMode && !raceActive) {
                     catchUpRealTime();
                     applySickAnimClass();
                     updateDisplay();
+                    maybeShowRacePrompt();
                     saveGameState();
                 }
             }
