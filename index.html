@@ -1,2389 +1,637 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Crudo Racing</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-
-    :root {
-      --gb-body: #c4cfa1;
-    }
-
-    body {
-      background-color: #111;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      font-family: 'Courier New', monospace;
-    }
-
-    /* ===== SCOCCA DEL DISPOSITIVO ===== */
-    #phone-screen {
-      width: 100vw;
-      max-width: 420px;
-      height: 100vh;
-      max-height: 900px;
-      background-color: var(--gb-body);
-      display: flex;
-      flex-direction: column;
-      border: 2px solid #2a2a2a;
-      border-radius: 26px 26px 44px 44px;
-      box-shadow: 0 0 30px rgba(0, 0, 0, 0.9),
-                  inset 0 0 8px rgba(255, 255, 255, 0.15);
-      overflow: hidden;
-    }
-
-    /* ===== AREA SCHERMO ===== */
-    #screen-container {
-      flex: 0 0 46%;
-      background-color: #222;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 12px;
-    }
-
-    #game-wrapper {
-      position: relative;
-      width: 320px;
-      height: 320px;
-      max-width: 100%;
-      aspect-ratio: 1 / 1;
-      margin: 0 auto;
-      border: 4px solid #111;
-      border-radius: 8px;
-      background-color: #000;
-      box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.7);
-    }
-
-    canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
-      image-rendering: pixelated;
-      border-radius: 4px;
-    }
-
-    /* ===== AREA COMANDI ===== */
-    #controller {
-      flex: 1;
-      background-color: var(--gb-body);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 30px 18px 40px;
-      border-top: 4px solid #555;
-    }
-
-    .controls-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      width: 100%;
-      padding: 0 4px;
-    }
-
-    /* ----- D-PAD (frecce direzionali) ----- */
-    .dpad {
-      position: relative;
-      width: 190px;
-      height: 190px;
-      flex-shrink: 0;
-      filter: drop-shadow(3px 6px 5px rgba(0, 0, 0, 0.4));
-    }
-
-    .dpad-btn {
-      position: absolute;
-      background: linear-gradient(145deg, #3a3a3a, #111);
-      border: none;
-      cursor: pointer;
-      box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.2),
-                  inset -1px -1px 3px rgba(0, 0, 0, 0.8);
-      transition: transform 0.05s ease, box-shadow 0.05s ease;
-      touch-action: none;
-    }
-
-    .dpad-up {
-      top: 0;
-      left: 67px;
-      width: 56px;
-      height: 67px;
-      border-radius: 12px 12px 0 0;
-    }
-
-    .dpad-down {
-      bottom: 0;
-      left: 67px;
-      width: 56px;
-      height: 67px;
-      border-radius: 0 0 12px 12px;
-    }
-
-    .dpad-left {
-      top: 67px;
-      left: 0;
-      width: 67px;
-      height: 56px;
-      border-radius: 12px 0 0 12px;
-    }
-
-    .dpad-right {
-      top: 67px;
-      right: 0;
-      width: 67px;
-      height: 56px;
-      border-radius: 0 12px 12px 0;
-    }
-
-    .dpad-btn:active,
-    .dpad-btn.active {
-      background: #111;
-      transform: translate(1px, 2px);
-      box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.9);
-    }
-
-    /* ----- TASTI A / B ----- */
-    .action-buttons {
-      display: flex;
-      align-items: flex-start;
-      gap: 20px;
-      transform: rotate(-15deg);
-      filter: drop-shadow(3px 6px 5px rgba(0, 0, 0, 0.3));
-    }
-
-    .btn-round-container {
-      text-align: center;
-    }
-
-    /* Tasto B molto piu in basso rispetto ad A */
-    .btn-b-container {
-      margin-top: 80px;
-    }
-
-    .btn-round {
-      width: 66px;
-      height: 66px;
-      background: linear-gradient(145deg, #a72352, #6e1333);
-      border-radius: 50%;
-      border: none;
-      color: white;
-      font-weight: bold;
-      font-size: 22px;
-      cursor: pointer;
-      box-shadow: inset 1px 2px 3px rgba(255, 255, 255, 0.3),
-                  inset -2px -2px 5px rgba(0, 0, 0, 0.6);
-      transition: transform 0.05s ease;
-      touch-action: none;
-    }
-
-    .btn-round:active,
-    .btn-round.active {
-      transform: translate(2px, 3px);
-      box-shadow: inset 2px 2px 7px rgba(0, 0, 0, 0.8);
-      background: #5b0f2a;
-    }
-
-    /* ----- TASTI SELECT / START ----- */
-    .controls-bottom {
-      display: flex;
-      justify-content: center;
-      gap: 45px;
-      margin-top: 0;
-      margin-bottom: 40px;
-    }
-
-    .btn-pill-container {
-      text-align: center;
-      transform: rotate(-25deg);
-      filter: drop-shadow(2px 4px 3px rgba(0, 0, 0, 0.3));
-    }
-
-    .btn-pill {
-      width: 80px;
-      height: 20px;
-      background: linear-gradient(145deg, #6e6e6e, #333);
-      border-radius: 10px;
-      border: none;
-      cursor: pointer;
-      box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.2),
-                  inset -1px -1px 3px rgba(0, 0, 0, 0.7);
-      touch-action: none;
-    }
-
-    .btn-pill:active,
-    .btn-pill.active {
-      transform: translate(1px, 2px);
-      background: #222;
-      box-shadow: inset 1px 1px 4px rgba(0, 0, 0, 0.9);
-    }
-
-    .btn-pill-label {
-      font-size: 12px;
-      color: #306230;
-      text-align: center;
-      margin-top: 6px;
-      font-weight: bold;
-      letter-spacing: 1px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DinoMio - 8-bit GBA Edition</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace; image-rendering: pixelated; }
+body { background: linear-gradient(160deg, #1c2530 0%, #12181f 100%); display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #3c4652; }
+.tamagotchi-container { width: 100%; max-width: 420px; height: 100vh; max-height: 750px; background: linear-gradient(150deg, #aebfd0 0%, #93a7bd 50%, #7d94ad 100%); border-radius: 40px; padding: 20px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 10px 40px rgba(0,0,0,0.6), inset 0 2px 8px rgba(255,255,255,0.35); border: 6px solid #6a809a; transition: background 0.3s, border-color 0.3s; }
+.tamagotchi-container.shell-blue { background: linear-gradient(150deg, #4da6ff 0%, #0066ff 100%); border-color: #0047b3; }
+.tamagotchi-container.shell-red { background: linear-gradient(150deg, #ff5252 0%, #e60000 100%); border-color: #b30000; }
+.tamagotchi-container.shell-white { background: linear-gradient(150deg, #ffffff 0%, #dfe6ee 100%); border-color: #b8c2ce; }
+.tamagotchi-container.shell-yellow { background: linear-gradient(150deg, #ffe14d 0%, #ffcc00 100%); border-color: #d9a400; }
+.tamagotchi-container.shell-pink { background: linear-gradient(150deg, #ff6ec7 0%, #ff1e9c 100%); border-color: #cc0077; }
+.tamagotchi-container.shell-beige { background: linear-gradient(150deg, #f0dfb0 0%, #e0c878 100%); border-color: #c2a84f; }
+.tamagotchi-container.shell-lightblue { background: linear-gradient(150deg, #5ce1ff 0%, #00c2ff 100%); border-color: #0095c7; }
+.lcd-screen { width: 100%; height: 100%; background: linear-gradient(180deg, #d6e2dc 0%, #c2d2ca 100%); border: 4px solid #5f7a72; border-radius: 12px; padding: 10px; display: flex; flex-direction: column; align-items: center; overflow-y: auto; position: relative; transition: background 0.5s; box-shadow: inset 0 2px 6px rgba(0,0,0,0.18); }
+h1, h2 { font-size: 0.9rem; text-align: center; color: #3a4653; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #6a809a; padding-bottom: 4px; margin-bottom: 6px; width: 100%; }
+.selection-container { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; align-items: center; }
+.pets-list { width: 100%; display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+.pet-row { display: flex; align-items: center; justify-content: space-between; background: linear-gradient(180deg, #eef2f5 0%, #dde5ea 100%); border: 2px solid #a3b3c0; padding: 4px 8px; border-radius: 10px; }
+.pet-row-info { display: flex; align-items: center; gap: 10px; }
+.pet-name-title { font-size: 0.75rem; font-weight: bold; text-transform: uppercase; color: #3a4653; }
+.pet-inputs-container { width: 100%; background: linear-gradient(180deg, #e8eef2 0%, #d6dfe6 100%); border: 2px solid #a3b3c0; padding: 6px; border-radius: 10px; margin-top: 4px; display: flex; flex-direction: column; gap: 4px; }
+.input-group { display: flex; align-items: center; justify-content: space-between; font-size: 0.65rem; font-weight: bold; color: #3a4653; }
+.input-group input[type="text"] { width: 55%; padding: 2px 4px; font-size: 0.65rem; border: 1px solid #a3b3c0; border-radius: 4px; font-family: inherit; text-transform: uppercase; background: #f6f9fb; }
+.gender-options { display: flex; gap: 8px; }
+.gender-options label { font-size: 0.65rem; font-weight: normal; cursor: pointer; }
+.select-pet-btn { background: linear-gradient(180deg, #7fb0c9 0%, #5a91b0 100%); color: #12303d; border: none; padding: 4px 10px; font-size: 0.6rem; font-weight: bold; cursor: pointer; border-radius: 6px; box-shadow: 0 2px 0 #3f7089; }
+.select-pet-btn:active { transform: translateY(2px); box-shadow: none; }
+.pixel-art-canvas { width: 32px; height: 32px; display: inline-block; }
+.area-section { width: 100%; display: flex; flex-direction: column; align-items: center; margin-bottom: 4px; padding: 4px 0; }
+.button-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; width: 100%; }
+.area-btn { background: linear-gradient(180deg, #eef2f5 0%, #dbe3ea 100%); color: #3a4653; border: 2px solid #a3b3c0; border-radius: 10px; padding: 10px 4px; font-size: 0.65rem; font-weight: bold; cursor: pointer; text-align: center; text-transform: uppercase; box-shadow: 0 3px 0 #b0bcc7; width: 100%; }
+.area-btn:active { transform: translateY(3px); box-shadow: none; }
+#btn-kitchen { background: linear-gradient(180deg,#d9cfa8 0%,#c6ba86 100%); border-color:#a89a5f; box-shadow:0 3px 0 #9a8c52; }
+#btn-park { background: linear-gradient(180deg,#a8c8a8 0%,#88b088 100%); border-color:#6f9a6f; box-shadow:0 3px 0 #5f8a5f; }
+#btn-gym { background: linear-gradient(180deg,#c9a0a0 0%,#b08484 100%); border-color:#946e6e; box-shadow:0 3px 0 #855f5f; }
+#btn-clinic { background: linear-gradient(180deg,#9ec7c2 0%,#7dada7 100%); border-color:#5f918b; box-shadow:0 3px 0 #4f817b; }
+#btn-shower { background: linear-gradient(180deg,#9fbdd6 0%,#7ba0bf 100%); border-color:#5f88a8; box-shadow:0 3px 0 #4f7898; }
+#btn-study { background: linear-gradient(180deg,#a6a6c4 0%,#8686ac 100%); border-color:#6e6e94; box-shadow:0 3px 0 #5f5f85; }
+.gameplay-screen, .rules-screen, .info-screen, .settings-screen, .choose-area-screen { display: none; flex-direction: column; align-items: center; width: 100%; height: 100%; }
+.game-frame { width: 100%; flex: 0.95; display: flex; flex-direction: column; border: 2px solid #7a9188; background: linear-gradient(180deg, #e2ece7 0%, #d0ddd6 100%); padding: 4px; margin-bottom: 4px; border-radius: 10px; }
+.frame-top-bar { display: flex; justify-content: space-between; align-items: center; padding: 2px 4px; background: linear-gradient(180deg,#c2d2ca 0%,#aec2b8 100%); border-bottom: 2px solid #7a9188; border-radius: 8px 8px 0 0; gap: 8px; }
+.frame-bottom-bar { display: flex; justify-content: space-between; align-items: center; padding: 2px 4px; background: linear-gradient(180deg,#aec2b8 0%,#c2d2ca 100%); border-top: 2px solid #7a9188; border-radius: 0 0 8px 8px; }
+.top-icons-group { display: flex; justify-content: space-between; align-items: center; flex: 1; margin-left: 8px; }
+.icon-stat-box { display: flex; flex-direction: column; align-items: center; gap: 1px; flex: 1; }
+.dots-mini { font-size: 0.7rem; line-height: 1; letter-spacing: -1px; font-weight: bold; color: #3a6154; }
+.pixel-pet-badge { background: linear-gradient(180deg,#4f6d86 0%,#3c566c 100%); color: #fff; padding: 2px 8px; border-radius: 8px; font-size: 0.6rem; font-weight: bold; letter-spacing: 0.5px; display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+#badge-pet-gender { font-size: 0.9rem; font-weight: 900; margin-left: 2px; line-height: 1; }
+.pet-display { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; border: 2px dashed #7a9188; background-color: #dde9e3; background-image: radial-gradient(rgba(90,120,110,0.16) 20%, transparent 20%), radial-gradient(rgba(90,120,110,0.16) 20%, transparent 20%); background-size: 8px 8px; background-position: 0 0, 4px 4px; position: relative; overflow: hidden; cursor: pointer; user-select: none; -webkit-user-select: none; border-radius: 8px; }
+.pet-display.lights-off { background-color: #10161d !important; background-image: none !important; }
+#bg-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+#game-canvas { width: 128px; height: 128px; transition: transform 0.2s; position: relative; z-index: 2; }
+.pet-idle-bounce { animation: bounceAndMove 3s infinite ease-in-out; }
+@keyframes bounceAndMove { 0% { transform: translate(0,0) scale(1,1); } 25% { transform: translate(-6px,-8px) scale(1.05,0.95); } 50% { transform: translate(0,-2px) scale(0.98,1.02); } 75% { transform: translate(6px,-8px) scale(1.05,0.95); } 100% { transform: translate(0,0) scale(1,1); } }
+.egg-wobble { animation: wobble 0.5s infinite ease-in-out !important; }
+@keyframes wobble { 0% { transform: rotate(0deg); } 25% { transform: rotate(-8deg); } 75% { transform: rotate(8deg); } 100% { transform: rotate(0deg); } }
+.pet-sick-anim { animation: sickSquish 1.2s infinite ease-in-out !important; }
+@keyframes sickSquish { 0% { transform: translateY(4px) scale(1.06,0.88); } 50% { transform: translateY(5px) scale(1.10,0.84) rotate(-2deg); } 100% { transform: translateY(4px) scale(1.06,0.88) rotate(2deg); } }
+#runner-container, #race-container { position: relative; width: 100%; height: 100px; display: none; z-index: 5; }
+#runner-canvas, #race-canvas { width: 100%; height: 100%; background: linear-gradient(180deg,#cfe0ea 0%,#b3ccdb 100%); border: 1px solid #5f88a8; border-radius: 6px; }
+#rps-container { position: absolute; inset: 0; display: none; z-index: 7; flex-direction: column; align-items: center; justify-content: flex-start; background: linear-gradient(180deg,#eef2f5 0%,#dde5ea 100%); padding: 6px; }
+#rps-arena { width: 100%; flex: 1; position: relative; background: #f6f9fb; border: 2px solid #3a4653; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
+#rps-info { font-size: 0.62rem; font-weight: bold; color: #1a2028; text-align: center; margin: 2px 0; }
+#rps-hands { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 4px 0; }
+.rps-hand-canvas { width: 40px; height: 40px; image-rendering: pixelated; }
+#rps-vs { font-size: 0.9rem; color: #1a2028; font-weight: bold; }
+#rps-result { font-size: 0.72rem; font-weight: bold; color: #1a2028; min-height: 16px; }
+.rps-choices { width: 100%; display: flex; gap: 8px; margin-top: 6px; flex-shrink: 0; }
+.rps-choices button { flex: 1; height: 46px; background: #f6f9fb; color: #1a2028; border: 2px solid #1a2028; border-radius: 8px; cursor: pointer; box-shadow: 0 3px 0 #1a2028; display: flex; align-items: center; justify-content: center; }
+.rps-choices button:active { transform: translateY(3px); box-shadow: none; }
+.rps-choice-canvas { width: 32px; height: 32px; image-rendering: pixelated; }
+.close-gym-btn { position: absolute; top: 2px; right: 2px; background: linear-gradient(180deg,#c47a7a 0%,#a85a5a 100%); color: #fff; border: 1px solid #fff; font-weight: bold; font-size: 0.6rem; width: 18px; height: 18px; line-height: 14px; text-align: center; cursor: pointer; z-index: 10; border-radius: 4px; }
+.poop-indicator { position: absolute; right: 12px; bottom: 24px; display: none; z-index: 4; }
+.sick-indicator { position: absolute; right: 8px; top: 8px; font-size: 10px; font-weight: bold; color: #a84a4a; z-index: 4; }
+.action-btn { margin-top: 5px; background: linear-gradient(180deg,#4f6d86 0%,#3c566c 100%); color: #ffffff; padding: 8px 12px; border: none; cursor: pointer; font-weight: bold; font-size: 0.65rem; border-radius: 8px; box-shadow: 0 3px 0 #2c4152; }
+.action-btn:active { transform: translateY(3px); box-shadow: none; }
+.kitchen-options { display: flex; gap: 6px; width: 100%; margin-top: 4px; align-items: center; flex-wrap: wrap; }
+.kitchen-options .kitchen-btn { flex: 1; padding: 6px 4px; font-size: 0.6rem; min-width: 40px; }
+.rules-content, .info-content, .settings-content { font-size: 0.65rem; text-align: left; line-height: 1.4; border: 1px solid #a3b3c0; padding: 8px; background: linear-gradient(180deg,#f2f6f8 0%,#e4ebef 100%); height: 100%; width: 100%; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; border-radius: 8px; color: #3a4653; }
+.stat-row { display: flex; align-items: center; gap: 6px; }
+.pixel-stat-icon { width: 16px; height: 16px; image-rendering: pixelated; flex-shrink: 0; }
+.settings-group { border-bottom: 1px solid #c4ccd6; padding-bottom: 6px; }
+.settings-group label { font-weight: bold; display: block; margin-bottom: 4px; }
+.rank-table { width: 100%; border-collapse: collapse; font-size: 0.62rem; margin-top: 4px; }
+.rank-table th, .rank-table td { border: 1px solid #c4ccd6; padding: 2px 4px; text-align: left; }
+.rank-table th { background: #d4ede0; }
+.rank-row-self { background: #fff3c4; font-weight: bold; }
+.race-prompt-overlay { display: none; position: absolute; inset: 0; z-index: 30; background: rgba(20,26,34,0.75); align-items: center; justify-content: center; }
+.race-prompt-box { background: linear-gradient(180deg,#f2f6f8 0%,#e4ebef 100%); border: 3px solid #5f7a92; border-radius: 12px; padding: 14px; width: 80%; max-width: 300px; text-align: center; color: #3a4653; font-size: 0.72rem; box-shadow: 0 6px 20px rgba(0,0,0,0.5); }
+.race-prompt-box .rp-buttons { display: flex; gap: 8px; margin-top: 12px; }
+.race-prompt-box .rp-buttons button { flex: 1; }
+.color-picker-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+.color-btn { padding: 4px; border: 1px solid #8a97a5; border-radius: 6px; font-size: 0.55rem; font-weight: bold; cursor: pointer; text-align: center; color: #3a4653; }
+.bg-picker-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.glossy-btn { background: linear-gradient(180deg, #eef2f5 0%, #cdd8e0 50%, #a3b3c0 100%); color: #3a4653; border: 2px solid #8a97a5; border-radius: 8px; padding: 6px 2px; font-size: 0.55rem; font-weight: bold; cursor: pointer; text-align: center; box-shadow: 0 4px 0 #8a97a5, inset 0 1px 0 #fff; transition: all 0.1s ease; position: relative; text-transform: uppercase; }
+.glossy-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #8a97a5, inset 0 1px 0 #fff; }
+.glossy-btn.active-bg { background: linear-gradient(180deg, #5a7690 0%, #47627a 50%, #3c566c 100%); color: #fff; border-color: #3c566c; box-shadow: 0 2px 0 #2c4152, inset 0 1px 0 #7d94ad; }
+.bottom-bar { width: 100%; display: flex; justify-content: space-between; gap: 6px; margin-top: 4px; }
+.info-btn { flex: 1; color: #ffffff; border: 2px solid #5f7a92; border-radius: 20px; padding: 8px 4px; font-size: 0.65rem; font-weight: bold; cursor: pointer; text-align: center; text-transform: uppercase; box-shadow: 0 3px 0 #3c566c; background: linear-gradient(180deg, #6a869e 0%, #52708a 50%, #45627a 100%); transition: background 0.3s, color 0.3s; }
+.info-btn:active { transform: translateY(3px); box-shadow: none; }
+.zzz-container { display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 6; }
+.zzz-text { position: absolute; color: #9db8d0; font-weight: bold; font-size: 16px; animation: floatZ 2s infinite linear; opacity: 0; }
+.zzz-text:nth-child(1) { left: 30%; animation-delay: 0s; }
+.zzz-text:nth-child(2) { left: 50%; animation-delay: 0.6s; }
+.zzz-text:nth-child(3) { left: 70%; animation-delay: 1.2s; }
+@keyframes floatZ { 0% { top: 70%; opacity: 0; transform: scale(0.6); } 50% { opacity: 1; } 100% { top: 10%; opacity: 0; transform: scale(1.3); } }
+</style>
 </head>
-
 <body>
-
-  <div id="phone-screen">
-
-    <!-- SCHERMO DI GIOCO -->
-    <div id="screen-container">
-      <div id="game-wrapper">
-        <canvas id="gameCanvas" width="320" height="320"></canvas>
-      </div>
-    </div>
-
-    <!-- COMANDI -->
-    <div id="controller">
-
-      <div class="controls-top">
-
-        <!-- Frecce direzionali -->
-        <div class="dpad">
-          <button class="dpad-btn dpad-up" id="btn-up"></button>
-          <button class="dpad-btn dpad-down" id="btn-down"></button>
-          <button class="dpad-btn dpad-left" id="btn-left"></button>
-          <button class="dpad-btn dpad-right" id="btn-right"></button>
-        </div>
-
-        <!-- Tasti A e B (B molto piu in basso) -->
-        <div class="action-buttons">
-          <div class="btn-round-container btn-b-container">
-            <button class="btn-round" id="btn-b">B</button>
-          </div>
-          <div class="btn-round-container">
-            <button class="btn-round" id="btn-a">A</button>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Tasti SELECT e START -->
-      <div class="controls-bottom">
-        <div class="btn-pill-container">
-          <button class="btn-pill" id="btn-select"></button>
-          <div class="btn-pill-label">SELECT</div>
-        </div>
-        <div class="btn-pill-container">
-          <button class="btn-pill" id="btn-start"></button>
-          <div class="btn-pill-label">START</div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <script>
-    "use strict";
-
-    // ============================================================
-    //  RIFERIMENTI E COSTANTI
-    // ============================================================
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
-
-    const NUM_RIVALS = 14;
-    const NUM_RACERS = NUM_RIVALS + 1;
-    const SAVE_KEY = "cityRacingChampionship_v1";
-    const LANG_KEY = "cityRacingLang";
-    const RACE_TARGET_MIN = 1;
-    const TOTAL_LAPS = 5;
-
-    const ROAD_WIDTH_BASE = 26;
-    const ROAD_WIDTH_PERSP = 240;
-
-    const SEGMENT_LENGTH = 100;
-    const POS_FACTOR = 0.4;
-
-    // ============================================================
-    //  LINGUE (Inglese di default, Italiano via SELECT)
-    // ============================================================
-    // MODIFICA 1: lingua predefinita = inglese
-    let lang = "en";
-    try {
-      lang = localStorage.getItem(LANG_KEY) || "en";
-    } catch (e) { }
-
-    const I18N = {
-      it: {
-        title: "CRUDO RACING",
-        pressStart: "Premi START",
-        chooseVehicle: "SCEGLI IL VEICOLO",
-        cars: "MACCHINE",
-        scooters: "MOTORINI",
-        chooseColor: "SCEGLI IL COLORE",
-        championship: "CAMPIONATO",
-        singleRace: "CORSA SINGOLA",
-        randomTrack: "PISTA CASUALE",
-        loadChampionship: "CARICA SALVATAGGIO",
-        chooseTrack: "SCEGLI LA PISTA",
-        startRace: "INIZIA GARA",
-        viewStandings: "VEDI CLASSIFICA",
-        saveChampionship: "SALVA PROGRESSI",
-        exitToMenu: "ESCI AL MENU",
-        saveAndExit: "SALVA ED ESCI",
-        pause: "PAUSA",
-        resume: "RIPRENDI",
-        standings: "CLASSIFICA",
-        finalStandings: "CLASSIFICA FINALE",
-        finish: "TRAGUARDO!",
-        position: "Posizione",
-        time: "Tempo",
-        raceInfo: "INFO GARA",
-        track: "Pista",
-        raceDuration: "Durata gara",
-        estDuration: "Durata stimata",
-        timeLeft: "Tempo restante",
-        lap: "Giro",
-        raceOf: "Gara",
-        of: "di",
-        raceStarting: "La gara sta per iniziare!",
-        savedOk: "Salvataggio effettuato!",
-        navChoose: "Frecce = scegli   A = conferma",
-        navChooseConfirm: "Frecce = scegli   A/START = conferma",
-        navColorHint: "Frecce = scegli  A = ok  B = indietro",
-        navBack: "B/SELECT = indietro",
-        controlsHint: "A=gas  B=freno  START=pausa  SELECT=info",
-        changeVehicle: "B = cambia veicolo/colore",
-        continueA: "A per continuare",
-        aForStandings: "A per la classifica",
-        aForMenu: "A per tornare al menu",
-        langLabel: "LINGUA",
-        toggleLangHint: "SELECT = English",
-        go: "VIA",
-        podiumWin: "CAMPIONE!",
-        podiumWinMsg: "COMPLIMENTI, HAI VINTO IL CAMPIONATO!",
-        podiumSecond: "SECONDO POSTO",
-        podiumSecondMsg: "SEI ARRIVATO SECONDO",
-        podiumThird: "TERZO POSTO",
-        podiumThirdMsg: "SEI ARRIVATO TERZO"
-      },
-      en: {
-        title: "CRUDO RACING",
-        pressStart: "Press START",
-        chooseVehicle: "CHOOSE VEHICLE",
-        cars: "CARS",
-        scooters: "SCOOTERS",
-        chooseColor: "CHOOSE COLOR",
-        championship: "CHAMPIONSHIP",
-        singleRace: "SINGLE RACE",
-        randomTrack: "RANDOM TRACK",
-        loadChampionship: "LOAD SAVE",
-        chooseTrack: "CHOOSE TRACK",
-        startRace: "START RACE",
-        viewStandings: "VIEW STANDINGS",
-        saveChampionship: "SAVE PROGRESS",
-        exitToMenu: "EXIT TO MENU",
-        saveAndExit: "SAVE & EXIT",
-        pause: "PAUSE",
-        resume: "RESUME",
-        standings: "STANDINGS",
-        finalStandings: "FINAL STANDINGS",
-        finish: "FINISH!",
-        position: "Position",
-        time: "Time",
-        raceInfo: "RACE INFO",
-        track: "Track",
-        raceDuration: "Race time",
-        estDuration: "Est. duration",
-        timeLeft: "Time left",
-        lap: "Lap",
-        raceOf: "Race",
-        of: "of",
-        raceStarting: "The race is about to start!",
-        savedOk: "Game saved!",
-        navChoose: "Arrows = move   A = confirm",
-        navChooseConfirm: "Arrows = move   A/START = confirm",
-        navColorHint: "Arrows = move  A = ok  B = back",
-        navBack: "B/SELECT = back",
-        controlsHint: "A=gas  B=brake  START=pause  SELECT=info",
-        changeVehicle: "B = change vehicle/color",
-        continueA: "Press A to continue",
-        aForStandings: "A for standings",
-        aForMenu: "A to return to menu",
-        langLabel: "LANGUAGE",
-        toggleLangHint: "SELECT = Italiano",
-        go: "GO",
-        podiumWin: "CHAMPION!",
-        podiumWinMsg: "CONGRATULATIONS, YOU WON THE CHAMPIONSHIP!",
-        podiumSecond: "SECOND PLACE",
-        podiumSecondMsg: "YOU FINISHED SECOND",
-        podiumThird: "THIRD PLACE",
-        podiumThirdMsg: "YOU FINISHED THIRD"
-      }
-    };
-
-    function t(key) {
-      return (I18N[lang] && I18N[lang][key]) || I18N.en[key] || key;
-    }
-
-    function toggleLang() {
-      lang = (lang === "en") ? "it" : "en";
-      try { localStorage.setItem(LANG_KEY, lang); } catch (e) {}
-    }
-
-    // ============================================================
-    //  NOMI DEI TEMI
-    // ============================================================
-    const THEME_NAMES = {
-      normal:         { it: "NORMALE",         en: "NORMAL" },
-      city:           { it: "CITTA",           en: "CITY" },
-      islands:        { it: "ISOLE",           en: "ISLANDS" },
-      mountain:       { it: "MONTAGNA",        en: "MOUNTAIN" },
-      desert:         { it: "DESERTO",         en: "DESERT" },
-      normalNight:    { it: "NOTTURNA",        en: "NIGHT" },
-      cityNight:      { it: "CITTA SERA",      en: "CITY NIGHT" },
-      islandsSunset:  { it: "ISOLE TRAMONTO",  en: "ISLANDS SUNSET" },
-      mountainSunset: { it: "MONT. TRAMONTO",  en: "MOUNT. SUNSET" },
-      desertNight:    { it: "DESERTO NOTTE",   en: "DESERT NIGHT" }
-    };
-
-    function themeName(key) {
-      return THEME_NAMES[key][lang] || THEME_NAMES[key].en;
-    }
-
-    // ============================================================
-    //  TEMI GRAFICI
-    // ============================================================
-    const THEMES = {
-      normal: {
-        sky: ["#5c94fc", "#8fc0ff"], night: false,
-        hills: { dark: "#187800", light: "#24a000" },
-        grass: { light: "#00b800", dark: "#007000" },
-        road:  { light: "#6e6e6e", dark: "#565656" },
-        kerb:  { a: "#e40058", b: "#ffffff" },
-        edge: "#0a3a0a", scenery: "hills"
-      },
-      city: {
-        sky: ["#7ea4d8", "#b9d0ec"], night: false,
-        hills: { dark: "#5a5a6e", light: "#727287" },
-        grass: { light: "#9a9a9a", dark: "#6a6a6a" },
-        road:  { light: "#787878", dark: "#5e5e5e" },
-        kerb:  { a: "#e40058", b: "#ffffff" },
-        edge: "#2a2a30", scenery: "buildings"
-      },
-      islands: {
-        sky: ["#3ea0e0", "#9fe0ff"], night: false,
-        hills: { dark: "#1f7fb0", light: "#2ea0d0" },
-        grass: { light: "#e8d59a", dark: "#c8a860" },
-        road:  { light: "#787880", dark: "#606068" },
-        kerb:  { a: "#e40058", b: "#ffffff" },
-        edge: "#7a5f30", scenery: "sea"
-      },
-      mountain: {
-        sky: ["#a8c8e8", "#dceaf7"], night: false,
-        hills: { dark: "#c8d4e0", light: "#eaf2fa" },
-        grass: { light: "#f2f6fb", dark: "#c8d2de" },
-        road:  { light: "#808088", dark: "#666670" },
-        kerb:  { a: "#c40040", b: "#ffffff" },
-        edge: "#9aa4b0", scenery: "snow"
-      },
-      desert: {
-        sky: ["#f0c46a", "#ffe3a0"], night: false,
-        hills: { dark: "#c89850", light: "#e0b060" },
-        grass: { light: "#e8c878", dark: "#c49848" },
-        road:  { light: "#948360", dark: "#74654a" },
-        kerb:  { a: "#c40040", b: "#ffffff" },
-        edge: "#8a6a34", scenery: "dunes"
-      },
-      normalNight: {
-        sky: ["#0a1030", "#1a2450"], night: true,
-        hills: { dark: "#0c2a0c", light: "#123812" },
-        grass: { light: "#0a3a0a", dark: "#052405" },
-        road:  { light: "#525260", dark: "#3c3c48" },
-        kerb:  { a: "#e40058", b: "#e8e8e8" },
-        edge: "#031803", scenery: "hills"
-      },
-      cityNight: {
-        sky: ["#141830", "#2a2450"], night: true,
-        hills: { dark: "#26263a", light: "#34344e" },
-        grass: { light: "#3a3a44", dark: "#242430" },
-        road:  { light: "#565664", dark: "#40404c" },
-        kerb:  { a: "#e40058", b: "#e8e8e8" },
-        edge: "#16161e", scenery: "buildingsLit"
-      },
-      islandsSunset: {
-        sky: ["#ff8a4a", "#ffd08a"], night: false, sunset: true,
-        hills: { dark: "#a85a70", light: "#d07a80" },
-        grass: { light: "#d8a878", dark: "#b8844c" },
-        road:  { light: "#78686e", dark: "#5c4c54" },
-        kerb:  { a: "#e40058", b: "#ffe0c0" },
-        edge: "#6a4a2a", scenery: "seaSunset"
-      },
-      mountainSunset: {
-        sky: ["#ff9a5a", "#ffcf9a"], night: false, sunset: true,
-        hills: { dark: "#e0c0d0", light: "#ffe0e8" },
-        grass: { light: "#f0d8e0", dark: "#d4b4c4" },
-        road:  { light: "#807078", dark: "#645460" },
-        kerb:  { a: "#c40040", b: "#ffe8d0" },
-        edge: "#9a7a8a", scenery: "snow"
-      },
-      desertNight: {
-        sky: ["#0a1028", "#1c2448"], night: true, moon: true,
-        hills: { dark: "#40381f", light: "#544a28" },
-        grass: { light: "#4a4028", dark: "#322a18" },
-        road:  { light: "#54503f", dark: "#403c30" },
-        kerb:  { a: "#c40040", b: "#e8e8e8" },
-        edge: "#241e10", scenery: "dunesNight"
-      }
-    };
-
-    const BASE_TRACKS = [
-      "normal", "city", "islands", "mountain", "desert",
-      "normalNight", "cityNight", "islandsSunset", "mountainSunset", "desertNight"
-    ];
-    const CHAMPIONSHIP_ORDER = BASE_TRACKS.concat(BASE_TRACKS);
-    const CHAMP_TOTAL = CHAMPIONSHIP_ORDER.length;
-
-    const PLAYER_COLORS = [
-      { it: "ROSSO",     en: "RED",    v: "#dc0000" },
-      { it: "BLU",       en: "BLUE",   v: "#1560dc" },
-      { it: "VERDE",     en: "GREEN",  v: "#18a018" },
-      { it: "GIALLO",    en: "YELLOW", v: "#f0c000" },
-      { it: "BIANCO",    en: "WHITE",  v: "#eeeeee" },
-      { it: "NERO",      en: "BLACK",  v: "#2a2a2a" },
-      { it: "ARANCIONE", en: "ORANGE", v: "#f07000" },
-      { it: "VIOLA",     en: "PURPLE", v: "#8020c0" }
-    ];
-
-    function colorName(i) {
-      return PLAYER_COLORS[i][lang] || PLAYER_COLORS[i].en;
-    }
-
-    const POINTS_TABLE = [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
-
-    const RIVAL_NAMES = [
-      "ROSSI", "BIANCHI", "VERDI", "FERRARI", "CONTI", "RICCI", "MORO",
-      "GALLO", "BRUNO", "FONTANA", "MARINO", "GRECO", "LOMBARDI", "BARBIERI"
-    ];
-    const RIVAL_COLORS = [
-      "#0044cc", "#fc9838", "#f8d820", "#00a844", "#cc00cc", "#00cccc",
-      "#ff5555", "#8844ff", "#44ddaa", "#dd7722", "#66aa22", "#aa2266",
-      "#2288dd", "#dddddd"
-    ];
-
-    // ============================================================
-    //  AUDIO
-    // ============================================================
-    const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
-    let audioCtx = null;
-    let engineOsc = null;
-    let engineGain = null;
-
-    function initAudio() {
-      if (!audioCtx) {
-        audioCtx = new AudioCtxClass();
-        engineOsc = audioCtx.createOscillator();
-        engineGain = audioCtx.createGain();
-        engineOsc.type = "sawtooth";
-        engineOsc.frequency.setValueAtTime(60, audioCtx.currentTime);
-        engineGain.gain.setValueAtTime(0.01, audioCtx.currentTime);
-        engineOsc.connect(engineGain);
-        engineGain.connect(audioCtx.destination);
-        engineOsc.start();
-      }
-      if (audioCtx.state === "suspended") {
-        audioCtx.resume();
-      }
-    }
-
-    function updateEngineSound(speedRatio) {
-      if (!engineOsc || !engineGain) return;
-      const base = (vehicleType === "scooter") ? 90 : 50;
-      const range = (vehicleType === "scooter") ? 260 : 180;
-      const freq = base + speedRatio * range;
-      engineOsc.frequency.setTargetAtTime(freq, audioCtx.currentTime, 0.05);
-      const volume = (state === "RACING" && speedRatio > 0.05) ? 0.04 : 0.0;
-      engineGain.gain.setTargetAtTime(volume, audioCtx.currentTime, 0.05);
-    }
-
-    function playSound(freq = 440, type = "square", duration = 0.08) {
-      initAudio();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = type;
-      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + duration);
-    }
-
-    // ============================================================
-    //  FISICA DEI VEICOLI
-    // ============================================================
-    const VEHICLE = {
-      car:     { maxSpeed: 210, accel: 1.6, decel: 1.1, braking: 3.2, steer: 0.045 },
-      scooter: { maxSpeed: 170, accel: 2.0, decel: 1.3, braking: 3.6, steer: 0.06 }
-    };
-    let phys = VEHICLE.car;
-
-    // ============================================================
-    //  STATO DEL GIOCO
-    // ============================================================
-    let state = "SPLASH";
-
-    let menuIndex = 0;
-    let vehicleType = "car";
-    let playerColorIndex = 0;
-    let playerColor = PLAYER_COLORS[0].v;
-
-    let raceMode = "single";
-    let championshipIndex = 0;
-    let championshipStandings = [];
-
-    let track = null;
-    let totalLaps = TOTAL_LAPS;
-
-    let playerX = 0;
-    let position = 0;
-    let speed = 0;
-    let lap = 1;
-    let raceTimeMs = 0;
-    let rivals = [];
-    let playerPos = NUM_RACERS;
-    let countdownMs = 0;
-    let showInfoOverlay = false;
-
-    let pauseIndex = 0;
-    let preraceIndex = 0;
-
-    let hasSavedGame = false;
-    let standingsReturn = "PRERACE";
-    let saveFlashMs = 0;
-    let splashTime = 0;
-
-    let finalRank = 1;
-
-    const drive = { up: false, down: false, left: false, right: false };
-    const keyHeld = { a: false, b: false };
-
-    // ============================================================
-    //  GENERATORE CASUALE CON SEED
-    // ============================================================
-    let rngState = 123456789;
-
-    function seedRng(seed) {
-      rngState = (seed >>> 0) || 1;
-    }
-
-    function rng() {
-      rngState ^= rngState << 13; rngState >>>= 0;
-      rngState ^= rngState >> 17;
-      rngState ^= rngState << 5;  rngState >>>= 0;
-      return rngState / 4294967296;
-    }
-
-    function rngRange(min, max) {
-      return min + rng() * (max - min);
-    }
-
-    function rngInt(min, max) {
-      return Math.floor(rngRange(min, max + 1));
-    }
-
-    // ============================================================
-    //  ACCESSO SICURO AI SEGMENTI
-    // ============================================================
-    function segAt(pos) {
-      const n = track.totalSegments;
-      let idx = Math.floor(pos / SEGMENT_LENGTH) % n;
-      if (idx < 0) idx += n;
-      return track.segments[idx] || track.segments[0];
-    }
-
-    // ============================================================
-    //  GENERAZIONE PROCEDURALE DELLA PISTA
-    // ============================================================
-    function buildTrack(themeKey, difficulty, seed) {
-      seedRng(seed);
-      const theme = THEMES[themeKey];
-
-      const avgSpeed = phys.maxSpeed * (0.55 - difficulty * 0.1);
-      const unitsPerSec = avgSpeed * POS_FACTOR * 60;
-      const totalUnitsNeeded = unitsPerSec * RACE_TARGET_MIN * 60;
-
-      totalLaps = TOTAL_LAPS;
-      let totalSegments = Math.max(
-        80,
-        Math.round((totalUnitsNeeded / totalLaps) / SEGMENT_LENGTH)
-      );
-
-      const segments = [];
-      let i = 0;
-      const startStraight = 20;
-
-      while (i < totalSegments) {
-
-        if (i < startStraight) {
-          segments.push(makeSeg(0, 0, i));
-          i++;
-          continue;
-        }
-
-        const roll = rng();
-        const remaining = totalSegments - i;
-
-        if (roll < 0.32) {
-          // Rettilineo
-          const len = Math.min(remaining, rngInt(18, 42));
-          const hill = maybeHill(difficulty);
-          for (let s = 0; s < len && i < totalSegments; s++, i++) {
-            const ease = Math.sin((s / len) * Math.PI);
-            segments.push(makeSeg(0, hill * ease, i));
-          }
-
-        } else if (roll < 0.62) {
-          // Curva semplice
-          const len = Math.min(remaining, rngInt(20, 40));
-          const dir = (rng() < 0.5) ? -1 : 1;
-          const intensity = dir * (rngRange(1.8, 2.7) + difficulty * 1.6);
-          const hill = maybeHill(difficulty);
-          for (let s = 0; s < len && i < totalSegments; s++, i++) {
-            const ease = Math.sin((s / len) * Math.PI);
-            segments.push(makeSeg(intensity * ease, hill * ease, i));
-          }
-
-        } else if (roll < 0.84) {
-          // Curva a S
-          const half = Math.min(Math.floor(remaining / 2), rngInt(16, 28));
-          const dir = (rng() < 0.5) ? -1 : 1;
-          const intensity = rngRange(2.0, 2.9) + difficulty * 1.6;
-          for (let s = 0; s < half && i < totalSegments; s++, i++) {
-            const ease = Math.sin((s / half) * Math.PI);
-            segments.push(makeSeg(dir * intensity * ease, 0, i));
-          }
-          for (let s = 0; s < half && i < totalSegments; s++, i++) {
-            const ease = Math.sin((s / half) * Math.PI);
-            segments.push(makeSeg(-dir * intensity * ease, 0, i));
-          }
-
-        } else {
-          // Curva a U / tornante
-          const len = Math.min(remaining, rngInt(30, 50));
-          const dir = (rng() < 0.5) ? -1 : 1;
-          const intensity = dir * (rngRange(3.6, 4.6) + difficulty * 1.6);
-          const hill = maybeHill(difficulty) * 0.5;
-          for (let s = 0; s < len && i < totalSegments; s++, i++) {
-            const ease = Math.min(1, Math.sin((s / len) * Math.PI) * 1.5);
-            segments.push(makeSeg(intensity * ease, hill * ease, i));
-          }
-        }
-      }
-
-      totalSegments = segments.length;
-      const lengthUnits = totalSegments * SEGMENT_LENGTH;
-
-      const obstacles = [];
-
-      return {
-        themeKey: themeKey,
-        theme: theme,
-        segments: segments,
-        totalSegments: totalSegments,
-        lengthUnits: lengthUnits,
-        difficulty: difficulty,
-        obstacles: obstacles
-      };
-    }
-
-    function maybeHill(difficulty) {
-      if (rng() < (0.3 + difficulty * 0.25)) {
-        return rngRange(0.5, 1.1) * (0.6 + difficulty);
-      }
-      return 0;
-    }
-
-    function makeSeg(curve, hill, i) {
-      return {
-        curve: curve,
-        hill: hill,
-        hasSign: (i % 15 === 0),
-        signSide: (i % 30 === 0) ? -1 : 1
-      };
-    }
-
-    // ============================================================
-    //  AVVIO DI UNA GARA
-    // ============================================================
-    function startRace(themeKey, difficulty, seed) {
-      track = buildTrack(themeKey, difficulty, seed);
-
-      playerX = 0;
-      position = 0;
-      speed = 0;
-      lap = 1;
-      raceTimeMs = 0;
-      showInfoOverlay = false;
-      drive.up = drive.down = drive.left = drive.right = false;
-      keyHeld.a = false;
-      keyHeld.b = false;
-
-      rivals = [];
-      for (let k = 0; k < NUM_RIVALS; k++) {
-        let startPos = (track.lengthUnits / NUM_RIVALS) * k + rngRange(-30, 30);
-        if (startPos < 0) startPos += track.lengthUnits;
-        startPos = startPos % track.lengthUnits;
-
-        rivals.push({
-          idx: k,
-          name: RIVAL_NAMES[k],
-          color: RIVAL_COLORS[k % RIVAL_COLORS.length],
-          pos: startPos,
-          lap: 1,
-          totalDist: 0,
-          offset: rngRange(-0.6, 0.6),
-          baseSpeed: phys.maxSpeed * (0.86 + difficulty * 0.10) + rngRange(-5, 10),
-          curSpeed: 0
-        });
-      }
-
-      countdownMs = 3200;
-      state = "COUNTDOWN";
-    }
-
-    // ============================================================
-    //  GESTIONE INPUT
-    // ============================================================
-    function pressAction(action) {
-      switch (state) {
-        case "SPLASH":
-          if (action === "start" || action === "a") {
-            playSound(660, "square", 0.1);
-            state = "VEHICLE_SELECT";
-            menuIndex = 0;
-          }
-          break;
-        case "VEHICLE_SELECT": navVehicle(action); break;
-        case "COLOR_SELECT":   navColor(action); break;
-        case "MENU":           navMainMenu(action); break;
-        case "TRACK_SELECT":   navTrackMenu(action); break;
-        case "PRERACE":        navPrerace(action); break;
-        case "RACING":
-          if (action === "start") openPause();
-          if (action === "select") {
-            showInfoOverlay = !showInfoOverlay;
-            playSound(500, "square", 0.05);
-          }
-          break;
-        case "PAUSE":     navPause(action); break;
-        case "FINISH":    if (action === "a" || action === "start") afterFinish(); break;
-        case "STANDINGS": if (action === "a" || action === "start") afterStandings(); break;
-        case "PODIUM":    if (action === "a" || action === "start") { state = "MENU"; menuIndex = 0; raceMode = "single"; } break;
-      }
-    }
-
-    function keyToInput(key, isDown) {
-      switch (key) {
-        case "ArrowUp": case "w": case "W":
-          drive.up = isDown;
-          if (isDown) pressAction("up");
-          break;
-        case "ArrowDown": case "s": case "S":
-          drive.down = isDown;
-          if (isDown) pressAction("down");
-          break;
-        case "ArrowLeft":
-          drive.left = isDown;
-          if (isDown) pressAction("left");
-          break;
-        case "ArrowRight":
-          drive.right = isDown;
-          if (isDown) pressAction("right");
-          break;
-        case "a": case "A":
-          keyHeld.a = isDown;
-          if (isDown) pressAction("a");
-          break;
-        case "b": case "B":
-          keyHeld.b = isDown;
-          if (isDown) pressAction("b");
-          break;
-        case "Enter":
-          if (isDown) pressAction("start");
-          break;
-        case "Shift":
-          if (isDown) pressAction("select");
-          break;
-      }
-    }
-
-    function isAccelerating() {
-      return keyHeld.a || drive.up;
-    }
-
-    function isBraking() {
-      return keyHeld.b || drive.down;
-    }
-
-    window.addEventListener("keydown", function (e) {
-      initAudio();
-      keyToInput(e.key, true);
-    });
-
-    window.addEventListener("keyup", function (e) {
-      keyToInput(e.key, false);
-    });
-
-    function maybeLangToggle(action) {
-      if (action === "select" && state !== "RACING" && state !== "SPLASH") {
-        toggleLang();
-        playSound(700, "square", 0.06);
-        return true;
-      }
-      return false;
-    }
-
-    // ---- Schermata scelta veicolo (con CARICA SALVATAGGIO) ----
-    // MODIFICA 2: le voci qui sono MACCHINE / MOTORINI / (CARICA SALVATAGGIO)
-    function vehicleSelectItems() {
-      const items = ["cars", "scooters"];
-      if (hasSavedGame) items.push("loadChampionship");
-      return items;
-    }
-
-    function navVehicle(action) {
-      if (maybeLangToggle(action)) return;
-      const items = vehicleSelectItems();
-
-      if (action === "up") {
-        menuIndex--;
-        playSound(400, "square", 0.04);
-      } else if (action === "down") {
-        menuIndex++;
-        playSound(400, "square", 0.04);
-      } else if (action === "a") {
-        const choice = items[(menuIndex + items.length) % items.length];
-
-        if (choice === "cars") {
-          vehicleType = "car";
-          phys = VEHICLE[vehicleType];
-          playSound(650, "square", 0.08);
-          state = "COLOR_SELECT";
-          menuIndex = 0;
-
-        } else if (choice === "scooters") {
-          vehicleType = "scooter";
-          phys = VEHICLE[vehicleType];
-          playSound(650, "square", 0.08);
-          state = "COLOR_SELECT";
-          menuIndex = 0;
-
-        } else if (choice === "loadChampionship") {
-          // Carica il salvataggio e vai direttamente al pre-gara del campionato
-          if (loadChampionship()) {
-            playSound(880, "triangle", 0.12);
-            raceMode = "championship";
-            state = "PRERACE";
-            preraceIndex = 0;
-          }
-        }
-      }
-
-      if (menuIndex < 0) menuIndex = items.length - 1;
-      if (menuIndex >= items.length) menuIndex = 0;
-    }
-
-    function navColor(action) {
-      if (maybeLangToggle(action)) return;
-      if (action === "left" || action === "up") {
-        menuIndex--;
-        playSound(400, "square", 0.04);
-      } else if (action === "right" || action === "down") {
-        menuIndex++;
-        playSound(400, "square", 0.04);
-      } else if (action === "a") {
-        playerColorIndex = menuIndex;
-        playerColor = PLAYER_COLORS[menuIndex].v;
-        playSound(650, "square", 0.08);
-        state = "MENU";
-        menuIndex = 0;
-      } else if (action === "b") {
-        state = "VEHICLE_SELECT";
-        menuIndex = (vehicleType === "car") ? 0 : 1;
-      }
-      clampMenuIndex(PLAYER_COLORS.length);
-    }
-
-    // ---- Menu principale (senza CARICA SALVATAGGIO ora) ----
-    function navMainMenu(action) {
-      if (maybeLangToggle(action)) return;
-      const len = menuMainItems().length;
-      if (action === "up") {
-        menuIndex--;
-        playSound(400, "square", 0.04);
-      } else if (action === "down") {
-        menuIndex++;
-        playSound(400, "square", 0.04);
-      } else if (action === "a") {
-        selectMainMenu();
-      } else if (action === "b") {
-        state = "COLOR_SELECT";
-        menuIndex = 0;
-      }
-      clampMenuIndex(len);
-    }
-
-    // MODIFICA 2: rimosso "loadChampionship" dal menu principale
-    function menuMainItems() {
-      return ["championship", "singleRace", "randomTrack"];
-    }
-
-    function selectMainMenu() {
-      playSound(650, "square", 0.08);
-      const choice = menuMainItems()[menuIndex];
-
-      if (choice === "championship") {
-        raceMode = "championship";
-        championshipIndex = 0;
-        initChampionshipStandings();
-        state = "PRERACE";
-        preraceIndex = 0;
-
-      } else if (choice === "singleRace") {
-        raceMode = "single";
-        state = "TRACK_SELECT";
-        menuIndex = 0;
-
-      } else if (choice === "randomTrack") {
-        raceMode = "random";
-        const keysArr = Object.keys(THEMES);
-        const key = keysArr[rngInt(0, keysArr.length - 1)] || "normal";
-        startRace(key, rngRange(0.35, 0.6), Date.now());
-      }
-    }
-
-    function navTrackMenu(action) {
-      if (maybeLangToggle(action)) return;
-      if (action === "up") {
-        menuIndex--;
-        playSound(400, "square", 0.04);
-      } else if (action === "down") {
-        menuIndex++;
-        playSound(400, "square", 0.04);
-      } else if (action === "a") {
-        playSound(650, "square", 0.08);
-        startRace(BASE_TRACKS[menuIndex], 0.4, Date.now());
-      } else if (action === "b") {
-        state = "MENU";
-        menuIndex = 1;
-      }
-      clampMenuIndex(BASE_TRACKS.length);
-    }
-
-    function preraceItems() {
-      return ["startRace", "viewStandings", "saveChampionship", "exitToMenu"];
-    }
-
-    function navPrerace(action) {
-      if (maybeLangToggle(action)) return;
-      const items = preraceItems();
-
-      if (action === "up") {
-        preraceIndex--;
-        playSound(400, "square", 0.04);
-      } else if (action === "down") {
-        preraceIndex++;
-        playSound(400, "square", 0.04);
-      } else if (action === "a") {
-        const choice = items[(preraceIndex + items.length) % items.length];
-
-        if (choice === "startRace") {
-          playSound(650, "square", 0.08);
-          startRace(
-            CHAMPIONSHIP_ORDER[championshipIndex],
-            difficultyForChampionship(championshipIndex),
-            Date.now()
-          );
-        } else if (choice === "viewStandings") {
-          playSound(500, "square", 0.06);
-          state = "STANDINGS";
-          standingsReturn = "PRERACE";
-        } else if (choice === "saveChampionship") {
-          saveChampionship();
-          playSound(880, "triangle", 0.15);
-          saveFlashMs = 1500;
-        } else if (choice === "exitToMenu") {
-          playSound(250, "square", 0.12);
-          state = "MENU";
-          menuIndex = 0;
-          raceMode = "single";
-        }
-      }
-
-      if (preraceIndex < 0) preraceIndex = items.length - 1;
-      if (preraceIndex >= items.length) preraceIndex = 0;
-    }
-
-    function openPause() {
-      state = "PAUSE";
-      pauseIndex = 0;
-      playSound(300, "square", 0.1);
-    }
-
-    function pauseItems() {
-      if (raceMode === "championship") {
-        return ["resume", "saveAndExit", "exitToMenu"];
-      }
-      return ["resume", "exitToMenu"];
-    }
-
-    function navPause(action) {
-      const items = pauseItems();
-
-      if (action === "up") {
-        pauseIndex--;
-        playSound(400, "square", 0.04);
-      } else if (action === "down") {
-        pauseIndex++;
-        playSound(400, "square", 0.04);
-      } else if (action === "a" || action === "start") {
-        const choice = items[(pauseIndex + items.length) % items.length];
-
-        if (choice === "resume") {
-          state = "RACING";
-          playSound(500, "square", 0.1);
-        } else if (choice === "saveAndExit") {
-          saveChampionship();
-          playSound(880, "triangle", 0.15);
-          updateEngineSound(0);
-          saveFlashMs = 1500;
-          state = "PRERACE";
-          preraceIndex = 0;
-        } else if (choice === "exitToMenu") {
-          exitToMenu();
-        }
-      }
-
-      if (pauseIndex < 0) pauseIndex = items.length - 1;
-      if (pauseIndex >= items.length) pauseIndex = 0;
-    }
-
-    function exitToMenu() {
-      playSound(250, "square", 0.15);
-      updateEngineSound(0);
-      state = "MENU";
-      menuIndex = 0;
-      raceMode = "single";
-    }
-
-    function clampMenuIndex(len) {
-      if (menuIndex < 0) menuIndex = len - 1;
-      if (menuIndex >= len) menuIndex = 0;
-    }
-
-    function difficultyForChampionship(idx) {
-      return Math.min(0.85, 0.10 + idx * 0.038);
-    }
-
-    // ============================================================
-    //  PULSANTI VIRTUALI (touch / mouse)
-    // ============================================================
-    function bindButton(id, options) {
-      const btn = document.getElementById(id);
-      if (!btn) return;
-
-      const driveKey = options.drive;
-      const action = options.action;
-
-      function onPress(e) {
-        if (e && e.cancelable) e.preventDefault();
-        initAudio();
-        btn.classList.add("active");
-        if (driveKey) drive[driveKey] = true;
-        if (id === "btn-a") keyHeld.a = true;
-        if (id === "btn-b") keyHeld.b = true;
-        if (action) pressAction(action);
-      }
-
-      function onRelease(e) {
-        if (e && e.cancelable) e.preventDefault();
-        btn.classList.remove("active");
-        if (driveKey) drive[driveKey] = false;
-        if (id === "btn-a") keyHeld.a = false;
-        if (id === "btn-b") keyHeld.b = false;
-      }
-
-      btn.addEventListener("touchstart", onPress, { passive: false });
-      btn.addEventListener("touchend", onRelease, { passive: false });
-      btn.addEventListener("touchcancel", onRelease, { passive: false });
-      btn.addEventListener("mousedown", onPress);
-      btn.addEventListener("mouseup", onRelease);
-      btn.addEventListener("mouseleave", onRelease);
-    }
-
-    bindButton("btn-up",     { action: "up",    drive: "up" });
-    bindButton("btn-down",   { action: "down",  drive: "down" });
-    bindButton("btn-left",   { action: "left",  drive: "left" });
-    bindButton("btn-right",  { action: "right", drive: "right" });
-    bindButton("btn-a",      { action: "a" });
-    bindButton("btn-b",      { action: "b" });
-    bindButton("btn-select", { action: "select" });
-    bindButton("btn-start",  { action: "start" });
-
-    // ============================================================
-    //  CLASSIFICA CAMPIONATO
-    // ============================================================
-    function initChampionshipStandings() {
-      championshipStandings = [];
-      championshipStandings.push({
-        name: "TU", color: playerColor, isPlayer: true, points: 0
-      });
-      for (let k = 0; k < NUM_RIVALS; k++) {
-        championshipStandings.push({
-          name: RIVAL_NAMES[k],
-          color: RIVAL_COLORS[k % RIVAL_COLORS.length],
-          isPlayer: false,
-          points: 0
-        });
-      }
-    }
-
-    function awardChampionshipPoints() {
-      const finishing = [];
-      finishing.push({ ref: getPlayerStanding(), dist: playerTotalDist() });
-      rivals.forEach(function (r) {
-        finishing.push({ ref: getRivalStanding(r.idx), dist: r.totalDist });
-      });
-      finishing.sort(function (a, b) { return b.dist - a.dist; });
-      finishing.forEach(function (entry, place) {
-        if (entry.ref) entry.ref.points += POINTS_TABLE[place] || 0;
-      });
-    }
-
-    function getPlayerStanding() {
-      return championshipStandings.find(function (s) { return s.isPlayer; });
-    }
-
-    function getRivalStanding(idx) {
-      return championshipStandings.find(function (s) {
-        return !s.isPlayer && s.name === RIVAL_NAMES[idx];
-      });
-    }
-
-    function playerTotalDist() {
-      return (lap - 1) * track.lengthUnits + position;
-    }
-
-    function computeFinalRank() {
-      const sorted = championshipStandings.slice().sort(function (a, b) {
-        return b.points - a.points;
-      });
-      for (let i = 0; i < sorted.length; i++) {
-        if (sorted[i].isPlayer) return i + 1;
-      }
-      return sorted.length;
-    }
-
-    // ============================================================
-    //  SALVATAGGIO / CARICAMENTO (localStorage)
-    // ============================================================
-    function saveChampionship() {
-      try {
-        const data = {
-          v: 3,
-          vehicleType: vehicleType,
-          playerColorIndex: playerColorIndex,
-          playerColor: playerColor,
-          championshipIndex: championshipIndex,
-          standings: championshipStandings
-        };
-        localStorage.setItem(SAVE_KEY, JSON.stringify(data));
-        hasSavedGame = true;
-        return true;
-      } catch (e) {
-        return false;
-      }
-    }
-
-    function loadChampionship() {
-      try {
-        const raw = localStorage.getItem(SAVE_KEY);
-        if (!raw) return false;
-        const d = JSON.parse(raw);
-        vehicleType = d.vehicleType || "car";
-        phys = VEHICLE[vehicleType];
-        playerColorIndex = d.playerColorIndex || 0;
-        playerColor = d.playerColor || PLAYER_COLORS[0].v;
-        championshipIndex = d.championshipIndex || 0;
-        championshipStandings = d.standings || [];
-        return true;
-      } catch (e) {
-        return false;
-      }
-    }
-
-    function checkSavedGame() {
-      try {
-        hasSavedGame = !!localStorage.getItem(SAVE_KEY);
-      } catch (e) {
-        hasSavedGame = false;
-      }
-    }
-    checkSavedGame();
-
-    // ============================================================
-    //  LOGICA DI AGGIORNAMENTO (ogni frame)
-    // ============================================================
-    function update(dt) {
-      if (saveFlashMs > 0) saveFlashMs -= dt;
-
-      if (state === "SPLASH") {
-        splashTime += dt;
-        return;
-      }
-
-      if (state === "PODIUM") {
-        splashTime += dt;
-        return;
-      }
-
-      if (state === "COUNTDOWN") {
-        countdownMs -= dt;
-        updateEngineSound(0);
-        if (countdownMs <= 0) {
-          state = "RACING";
-          playSound(880, "triangle", 0.25);
-        }
-        return;
-      }
-
-      if (state !== "RACING") {
-        updateEngineSound(0);
-        return;
-      }
-
-      raceTimeMs += dt;
-
-      if (isAccelerating()) {
-        speed += phys.accel;
-      } else if (isBraking()) {
-        speed -= phys.braking;
-      } else {
-        speed -= phys.decel;
-      }
-      speed = Math.max(0, Math.min(speed, phys.maxSpeed));
-      updateEngineSound(speed / phys.maxSpeed);
-
-      const speedRatio = speed / phys.maxSpeed;
-      position += speed * POS_FACTOR;
-
-      if (position >= track.lengthUnits) {
-        position -= track.lengthUnits;
-        lap++;
-        if (lap > totalLaps) {
-          finishRace();
-          return;
-        }
-        playSound(900, "triangle", 0.3);
-      }
-
-      const seg = segAt(position);
-
-      if (drive.left)  playerX -= phys.steer * (0.3 + speedRatio);
-      if (drive.right) playerX += phys.steer * (0.3 + speedRatio);
-
-      playerX -= seg.curve * 0.0095 * speedRatio;
-      playerX = Math.max(-1.6, Math.min(1.6, playerX));
-
-      if (Math.abs(playerX) > 1.0) {
-        speed *= 0.955;
-        if (speed > 40 && Math.random() < 0.2) {
-          playSound(100, "sawtooth", 0.05);
-        }
-      }
-
-      updateRivals();
-      handleCollisions();
-      updatePlayerPosition();
-    }
-
-    function updateRivals() {
-      rivals.forEach(function (r) {
-        const rSeg = segAt(r.pos);
-        const curveFactor = 1 - Math.min(0.35, Math.abs(rSeg.curve) * 0.06);
-        r.curSpeed += (r.baseSpeed * curveFactor - r.curSpeed) * 0.05;
-        r.offset -= rSeg.curve * 0.004;
-        r.offset = Math.max(-0.8, Math.min(0.8, r.offset));
-        r.pos += r.curSpeed * POS_FACTOR;
-        r.totalDist += r.curSpeed * POS_FACTOR;
-        if (r.pos >= track.lengthUnits) {
-          r.pos -= track.lengthUnits;
-          r.lap++;
-        }
-      });
-    }
-
-    function handleCollisions() {
-      rivals.forEach(function (r) {
-        let rel = r.pos - position;
-        if (rel > track.lengthUnits / 2)  rel -= track.lengthUnits;
-        if (rel < -track.lengthUnits / 2) rel += track.lengthUnits;
-        if (Math.abs(rel) < 35 && Math.abs(playerX - r.offset) < 0.42) {
-          speed *= 0.7;
-          playSound(80, "sawtooth", 0.15);
-          if (playerX > r.offset) playerX += 0.13;
-          else playerX -= 0.13;
-        }
-      });
-    }
-
-    function updatePlayerPosition() {
-      const myDist = playerTotalDist();
-      let ahead = 0;
-      rivals.forEach(function (r) {
-        if (r.totalDist > myDist) ahead++;
-      });
-      playerPos = ahead + 1;
-    }
-
-    function finishRace() {
-      speed = 0;
-      updateEngineSound(0);
-      playSound(1000, "triangle", 0.4);
-      setTimeout(function () { playSound(1200, "triangle", 0.4); }, 200);
-      if (raceMode === "championship") {
-        awardChampionshipPoints();
-      }
-      state = "FINISH";
-    }
-
-    function afterFinish() {
-      if (raceMode === "championship") {
-        state = "STANDINGS";
-        standingsReturn = "ADVANCE";
-      } else {
-        state = "MENU";
-        menuIndex = 0;
-      }
-    }
-
-    function afterStandings() {
-      if (standingsReturn === "PRERACE") {
-        state = "PRERACE";
-        return;
-      }
-      championshipIndex++;
-      if (championshipIndex >= CHAMP_TOTAL) {
-        finalRank = computeFinalRank();
-        if (finalRank <= 3) {
-          splashTime = 0;
-          state = "PODIUM";
-          playSound(880, "triangle", 0.2);
-          setTimeout(function () { playSound(1100, "triangle", 0.2); }, 180);
-          setTimeout(function () { playSound(1320, "triangle", 0.3); }, 360);
-        } else {
-          state = "MENU";
-          menuIndex = 0;
-          raceMode = "single";
-        }
-        return;
-      }
-      state = "PRERACE";
-      preraceIndex = 0;
-    }
-
-    // ============================================================
-    //  FUNZIONI DI SUPPORTO
-    // ============================================================
-    function fmtTime(ms) {
-      const totalSec = Math.floor(ms / 1000);
-      const m = Math.floor(totalSec / 60);
-      const s = totalSec % 60;
-      return m + ":" + (s < 10 ? "0" : "") + s;
-    }
-
-    function estimatedTotalMs() {
-      const avg = phys.maxSpeed * 0.55;
-      const unitsPerSec = avg * POS_FACTOR * 60;
-      return ((track.lengthUnits * totalLaps) / unitsPerSec) * 1000;
-    }
-
-    function shade(hex, amt) {
-      const n = parseInt(hex.slice(1), 16);
-      let r = (n >> 16) + amt;
-      let g = ((n >> 8) & 255) + amt;
-      let b = (n & 255) + amt;
-      r = Math.max(0, Math.min(255, r));
-      g = Math.max(0, Math.min(255, g));
-      b = Math.max(0, Math.min(255, b));
-      return "#" + ((r << 16) | (g << 8) | b).toString(16).padStart(6, "0");
-    }
-
-    function px(x, y, w, h, color) {
-      ctx.fillStyle = color;
-      ctx.fillRect(x, y, w, h);
-    }
-
-    // ============================================================
-    //  DISEGNO PRINCIPALE
-    // ============================================================
-    function draw() {
-      switch (state) {
-        case "SPLASH":         return drawSplash();
-        case "VEHICLE_SELECT": return drawVehicleSelect();
-        case "COLOR_SELECT":   return drawColorSelect();
-        case "MENU":           return drawMenu();
-        case "TRACK_SELECT":   return drawTrackSelect();
-        case "PRERACE":        return drawPrerace();
-        case "STANDINGS":      return drawStandings();
-        case "PODIUM":         return drawPodium();
-      }
-
-      drawScene();
-      if (state === "COUNTDOWN") drawCountdown();
-      if (state === "PAUSE")     drawPause();
-      if (state === "FINISH")    drawFinish();
-      if (showInfoOverlay && state === "RACING") drawInfoOverlay();
-    }
-
-    // ============================================================
-    //  SCHERMATA INIZIALE (splash 8-bit)
-    // ============================================================
-    function drawSplash() {
-      const bands = ["#241a4a", "#3a2a6a", "#6a3a7a", "#c0506a", "#f08050", "#ffb060"];
-      for (let i = 0; i < bands.length; i++) {
-        px(0, i * 15, 320, 15, bands[i]);
-      }
-
-      px(130, 50, 60, 60, "#ffe070");
-      px(124, 56, 72, 48, "#ffe070");
-      px(136, 44, 48, 72, "#ffe070");
-      px(150, 70, 20, 20, "#fff2b0");
-
-      for (let b = 0; b < 10; b++) {
-        const bx = b * 34;
-        const bh = 20 + ((b * 29) % 40);
-        px(bx, 120 - bh, 30, bh, "#2a1c40");
-      }
-
-      px(0, 150, 320, 170, "#3a3a44");
-      for (let i = 0; i < 11; i++) {
-        const w = 8 + i * 26;
-        px(160 - w, 150 + i * 16, w * 2, 16, i % 2 ? "#4a4a56" : "#42424e");
-      }
-      for (let i = 0; i < 9; i++) {
-        px(158, 150 + i * 18, 4, 12, "#ffd84a");
-      }
-
-      drawCarBig(160, 262, 3.0, "#1aa3f0");
-
-      ctx.textAlign = "center";
-      ctx.fillStyle = "#5a0000";
-      ctx.font = "bold 32px monospace";
-      ctx.fillText("CRUDO", 163, 35);
-      ctx.fillStyle = "#dc0000";
-      ctx.fillText("CRUDO", 160, 32);
-      ctx.fillStyle = "#7a5a00";
-      ctx.font = "bold 24px monospace";
-      ctx.fillText("RACING", 162, 60);
-      ctx.fillStyle = "#ffd84a";
-      ctx.fillText("RACING", 160, 58);
-
-      if (Math.floor(splashTime / 450) % 2 === 0) {
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 13px monospace";
-        ctx.fillText(">> " + t("pressStart") + " <<", 160, 138);
-      }
-
-      ctx.fillStyle = "#00e5ff";
-      ctx.font = "bold 9px monospace";
-      ctx.fillText(t("langLabel") + ": " + lang.toUpperCase(), 160, 316);
-      ctx.textAlign = "left";
-    }
-
-    function drawCarBig(cx, cy, s, color) {
-      px(cx - 30 * s, cy + 20 * s, 60 * s, 4 * s, "rgba(0,0,0,0.3)");
-      px(cx - 30 * s, cy - 2 * s, 60 * s, 20 * s, color);
-      px(cx - 24 * s, cy - 20 * s, 48 * s, 20 * s, color);
-      px(cx - 20 * s, cy - 17 * s, 40 * s, 15 * s, "#000");
-      px(cx - 28 * s, cy + 3 * s, 14 * s, 7 * s, "#cc2020");
-      px(cx - 27 * s, cy + 4 * s, 5 * s, 5 * s, "#ff8040");
-      px(cx + 14 * s, cy + 3 * s, 14 * s, 7 * s, "#cc2020");
-      px(cx + 22 * s, cy + 4 * s, 5 * s, 5 * s, "#ff8040");
-      px(cx - 8 * s, cy + 3 * s, 16 * s, 7 * s, "#fff");
-      px(cx - 30 * s, cy + 13 * s, 60 * s, 4 * s, "#5a2a9a");
-      px(cx - 30 * s, cy + 16 * s, 60 * s, 2 * s, "#c02020");
-      px(cx - 32 * s, cy + 16 * s, 10 * s, 8 * s, "#111");
-      px(cx + 22 * s, cy + 16 * s, 10 * s, 8 * s, "#111");
-      px(cx - 30 * s, cy + 18 * s, 6 * s, 4 * s, "#888");
-      px(cx + 24 * s, cy + 18 * s, 6 * s, 4 * s, "#888");
-    }
-
-    // ============================================================
-    //  SCHERMATA PODIO (fine campionato, top 3)
-    // ============================================================
-    function drawPodium() {
-      const bgTop = (finalRank === 1) ? "#1a2a5a" : "#141830";
-      px(0, 0, 320, 320, bgTop);
-
-      for (let i = 0; i < 30; i++) {
-        const cx = (i * 97 + Math.floor(splashTime / 30) * (i % 3 + 1)) % 320;
-        const cy = (i * 53 + Math.floor(splashTime / 20) * (i % 2 + 1)) % 260 + 10;
-        const colors = ["#ffd84a", "#ff5555", "#44ddaa", "#8844ff", "#ffffff"];
-        px(cx, cy, 3, 3, colors[i % colors.length]);
-      }
-
-      ctx.textAlign = "center";
-      let titleColor, titleText, msgText;
-      if (finalRank === 1) {
-        titleColor = "#ffd84a";
-        titleText = t("podiumWin");
-        msgText = t("podiumWinMsg");
-      } else if (finalRank === 2) {
-        titleColor = "#c8c8d0";
-        titleText = t("podiumSecond");
-        msgText = t("podiumSecondMsg");
-      } else {
-        titleColor = "#cd7f32";
-        titleText = t("podiumThird");
-        msgText = t("podiumThirdMsg");
-      }
-
-      ctx.fillStyle = titleColor;
-      ctx.font = "bold 22px monospace";
-      ctx.fillText(titleText, 160, 40);
-
-      const baseY = 250;
-      px(70, baseY - 40, 50, 40, "#b8b8c0");
-      px(70, baseY - 40, 50, 4, "#d8d8e0");
-      ctx.fillStyle = "#333"; ctx.font = "bold 16px monospace"; ctx.fillText("2", 95, baseY - 18);
-      px(135, baseY - 62, 50, 62, "#f0c000");
-      px(135, baseY - 62, 50, 4, "#ffe070");
-      ctx.fillStyle = "#5a4400"; ctx.fillText("1", 160, baseY - 38);
-      px(200, baseY - 26, 50, 26, "#cd7f32");
-      px(200, baseY - 26, 50, 4, "#e0a050");
-      ctx.fillStyle = "#3a2410"; ctx.fillText("3", 225, baseY - 10);
-
-      let manX, manBaseY;
-      if (finalRank === 1) { manX = 160; manBaseY = baseY - 62; }
-      else if (finalRank === 2) { manX = 95; manBaseY = baseY - 40; }
-      else { manX = 225; manBaseY = baseY - 26; }
-
-      drawCelebratingMan(manX, manBaseY, playerColor);
-
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 11px monospace";
-      wrapText(msgText, 160, 278, 300, 15);
-
-      ctx.fillStyle = "#888";
-      ctx.font = "bold 9px monospace";
-      ctx.fillText(t("continueA"), 160, 312);
-      ctx.textAlign = "left";
-    }
-
-    function drawCelebratingMan(cx, footY, color) {
-      px(cx - 6, footY - 14, 5, 14, "#2a3a6a");
-      px(cx + 1, footY - 14, 5, 14, "#2a3a6a");
-      px(cx - 7, footY - 3, 6, 3, "#222");
-      px(cx + 1, footY - 3, 6, 3, "#222");
-      px(cx - 8, footY - 30, 16, 17, color);
-      px(cx - 13, footY - 40, 5, 14, color);
-      px(cx + 8, footY - 40, 5, 14, color);
-      px(cx - 13, footY - 44, 5, 5, "#f0c090");
-      px(cx + 8, footY - 44, 5, 5, "#f0c090");
-      px(cx - 6, footY - 44, 12, 12, "#f0c090");
-      px(cx - 6, footY - 44, 12, 4, "#5a3a1a");
-      px(cx - 3, footY - 36, 6, 2, "#7a3a1a");
-      const medal = (finalRank === 1) ? "#f0c000" : (finalRank === 2) ? "#c8c8d0" : "#cd7f32";
-      px(cx - 3, footY - 26, 6, 6, medal);
-    }
-
-    function wrapText(text, x, y, maxWidth, lineHeight) {
-      const words = text.split(" ");
-      let line = "";
-      const lines = [];
-      for (let n = 0; n < words.length; n++) {
-        const test = line + words[n] + " ";
-        if (ctx.measureText(test).width > maxWidth && line !== "") {
-          lines.push(line.trim());
-          line = words[n] + " ";
-        } else {
-          line = test;
-        }
-      }
-      lines.push(line.trim());
-      for (let i = 0; i < lines.length; i++) {
-        ctx.fillText(lines[i], x, y + i * lineHeight);
-      }
-    }
-
-    // ============================================================
-    //  SCENA DI GIOCO
-    // ============================================================
-    function drawScene() {
-      const theme = track.theme;
-      const horizonY = 140;
-      const roadHeight = 180;
-
-      const grad = ctx.createLinearGradient(0, 0, 0, horizonY);
-      grad.addColorStop(0, theme.sky[0]);
-      grad.addColorStop(1, theme.sky[1]);
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, 320, horizonY);
-
-      drawCelestial(theme, horizonY);
-
-      const seg = segAt(position);
-      drawBackground(theme, horizonY, seg.curve * 10);
-      drawRoad(theme, horizonY, roadHeight);
-      drawWorldSprites(horizonY, roadHeight);
-      drawPlayerVehicle();
-      drawHUD();
-    }
-
-    function drawCelestial(theme, horizonY) {
-      if (theme.moon) {
-        for (let i = 0; i < 40; i++) {
-          px((i * 977) % 320, (i * 613) % (horizonY - 20), 1, 1, "#fff");
-        }
-        ctx.fillStyle = "#f4f4d0";
-        ctx.beginPath(); ctx.arc(255, 45, 22, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = theme.sky[0];
-        ctx.beginPath(); ctx.arc(247, 40, 20, 0, Math.PI * 2); ctx.fill();
-      } else if (theme.night) {
-        for (let i = 0; i < 50; i++) {
-          px((i * 977) % 320, (i * 613) % (horizonY - 20), 1, 1, "#fff");
-        }
-      } else if (theme.sunset) {
-        ctx.fillStyle = "#ff5a2a";
-        ctx.beginPath(); ctx.arc(160, horizonY - 10, 34, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = "rgba(255,180,90,0.4)";
-        ctx.beginPath(); ctx.arc(160, horizonY - 10, 50, 0, Math.PI * 2); ctx.fill();
-      } else {
-        ctx.fillStyle = "rgba(255,255,220,0.9)";
-        ctx.beginPath(); ctx.arc(260, 40, 20, 0, Math.PI * 2); ctx.fill();
-      }
-    }
-
-    function drawBackground(theme, horizonY, curveOffset) {
-      switch (theme.scenery) {
-        case "buildings":
-        case "buildingsLit":
-          return drawBuildings(theme, horizonY, curveOffset, theme.scenery === "buildingsLit");
-        case "sea":
-        case "seaSunset":
-          return drawSea(theme, horizonY, curveOffset);
-        case "snow":
-          return drawSnowMountains(theme, horizonY, curveOffset);
-        case "dunes":
-        case "dunesNight":
-          return drawDunes(theme, horizonY, curveOffset);
-        default:
-          return drawHills(theme, horizonY, curveOffset);
-      }
-    }
-
-    function drawHills(theme, horizonY, co) {
-      ctx.fillStyle = theme.hills.dark;
-      ctx.beginPath();
-      ctx.moveTo(0, horizonY);
-      ctx.lineTo(80 + co, 115);
-      ctx.lineTo(200 + co, 115);
-      ctx.lineTo(320, horizonY);
-      ctx.fill();
-      ctx.fillStyle = theme.hills.light;
-      ctx.beginPath();
-      ctx.moveTo(40 + co, horizonY);
-      ctx.lineTo(130 + co, 122);
-      ctx.lineTo(250 + co, horizonY);
-      ctx.fill();
-    }
-
-    function drawBuildings(theme, horizonY, co, lit) {
-      const baseY = horizonY;
-      for (let b = 0; b < 12; b++) {
-        const bw = 22;
-        const bx = ((b * 30) + co * 0.5) % 340 - 10;
-        const bh = 35 + ((b * 37) % 55);
-        ctx.fillStyle = (b % 2 === 0) ? theme.hills.dark : theme.hills.light;
-        ctx.fillRect(bx, baseY - bh, bw, bh);
-        for (let wy = baseY - bh + 4; wy < baseY - 4; wy += 8) {
-          for (let wx = bx + 3; wx < bx + bw - 3; wx += 7) {
-            if (lit) {
-              ctx.fillStyle = (Math.floor(wx + wy + b) % 3 === 0) ? "#ffe27a" : "#33334a";
-            } else {
-              ctx.fillStyle = "#2a3550";
-            }
-            ctx.fillRect(wx, wy, 3, 4);
-          }
-        }
-      }
-    }
-
-    function drawSea(theme, horizonY, co) {
-      ctx.fillStyle = theme.hills.dark;
-      ctx.fillRect(0, horizonY - 30, 320, 30);
-      ctx.fillStyle = theme.hills.light;
-      for (let w = 0; w < 8; w++) {
-        const wy = horizonY - 26 + w * 3;
-        const off = (w % 2 === 0) ? 0 : 15;
-        ctx.fillRect((off + co) % 40, wy, 12, 1);
-        ctx.fillRect((off + 60 + co) % 320, wy, 12, 1);
-        ctx.fillRect((off + 180 + co) % 320, wy, 12, 1);
-      }
-      ctx.fillStyle = theme.sunset ? "#7a5a70" : "#2a8030";
-      ctx.beginPath();
-      ctx.moveTo(120 + co, horizonY - 30);
-      ctx.lineTo(150 + co, horizonY - 45);
-      ctx.lineTo(190 + co, horizonY - 30);
-      ctx.fill();
-    }
-
-    function drawSnowMountains(theme, horizonY, co) {
-      ctx.fillStyle = theme.hills.dark;
-      ctx.beginPath();
-      ctx.moveTo(0, horizonY);
-      ctx.lineTo(70 + co, 95);
-      ctx.lineTo(150 + co, horizonY);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.moveTo(140 + co, horizonY);
-      ctx.lineTo(220 + co, 90);
-      ctx.lineTo(320 + co, horizonY);
-      ctx.fill();
-      ctx.fillStyle = theme.hills.light;
-      ctx.beginPath();
-      ctx.moveTo(55 + co, 110);
-      ctx.lineTo(70 + co, 95);
-      ctx.lineTo(85 + co, 110);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.moveTo(205 + co, 105);
-      ctx.lineTo(220 + co, 90);
-      ctx.lineTo(235 + co, 105);
-      ctx.fill();
-    }
-
-    function drawDunes(theme, horizonY, co) {
-      ctx.fillStyle = theme.hills.dark;
-      ctx.beginPath();
-      ctx.moveTo(0, horizonY);
-      ctx.quadraticCurveTo(80 + co, 108, 170 + co, horizonY);
-      ctx.fill();
-      ctx.fillStyle = theme.hills.light;
-      ctx.beginPath();
-      ctx.moveTo(120 + co, horizonY);
-      ctx.quadraticCurveTo(220 + co, 112, 320, horizonY);
-      ctx.fill();
-    }
-
-    function drawRoad(theme, horizonY, roadHeight) {
-      let dx = 0;
-      const camX = playerX * 120;
-
-      for (let i = 0; i < roadHeight; i++) {
-        const perspective = i / roadHeight;
-        const lookAhead = position + (1 - perspective) * 800;
-        const seg = segAt(lookAhead);
-        dx += seg.curve * perspective * 0.8;
-
-        const hillLift = (seg.hill || 0) * perspective * 25;
-        const roadWidth = ROAD_WIDTH_BASE + perspective * ROAD_WIDTH_PERSP;
-        const centerX = 160 - camX * perspective + dx;
-        const y = horizonY + i - hillLift;
-
-        const leftGrass = centerX - roadWidth;
-        const rightGrass = centerX + roadWidth;
-        const isAlt = Math.floor(lookAhead / 40) % 2 === 0;
-
-        ctx.fillStyle = isAlt ? theme.grass.light : theme.grass.dark;
-        ctx.fillRect(0, y, 320, 1);
-
-        const edgeW = Math.max(2, roadWidth * 0.14);
-        ctx.fillStyle = theme.edge;
-        ctx.fillRect(leftGrass - edgeW, y, roadWidth * 2 + edgeW * 2, 1);
-
-        ctx.fillStyle = isAlt ? theme.road.light : theme.road.dark;
-        ctx.fillRect(leftGrass, y, roadWidth * 2, 1);
-
-        ctx.fillStyle = isAlt ? theme.kerb.a : theme.kerb.b;
-        const kerbW = Math.max(1.5, roadWidth * 0.1);
-        ctx.fillRect(leftGrass - kerbW, y, kerbW, 1);
-        ctx.fillRect(rightGrass, y, kerbW, 1);
-
-        if (isAlt && roadWidth > 30) {
-          ctx.fillStyle = "rgba(255,255,255,0.7)";
-          ctx.fillRect(centerX - 1, y, 2, 1);
-        }
-
-        if (seg.hasSign && i % 35 === 0) {
-          const signX = (seg.signSide === -1) ? leftGrass - 15 : rightGrass + 5;
-          ctx.fillStyle = "#000";
-          ctx.fillRect(signX + 4, y - 10, 2, 10);
-          ctx.fillStyle = theme.kerb.a;
-          ctx.fillRect(signX, y - 12, 10, 5);
-        }
-      }
-    }
-
-    function drawWorldSprites(horizonY, roadHeight) {
-      const sprites = [];
-
-      rivals.forEach(function (r) {
-        let rel = r.pos - position;
-        if (rel < 0) rel += track.lengthUnits;
-        if (rel > 0 && rel < 800) {
-          sprites.push({ rel: rel, data: r });
-        }
-      });
-
-      sprites.sort(function (a, b) { return b.rel - a.rel; });
-
-      sprites.forEach(function (sp) {
-        const perspective = 1 - (sp.rel / 800);
-        const y = horizonY + perspective * roadHeight;
-        drawRivalVehicle(sp.data, perspective, y);
-      });
-    }
-
-    function spriteX(offset, perspective) {
-      return 160 - (playerX - offset) * 120 * perspective;
-    }
-
-    function drawRivalVehicle(r, perspective, y) {
-      const x = spriteX(r.offset, perspective);
-      const scale = (10 + perspective * 46) / 34;
-      if (vehicleType === "scooter") {
-        drawScooterSprite(x, y, scale, r.color);
-      } else {
-        drawCarSprite(x, y, scale, r.color);
-      }
-    }
-
-    function drawCarSprite(cx, cy, u, color) {
-      px(cx - 16 * u, cy - 2 * u, 32 * u, 12 * u, color);
-      px(cx - 12 * u, cy - 12 * u, 24 * u, 10 * u, color);
-      px(cx - 10 * u, cy - 10 * u, 20 * u, 7 * u, "#000");
-      px(cx - 15 * u, cy + 1 * u, 8 * u, 4 * u, "#cc2020");
-      px(cx + 7 * u, cy + 1 * u, 8 * u, 4 * u, "#cc2020");
-      px(cx - 4 * u, cy + 1 * u, 8 * u, 4 * u, "#fff");
-      px(cx - 16 * u, cy + 8 * u, 32 * u, 2 * u, "#5a2a9a");
-      px(cx - 17 * u, cy + 9 * u, 6 * u, 5 * u, "#111");
-      px(cx + 11 * u, cy + 9 * u, 6 * u, 5 * u, "#111");
-    }
-
-    function drawScooterSprite(cx, cy, u, color) {
-      const dark = shade(color, -35);
-      px(cx - 9 * u, cy + 13 * u, 18 * u, 3 * u, "rgba(0,0,0,0.3)");
-      px(cx - 4 * u, cy + 4 * u, 8 * u, 11 * u, "#1a1a1a");
-      px(cx - 2 * u, cy + 7 * u, 4 * u, 5 * u, "#666");
-      px(cx - 9 * u, cy - 2 * u, 18 * u, 8 * u, color);
-      px(cx - 7 * u, cy + 4 * u, 14 * u, 4 * u, dark);
-      px(cx - 2 * u, cy - 1 * u, 4 * u, 3 * u, "#cc2020");
-      px(cx - 6 * u, cy - 8 * u, 12 * u, 5 * u, "#2a2a2a");
-      px(cx - 6 * u, cy - 18 * u, 12 * u, 11 * u, "#3a4a6a");
-      px(cx - 8 * u, cy - 15 * u, 3 * u, 8 * u, "#33405c");
-      px(cx + 5 * u, cy - 15 * u, 3 * u, 8 * u, "#33405c");
-      px(cx - 5 * u, cy - 27 * u, 10 * u, 10 * u, "#e8e8ec");
-      px(cx - 5 * u, cy - 27 * u, 10 * u, 3 * u, "#ffffff");
-      px(cx - 5 * u, cy - 19 * u, 10 * u, 2 * u, "#333");
-      px(cx - 9 * u, cy - 13 * u, 2 * u, 2 * u, "#222");
-      px(cx + 7 * u, cy - 13 * u, 2 * u, 2 * u, "#222");
-    }
-
-    function drawPlayerVehicle() {
-      const cx = 160;
-      if (vehicleType === "scooter") {
-        if (track.theme.night) drawHeadlights(cx, 270);
-        drawScooterSprite(cx, 256, 2.4, playerColor);
-      } else {
-        if (track.theme.night) drawHeadlights(cx, 268);
-        drawCarSprite(cx, 256, 2.6, playerColor);
-      }
-    }
-
-    function drawHeadlights(cx, y) {
-      ctx.fillStyle = "rgba(255,255,180,0.15)";
-      ctx.beginPath();
-      ctx.moveTo(cx - 6, y - 20);
-      ctx.lineTo(cx - 60, 150);
-      ctx.lineTo(cx + 60, 150);
-      ctx.lineTo(cx + 6, y - 20);
-      ctx.fill();
-    }
-
-    function drawHUD() {
-      ctx.fillStyle = "#101010";
-      ctx.fillRect(0, 0, 320, 22);
-      ctx.textAlign = "left";
-      ctx.fillStyle = "#00e5ff";
-      ctx.font = "bold 10px monospace";
-      ctx.fillText("SPEED:", 6, 15);
-      ctx.fillStyle = "#fff";
-      ctx.fillText(String(Math.floor(speed)), 46, 15);
-      ctx.fillStyle = "#f8d820";
-      ctx.fillText(t("lap").toUpperCase() + " " + lap + "/" + totalLaps, 120, 15);
-      ctx.fillStyle = "#ff4444";
-      ctx.fillText("POS " + playerPos + "/" + NUM_RACERS, 235, 15);
-    }
-
-    function drawInfoOverlay() {
-      ctx.fillStyle = "rgba(0,0,0,0.78)";
-      ctx.fillRect(30, 40, 260, 160);
-      ctx.strokeStyle = "#00e5ff";
-      ctx.strokeRect(30, 40, 260, 160);
-
-      ctx.fillStyle = "#00e5ff";
-      ctx.font = "bold 14px monospace";
-      ctx.textAlign = "center";
-      ctx.fillText(t("raceInfo"), 160, 62);
-
-      ctx.font = "bold 11px monospace";
-      ctx.fillStyle = "#fff";
-      ctx.textAlign = "left";
-
-      const totalMs = estimatedTotalMs();
-      const remaining = Math.max(0, totalMs - raceTimeMs);
-      const lapProgress = Math.floor((position / track.lengthUnits) * 100);
-
-      ctx.fillText(t("track") + ": " + themeName(track.themeKey), 45, 88);
-      ctx.fillText(t("raceDuration") + ": " + fmtTime(raceTimeMs), 45, 106);
-      ctx.fillText(t("estDuration") + ": " + fmtTime(totalMs), 45, 124);
-      ctx.fillText(t("timeLeft") + " ~ " + fmtTime(remaining), 45, 142);
-      ctx.fillText(t("position") + ": " + playerPos + " / " + NUM_RACERS, 45, 160);
-      ctx.fillText(t("lap") + " " + lap + "/" + totalLaps + " (" + lapProgress + "%)", 45, 178);
-    }
-
-    function drawCountdown() {
-      ctx.fillStyle = "rgba(0,0,0,0.4)";
-      ctx.fillRect(0, 0, 320, 320);
-      const n = Math.ceil(countdownMs / 1000);
-      ctx.fillStyle = (n <= 1) ? "#00ff00" : "#ffcc00";
-      ctx.font = "bold 90px monospace";
-      ctx.textAlign = "center";
-      ctx.fillText(n > 0 ? String(n) : t("go"), 160, 200);
-      ctx.textAlign = "left";
-    }
-
-    function drawPause() {
-      ctx.fillStyle = "rgba(0,0,0,0.8)";
-      ctx.fillRect(0, 0, 320, 320);
-      ctx.textAlign = "center";
-      ctx.fillStyle = "#fff";
-      ctx.font = "bold 26px monospace";
-      ctx.fillText(t("pause"), 160, 96);
-
-      const items = pauseItems();
-      ctx.font = "bold 15px monospace";
-      items.forEach(function (key, idx) {
-        const label = t(key);
-        const y = 140 + idx * 32;
-        if (idx === pauseIndex) {
-          ctx.fillStyle = "#00e5ff";
-          ctx.fillText("> " + label + " <", 160, y);
-        } else {
-          ctx.fillStyle = "#aaa";
-          ctx.fillText(label, 160, y);
-        }
-      });
-
-      if (saveFlashMs > 0) {
-        ctx.fillStyle = "#00ff88";
-        ctx.font = "bold 11px monospace";
-        ctx.fillText(t("savedOk"), 160, 255);
-      }
-
-      ctx.fillStyle = "#666";
-      ctx.font = "bold 9px monospace";
-      ctx.fillText(t("navChooseConfirm"), 160, 278);
-      ctx.textAlign = "left";
-    }
-
-    function drawFinish() {
-      ctx.fillStyle = "rgba(0,0,0,0.85)";
-      ctx.fillRect(0, 0, 320, 320);
-      ctx.textAlign = "center";
-      ctx.fillStyle = "#f8d820";
-      ctx.font = "bold 26px monospace";
-      ctx.fillText(t("finish"), 160, 120);
-
-      ctx.fillStyle = "#fff";
-      ctx.font = "bold 14px monospace";
-      ctx.fillText(t("position") + ": " + playerPos + " / " + NUM_RACERS, 160, 155);
-      ctx.fillText(t("time") + ": " + fmtTime(raceTimeMs), 160, 178);
-
-      ctx.font = "bold 11px monospace";
-      if (raceMode === "championship") {
-        ctx.fillStyle = "#00e5ff";
-        ctx.fillText(t("raceOf") + " " + (championshipIndex + 1) + "/" + CHAMP_TOTAL +
-                     "  -  " + t("aForStandings"), 160, 220);
-      } else {
-        ctx.fillText(t("aForMenu"), 160, 220);
-      }
-      ctx.textAlign = "left";
-    }
-
-    function drawStandings() {
-      ctx.fillStyle = "#0c1020";
-      ctx.fillRect(0, 0, 320, 320);
-      ctx.textAlign = "center";
-      ctx.fillStyle = "#f8d820";
-      ctx.font = "bold 14px monospace";
-
-      const last = (championshipIndex >= CHAMP_TOTAL - 1) && (standingsReturn === "ADVANCE");
-      ctx.fillText(last ? t("finalStandings") : t("standings"), 160, 20);
-
-      const sorted = championshipStandings.slice().sort(function (a, b) {
-        return b.points - a.points;
-      });
-
-      ctx.font = "bold 9px monospace";
-      ctx.textAlign = "left";
-      sorted.forEach(function (s, idx) {
-        const y = 38 + idx * 17;
-        ctx.fillStyle = s.color;
-        ctx.fillRect(18, y - 7, 8, 8);
-        ctx.fillStyle = s.isPlayer ? "#00e5ff" : "#ddd";
-        ctx.fillText((idx + 1).toString().padStart(2, " ") + ". " + s.name, 32, y);
-        ctx.textAlign = "right";
-        ctx.fillText(s.points + " pt", 300, y);
-        ctx.textAlign = "left";
-      });
-
-      ctx.textAlign = "center";
-      ctx.fillStyle = "#888";
-      ctx.font = "bold 9px monospace";
-      ctx.fillText(t("continueA"), 160, 312);
-      ctx.textAlign = "left";
-    }
-
-    function drawPrerace() {
-      ctx.fillStyle = "#101828";
-      ctx.fillRect(0, 0, 320, 320);
-      ctx.textAlign = "center";
-
-      ctx.fillStyle = "#f8d820";
-      ctx.font = "bold 15px monospace";
-      ctx.fillText(t("championship"), 160, 34);
-
-      ctx.fillStyle = "#fff";
-      ctx.font = "bold 12px monospace";
-      ctx.fillText(t("raceOf") + " " + (championshipIndex + 1) + " " + t("of") + " " + CHAMP_TOTAL, 160, 60);
-
-      ctx.fillStyle = "#00e5ff";
-      ctx.font = "bold 14px monospace";
-      ctx.fillText(themeName(CHAMPIONSHIP_ORDER[championshipIndex]), 160, 84);
-
-      ctx.fillStyle = "#aaa";
-      ctx.font = "bold 10px monospace";
-      ctx.fillText(t("raceStarting"), 160, 104);
-
-      const items = preraceItems();
-      ctx.font = "bold 13px monospace";
-      items.forEach(function (key, idx) {
-        const label = t(key);
-        const y = 140 + idx * 30;
-        if (idx === preraceIndex) {
-          ctx.fillStyle = "#00e5ff";
-          ctx.fillText("> " + label + " <", 160, y);
-        } else {
-          ctx.fillStyle = "#bbb";
-          ctx.fillText(label, 160, y);
-        }
-      });
-
-      if (saveFlashMs > 0) {
-        ctx.fillStyle = "#00ff88";
-        ctx.font = "bold 11px monospace";
-        ctx.fillText(t("savedOk"), 160, 285);
-      }
-
-      ctx.fillStyle = "#666";
-      ctx.font = "bold 9px monospace";
-      ctx.fillText(t("navChoose"), 160, 305);
-      ctx.textAlign = "left";
-    }
-
-    // Schermata scelta veicolo: MACCHINE / MOTORINI / (CARICA SALVATAGGIO)
-    function drawVehicleSelect() {
-      ctx.fillStyle = "#101828";
-      ctx.fillRect(0, 0, 320, 320);
-      ctx.textAlign = "center";
-
-      ctx.fillStyle = "#dc0000";
-      ctx.font = "bold 20px monospace";
-      ctx.fillText(t("title"), 160, 40);
-
-      ctx.fillStyle = "#f8d820";
-      ctx.font = "bold 13px monospace";
-      ctx.fillText(t("chooseVehicle"), 160, 66);
-
-      const items = vehicleSelectItems();
-      ctx.font = "bold 16px monospace";
-      items.forEach(function (key, idx) {
-        const label = t(key);
-        const y = 108 + idx * 32;
-        if (idx === menuIndex) {
-          ctx.fillStyle = "#00e5ff";
-          ctx.fillText("> " + label + " <", 160, y);
-        } else {
-          ctx.fillStyle = "#aaa";
-          ctx.fillText(label, 160, y);
-        }
-      });
-
-      // anteprima del veicolo evidenziato (auto o scooter)
-      const highlighted = items[(menuIndex + items.length) % items.length];
-      if (highlighted === "cars") {
-        drawCarSprite(160, 236, 1.9, "#1aa3f0");
-      } else if (highlighted === "scooters") {
-        drawScooterSprite(160, 238, 1.9, "#1aa3f0");
-      }
-
-      ctx.fillStyle = "#7ad0ff";
-      ctx.font = "bold 10px monospace";
-      ctx.fillText(t("langLabel") + ": " + lang.toUpperCase() + "  (" + t("toggleLangHint") + ")", 160, 292);
-
-      ctx.fillStyle = "#666";
-      ctx.font = "bold 9px monospace";
-      ctx.fillText(t("navChoose"), 160, 308);
-      ctx.textAlign = "left";
-    }
-
-    function drawColorSelect() {
-      ctx.fillStyle = "#101828";
-      ctx.fillRect(0, 0, 320, 320);
-      ctx.textAlign = "center";
-
-      ctx.fillStyle = "#f8d820";
-      ctx.font = "bold 14px monospace";
-      ctx.fillText(t("chooseColor"), 160, 28);
-
-      const cols = 4;
-      PLAYER_COLORS.forEach(function (c, idx) {
-        const cx = 60 + (idx % cols) * 67;
-        const cy = 64 + Math.floor(idx / cols) * 54;
-        ctx.fillStyle = c.v;
-        ctx.fillRect(cx - 20, cy - 16, 40, 28);
-        if (idx === menuIndex) {
-          ctx.strokeStyle = "#00e5ff";
-          ctx.lineWidth = 3;
-          ctx.strokeRect(cx - 22, cy - 18, 44, 32);
-          ctx.lineWidth = 1;
-        }
-      });
-
-      ctx.fillStyle = "#fff";
-      ctx.font = "bold 13px monospace";
-      ctx.fillText(colorName(menuIndex), 160, 196);
-
-      if (vehicleType === "car") {
-        drawCarSprite(160, 250, 2.2, PLAYER_COLORS[menuIndex].v);
-      } else {
-        drawScooterSprite(160, 252, 2.1, PLAYER_COLORS[menuIndex].v);
-      }
-
-      ctx.fillStyle = "#666";
-      ctx.font = "bold 9px monospace";
-      ctx.fillText(t("navColorHint"), 160, 306);
-      ctx.textAlign = "left";
-    }
-
-    function drawMenu() {
-      ctx.fillStyle = "#101828";
-      ctx.fillRect(0, 0, 320, 320);
-      ctx.textAlign = "center";
-
-      ctx.fillStyle = "#dc0000";
-      ctx.font = "bold 22px monospace";
-      ctx.fillText(t("title"), 160, 48);
-
-      ctx.fillStyle = "#f8d820";
-      ctx.font = "bold 11px monospace";
-      ctx.fillText((vehicleType === "car" ? t("cars") : t("scooters")) + " - " + colorName(playerColorIndex), 160, 70);
-
-      const items = menuMainItems();
-      ctx.font = "bold 14px monospace";
-      items.forEach(function (key, idx) {
-        const label = t(key);
-        const y = 104 + idx * 26;
-        if (idx === menuIndex) {
-          ctx.fillStyle = "#00e5ff";
-          ctx.fillText("> " + label + " <", 160, y);
-        } else {
-          ctx.fillStyle = "#aaa";
-          ctx.fillText(label, 160, y);
-        }
-      });
-
-      ctx.fillStyle = "#7ad0ff";
-      ctx.font = "bold 9px monospace";
-      ctx.fillText(t("langLabel") + ": " + lang.toUpperCase() + " (" + t("toggleLangHint") + ")", 160, 236);
-
-      ctx.fillStyle = "#666";
-      ctx.fillText(t("controlsHint"), 160, 256);
-      ctx.fillText(t("changeVehicle"), 160, 272);
-      ctx.textAlign = "left";
-    }
-
-    function drawTrackSelect() {
-      ctx.fillStyle = "#101828";
-      ctx.fillRect(0, 0, 320, 320);
-      ctx.textAlign = "center";
-
-      ctx.fillStyle = "#f8d820";
-      ctx.font = "bold 15px monospace";
-      ctx.fillText(t("chooseTrack"), 160, 26);
-
-      ctx.font = "bold 11px monospace";
-      BASE_TRACKS.forEach(function (key, idx) {
-        const y = 50 + idx * 23;
-        const label = (idx + 1) + ". " + themeName(key);
-        if (idx === menuIndex) {
-          ctx.fillStyle = "#00e5ff";
-          ctx.fillText("> " + label, 160, y);
-        } else {
-          ctx.fillStyle = "#bbb";
-          ctx.fillText(label, 160, y);
-        }
-      });
-
-      ctx.fillStyle = "#666";
-      ctx.font = "bold 9px monospace";
-      ctx.fillText(t("navBack"), 160, 300);
-      ctx.textAlign = "left";
-    }
-
-    // ============================================================
-    //  LOOP PRINCIPALE DEL GIOCO
-    // ============================================================
-    let lastTime = performance.now();
-
-    function gameLoop(now) {
-      let dt = now - lastTime;
-      lastTime = now;
-      if (dt > 100) dt = 100;
-
-      try {
-        update(dt);
-        draw();
-      } catch (err) {
-        console.error(err);
-      }
-
-      requestAnimationFrame(gameLoop);
-    }
-
-    requestAnimationFrame(gameLoop);
-  </script>
+<svg style="display: none;">
+<g id="icon-hun"><path d="M2 1h1v2H2zM5 0h1v2H5zM3 4h2v1H3zM1 3h6v2H1zM0 5h8v2H0zM1 7h6v1H1z" fill="#b8823a"/></g>
+<g id="icon-cln"><path d="M3 1h2v1H3zM2 2h4v1H2zM1 3h6v1H1zM3 4h2v1H3zM4 6h1v1H4zM2 6h1v1H2z" fill="#4a86b8"/></g>
+<g id="icon-hap"><path d="M1 1h2v2H1zM5 1h2v2H5zM0 2h8v2H0zM1 4h6v2H1zM2 6h4v1H2zM3 7h2v1H3z" fill="#b89a3a"/></g>
+<g id="icon-hlt"><path d="M3 0h2v8H3zM0 3h8v2H0z" fill="#b85a5a"/></g>
+<g id="icon-nrg"><path d="M4 0l3 4H4l2 4-5-5h3z" fill="#5a9a5a"/></g>
+<g id="icon-fit"><path d="M0 2h2v4H0zM6 2h2v4H6zM2 3h4v2H2z" fill="#6e6ea8"/></g>
+<g id="icon-int"><path d="M4 0L0 2l4 2 4-2-4-2zM2 3.5v2.5c0 1 1 1.5 2 1.5s2-.5 2-1.5V3.5M7 2.5v3.5" fill="#4a9a8f"/></g>
+</svg>
+<div class="tamagotchi-container" id="shell-container">
+<div class="lcd-screen" id="lcd-screen">
+
+<div id="selection-screen" style="width: 100%; height: 100%;">
+<div class="selection-container">
+<h2 id="title-selection">DINOMIO - SELEZIONA PET</h2>
+<div class="pet-inputs-container">
+<div class="input-group">
+<label for="custom-pet-name" id="lbl-input-name">NOME:</label>
+<input type="text" id="custom-pet-name" placeholder="ES. SPIKE" maxlength="10">
+</div>
+<div class="input-group">
+<span id="lbl-input-gender">GENERE:</span>
+<div class="gender-options">
+<label><input type="radio" name="pet-gender" value="M" checked> &#9794; M</label>
+<label><input type="radio" name="pet-gender" value="F"> &#9792; F</label>
+</div>
+</div>
+</div>
+<div class="pets-list">
+<div class="pet-row"><div class="pet-row-info"><canvas class="pixel-art-canvas" id="p1_baby" width="32" height="32"></canvas><span class="pet-name-title">SPIKE</span></div><button class="select-pet-btn" onclick="selectPet(0, 'SPIKE')">START</button></div>
+<div class="pet-row"><div class="pet-row-info"><canvas class="pixel-art-canvas" id="p2_baby" width="32" height="32"></canvas><span class="pet-name-title">NIBBLE</span></div><button class="select-pet-btn" onclick="selectPet(1, 'NIBBLE')">START</button></div>
+<div class="pet-row"><div class="pet-row-info"><canvas class="pixel-art-canvas" id="p3_baby" width="32" height="32"></canvas><span class="pet-name-title">BUBBLE</span></div><button class="select-pet-btn" onclick="selectPet(2, 'BUBBLE')">START</button></div>
+<div class="pet-row"><div class="pet-row-info"><canvas class="pixel-art-canvas" id="p4_baby" width="32" height="32"></canvas><span class="pet-name-title">PUFF</span></div><button class="select-pet-btn" onclick="selectPet(3, 'PUFF')">START</button></div>
+<div class="pet-row"><div class="pet-row-info"><canvas class="pixel-art-canvas" id="p5_baby" width="32" height="32"></canvas><span class="pet-name-title">DINO</span></div><button class="select-pet-btn" onclick="selectPet(4, 'DINO')">START</button></div>
+</div>
+<div class="area-section">
+<button class="action-btn" id="btn-manual" style="width: 90%; margin-bottom: 4px;" onclick="showRules()">MANUALE / REGOLE</button>
+<button class="action-btn" id="btn-choose-area-menu" style="width: 90%;" onclick="showChooseArea()">SCEGLI AREA</button>
+</div>
+</div>
+</div>
+
+<div id="choose-area-screen" class="choose-area-screen">
+<h2 id="title-choose-area">SCEGLI LA TUA AREA</h2>
+<div class="button-grid" style="grid-template-columns: repeat(3, 1fr); margin-top: 15px; gap: 8px;">
+<button class="area-btn" id="area-birth" onclick="navigateToLocation('Aree Nascita')">Nascita</button>
+<button class="area-btn" id="area-forest" onclick="navigateToLocation('Bosco Incantato')">Bosco</button>
+<button class="area-btn" id="area-beach" onclick="navigateToLocation('Spiaggia Solare')">Spiaggia</button>
+<button class="area-btn" id="area-city" onclick="navigateToLocation('Citta Futuristica')">Citta</button>
+<button class="area-btn" id="area-mountain" onclick="navigateToLocation('Montagna Rocciosa')">Montagna</button>
+<button class="area-btn" id="area-castle" onclick="navigateToLocation('Castello Antico')">Castello</button>
+<button class="area-btn" id="area-island" onclick="navigateToLocation('Isola del Tesoro')">Isola</button>
+<button class="area-btn" id="area-space" onclick="navigateToLocation('Spazio Aperto')">Spazio</button>
+<button class="area-btn" id="area-magic" onclick="navigateToLocation('Mondo Magico')">Magia</button>
+</div>
+<button class="action-btn" id="btn-back-area" style="margin-top: auto;" onclick="hideChooseArea()">INDIETRO</button>
+</div>
+
+<div id="rules-screen" class="rules-screen">
+<h2 id="title-rules">REGOLE REALI</h2>
+<div class="rules-content" id="rules-body"></div>
+<button class="action-btn" id="btn-back-sel" onclick="hideRules()">TORNA ALLA SELEZIONE</button>
+</div>
+
+<div id="info-screen" class="info-screen">
+<h2 id="title-info">INFORMAZIONI PET</h2>
+<div class="info-content">
+<p><b id="lbl-name">NOME:</b> <span id="info-name">SPIKE</span></p>
+<p><b id="lbl-gender">GENERE:</b> <span id="info-gender">M</span></p>
+<p><b id="lbl-gen">GENERAZIONE:</b> <span id="info-gen">1</span></p>
+<p><b id="lbl-age">ETA:</b> <span id="info-age">0</span> <span id="lbl-days">giorni</span></p>
+<p><b id="lbl-stage">STADIO:</b> <span id="info-stage">EGG</span></p>
+<hr style="margin: 6px 0; border-color:#c4ccd6;">
+<div class="stat-row"><svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-hun"/></svg><p><b id="lbl-hun">FAME (HUN):</b> <span id="info-hunger">&#9679;&#9679;&#9679;&#9679;&#9679;</span></p></div>
+<div class="stat-row"><svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-cln"/></svg><p><b id="lbl-cln">PULIZIA (CLN):</b> <span id="info-cleanliness">&#9679;&#9679;&#9679;&#9679;&#9679;</span></p></div>
+<div class="stat-row"><svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-hap"/></svg><p><b id="lbl-hap">FELICITA (HAP):</b> <span id="info-happy">&#9679;&#9679;&#9679;&#9679;&#9679;</span></p></div>
+<div class="stat-row"><svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-hlt"/></svg><p><b id="lbl-hlt">SALUTE (HLT):</b> <span id="info-health">&#9679;&#9679;&#9679;&#9679;&#9679;</span></p></div>
+<div class="stat-row"><svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-nrg"/></svg><p><b id="lbl-nrg">ENERGIA (NRG):</b> <span id="info-energy">&#9679;&#9679;&#9679;&#9679;&#9679;</span></p></div>
+<div class="stat-row"><svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-fit"/></svg><p><b id="lbl-fit">FORMA FISICA (FIT):</b> <span id="info-fitness">&#9679;&#9679;&#9679;&#9679;&#9679;</span></p></div>
+<div class="stat-row"><svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-int"/></svg><p><b id="lbl-int">INTELLIGENZA (INT):</b> <span id="info-intelligence">&#9675;&#9675;&#9675;&#9675;&#9675;</span></p></div>
+<hr style="margin: 6px 0; border-color:#c4ccd6;">
+<p style="font-weight:bold;" id="lbl-rank-title">CLASSIFICA GARE</p>
+<table class="rank-table"><thead><tr><th>#</th><th id="lbl-rank-name">NOME</th><th id="lbl-rank-points">PUNTI</th></tr></thead><tbody id="rank-tbody"></tbody></table>
+</div>
+<button class="action-btn" id="btn-back-game" onclick="hideInfo()">TORNA AL GIOCO</button>
+</div>
+
+<div id="settings-screen" class="settings-screen">
+<h2 id="title-settings">IMPOSTAZIONI</h2>
+<div class="settings-content">
+<div class="settings-group">
+<label id="lbl-reset-opt">RESET PET:</label>
+<button class="action-btn" style="width: 100%; background: linear-gradient(180deg,#c47a7a,#a85a5a); box-shadow:0 3px 0 #8c4646; color:#fff; margin-top:0;" id="btn-reset-game" onclick="resetGame()">RESET PET</button>
+</div>
+<div class="settings-group">
+<label id="lbl-lang">LINGUA / LANGUAGE:</label>
+<button class="action-btn" style="width: 100%; margin-top:0;" onclick="toggleLanguage()" id="btn-lang-toggle">Italiano / English</button>
+</div>
+<div class="settings-group">
+<label id="lbl-bg-style">SFONDO PIXEL-ART 8-BIT:</label>
+<div class="bg-picker-grid">
+<button class="glossy-btn active-bg" id="bg-btn-none" onclick="setBackgroundStyle('none')">VUOTO</button>
+<button class="glossy-btn" id="bg-btn-sea" onclick="setBackgroundStyle('sea')">MARE</button>
+<button class="glossy-btn" id="bg-btn-forest" onclick="setBackgroundStyle('forest')">BOSCO</button>
+<button class="glossy-btn" id="bg-btn-city" onclick="setBackgroundStyle('city')">CITTA</button>
+<button class="glossy-btn" id="bg-btn-sky" onclick="setBackgroundStyle('sky')">CIELO</button>
+<button class="glossy-btn" id="bg-btn-space" onclick="setBackgroundStyle('space')">SPAZIO</button>
+</div>
+</div>
+<div class="settings-group">
+<label id="lbl-shell-color">COLORE GUSCIO:</label>
+<div class="color-picker-grid">
+<button class="color-btn" style="background:#93a7bd;" onclick="setShellColor('default')">DEFAULT</button>
+<button class="color-btn" style="background:#0066ff; color:#fff;" onclick="setShellColor('blue')">BLU</button>
+<button class="color-btn" style="background:#e60000; color:#fff;" onclick="setShellColor('red')">ROSSO</button>
+<button class="color-btn" style="background:#ffffff;" onclick="setShellColor('white')">BIANCO</button>
+<button class="color-btn" style="background:#ffcc00;" onclick="setShellColor('yellow')">GIALLO</button>
+<button class="color-btn" style="background:#ff1e9c; color:#fff;" onclick="setShellColor('pink')">ROSA</button>
+<button class="color-btn" style="background:#e0c878;" onclick="setShellColor('beige')">BEIGE</button>
+<button class="color-btn" style="background:#00c2ff;" onclick="setShellColor('lightblue')">CELESTE</button>
+</div>
+</div>
+</div>
+<button class="action-btn" id="btn-back-settings" onclick="hideSettings()">TORNA AL GIOCO</button>
+</div>
+
+<div id="gameplay-screen" class="gameplay-screen">
+<div class="game-frame">
+<div class="frame-top-bar">
+<div class="pixel-pet-badge"><span id="badge-pet-name">SPIKE</span><span id="badge-pet-gender">&#9794;</span></div>
+<div class="top-icons-group">
+<div class="icon-stat-box" title="Fame"><svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-hun"/></svg><span class="dots-mini" id="mini-hunger">&#9679;&#9679;&#9679;&#9679;&#9679;</span></div>
+<div class="icon-stat-box" title="Pulizia"><svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-cln"/></svg><span class="dots-mini" id="mini-cleanliness">&#9679;&#9679;&#9679;&#9679;&#9679;</span></div>
+<div class="icon-stat-box" title="Felicita"><svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-hap"/></svg><span class="dots-mini" id="mini-happy">&#9679;&#9679;&#9679;&#9679;&#9679;</span></div>
+</div>
+</div>
+<div class="pet-display" id="pet-display-box" onmousedown="triggerJumpInRunner()" ontouchstart="triggerJumpInRunner()">
+<canvas id="bg-canvas" width="128" height="128"></canvas>
+<div id="sick-tag" class="sick-indicator" style="display:none;">[MALATO!]</div>
+<canvas id="game-canvas" width="32" height="32" class="egg-wobble"></canvas>
+<div id="runner-container">
+<button class="close-gym-btn" onclick="event.stopPropagation(); stopRunner();">X</button>
+<canvas id="runner-canvas" width="200" height="80"></canvas>
+</div>
+<div id="rps-container">
+<button class="close-gym-btn" onclick="event.stopPropagation(); stopRpsGame();">X</button>
+<div id="rps-arena">
+<div id="rps-info">CARTA - FORBICE - SASSO</div>
+<div id="rps-hands">
+<canvas class="rps-hand-canvas" id="rps-hand-pet" width="20" height="20"></canvas>
+<span id="rps-vs">VS</span>
+<canvas class="rps-hand-canvas" id="rps-hand-cpu" width="20" height="20"></canvas>
+</div>
+<div id="rps-result"></div>
+</div>
+<div class="rps-choices">
+<button onclick="event.stopPropagation(); playRps('rock')" title="Sasso"><canvas class="rps-choice-canvas" id="rps-btn-rock" width="20" height="20"></canvas></button>
+<button onclick="event.stopPropagation(); playRps('paper')" title="Carta"><canvas class="rps-choice-canvas" id="rps-btn-paper" width="20" height="20"></canvas></button>
+<button onclick="event.stopPropagation(); playRps('scissors')" title="Forbice"><canvas class="rps-choice-canvas" id="rps-btn-scissors" width="20" height="20"></canvas></button>
+</div>
+</div>
+<div id="race-container"><canvas id="race-canvas" width="200" height="80"></canvas></div>
+<div class="zzz-container" id="zzz-layer"><div class="zzz-text">Z</div><div class="zzz-text">z</div><div class="zzz-text">Z</div></div>
+<canvas id="poop-canvas" width="32" height="32" class="poop-indicator"></canvas>
+<div id="action-msg" style="font-size: 0.55rem; margin-top: 2px; position: relative; z-index: 3; color:#3a5f52;">L'uovo si sta scaldando...</div>
+<div id="race-prompt" class="race-prompt-overlay">
+<div class="race-prompt-box">
+<div id="race-prompt-text">C'e una gara! Vuoi partecipare?</div>
+<div class="rp-buttons">
+<button class="action-btn" style="margin-top:0;" onclick="answerRace(true)">SI</button>
+<button class="action-btn" style="margin-top:0; background:linear-gradient(180deg,#c47a7a,#a85a5a); box-shadow:0 3px 0 #8c4646;" onclick="answerRace(false)">NO</button>
+</div>
+</div>
+</div>
+</div>
+<div class="frame-bottom-bar">
+<div class="icon-stat-box" title="Salute"><svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-hlt"/></svg><span class="dots-mini" id="mini-health">&#9679;&#9679;&#9679;&#9679;&#9679;</span></div>
+<div class="icon-stat-box" title="Energia"><svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-nrg"/></svg><span class="dots-mini" id="mini-energy">&#9679;&#9679;&#9679;&#9679;&#9679;</span></div>
+<div class="icon-stat-box" title="Forma"><svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-fit"/></svg><span class="dots-mini" id="mini-fitness">&#9679;&#9679;&#9679;&#9679;&#9679;</span></div>
+<div class="icon-stat-box" title="Intelligenza"><svg class="pixel-stat-icon" viewBox="0 0 8 8"><use href="#icon-int"/></svg><span class="dots-mini" id="mini-intelligence">&#9675;&#9675;&#9675;&#9675;&#9675;</span></div>
+</div>
+</div>
+<div class="area-section">
+<div class="button-grid">
+<button class="area-btn" id="btn-kitchen" onclick="toggleKitchenMenu()">Cucina</button>
+<button class="area-btn" id="btn-park" onclick="toggleFunMenu()">Svago</button>
+<button class="area-btn" id="btn-gym" onclick="toggleGymMenu()">Palestra</button>
+<button class="area-btn" id="btn-clinic" onclick="interactArea('Infermeria')">Infermeria</button>
+<button class="area-btn" id="btn-shower" onclick="interactArea('Doccia')">Doccia</button>
+<button class="area-btn" id="btn-study" onclick="interactArea('Studio')">Studio</button>
+</div>
+<div id="kitchen-sub-menu" class="kitchen-options" style="display: none;">
+<button class="area-btn kitchen-btn" id="btn-meal" onclick="feedPet('pasto')">Pasto</button>
+<button class="area-btn kitchen-btn" id="btn-snack" onclick="feedPet('snack')">Snack</button>
+<button class="area-btn kitchen-btn" id="btn-close-kitchen" onclick="toggleKitchenMenu()">Esci</button>
+</div>
+<div id="fun-sub-menu" class="kitchen-options" style="display: none;">
+<button class="area-btn kitchen-btn" id="btn-park-play" onclick="interactArea('Parco')">Parco</button>
+<button class="area-btn kitchen-btn" id="btn-cuddle" onclick="interactArea('Coccole')">Coccole</button>
+<button class="area-btn kitchen-btn" id="btn-rps-play" onclick="startRpsGame()">Gioco</button>
+<button class="area-btn kitchen-btn" id="btn-close-fun" onclick="toggleFunMenu()">X</button>
+</div>
+<div id="gym-sub-menu" class="kitchen-options" style="display: none;">
+<button class="area-btn kitchen-btn" id="btn-gym-play" onclick="interactArea('Palestra')">Gioca</button>
+<button class="area-btn kitchen-btn" id="btn-gym-record" onclick="showGymRecord()">Record</button>
+<button class="area-btn kitchen-btn" id="btn-close-gym" onclick="toggleGymMenu()">X</button>
+</div>
+</div>
+<div class="bottom-bar">
+<button class="info-btn" id="btn-settings-main" onclick="showSettings()">IMPOSTAZIONI</button>
+<button class="info-btn" id="btn-info-main" onclick="showInfo()">INFO</button>
+<button class="info-btn" id="btn-light" onclick="interactArea('Luce')">LUCE</button>
+</div>
+</div>
+
+</div>
+</div>
+<script>
+let currentLang='en',currentShellColor='default',currentBgStyle='none',actionMsgTimer=null;
+let petCustomName="SPIKE",petGender="M";
+const PET_PALETTE=[
+{outline:"#264d3a",body:"#5a9e6e",shade:"#3f7a52",light:"#8fc99e",spot:"#2f5f42"},
+{outline:"#2a3d5c",body:"#5a7ab0",shade:"#3f5a8a",light:"#93aed6",spot:"#33507a"},
+{outline:"#3a2f52",body:"#7a6aa0",shade:"#5a4f7f",light:"#a99cc4",spot:"#4f4270"},
+{outline:"#5c3f24",body:"#b08a4f",shade:"#8a693a",light:"#d6b884",spot:"#6e5230"},
+{outline:"#3a3320",body:"#8a8f4f",shade:"#6a6e3a",light:"#b8bc84",spot:"#565a2f"}];
+const EGG_COLORS=[{sh:"#c9c2a8",hi:"#e6e0cc",out:"#7a7458"},{sh:"#b8c0cc",hi:"#dbe0e8",out:"#6a7280"},{sh:"#c2bacc",hi:"#e0dbe8",out:"#726a80"},{sh:"#ccbfa0",hi:"#e8ddc4",out:"#807458"},{sh:"#c4c4a8",hi:"#e2e2cc",out:"#767658"}];
+const EYE_COLOR="#1a2028",POOP_COLOR="#7a5228",POOP_COLOR_DARK="#5a3c1c",SMOKE_COLOR="rgba(120,124,130,0.5)";
+const RIVAL_NAMES=["ZORBO","TILLY","GROK","MIMSY","FANGO","LULU","BONK","PIXO","REXO","NUBBY","ZAZA","WOMP"];
+
+function setActionMessage(msg,delay=2000){const e=document.getElementById('action-msg');e.innerText=msg;if(actionMsgTimer)clearTimeout(actionMsgTimer);if(petStage>0&&msg){actionMsgTimer=setTimeout(()=>{e.innerText="";},delay);}}
+
+const i18n={
+it:{titleSel:"DINOMIO - SELEZIONA PET",lblInputName:"NOME:",lblInputGender:"GENERE:",manualBtn:"MANUALE / REGOLE",btnChooseAreaMenu:"SCEGLI AREA",titleChooseArea:"SCEGLI LA TUA AREA",areaBirth:"Nascita",areaForest:"Bosco",areaBeach:"Spiaggia",areaCity:"Citta",areaMountain:"Montagna",areaCastle:"Castello",areaIsland:"Isola",areaSpace:"Spazio",areaMagic:"Magia",btnBackArea:"INDIETRO",travelMsg:"Ti stai spostando in: ",rulesTitle:"REGOLE REALI",rulesBack:"TORNA ALLA SELEZIONE",
+rulesContent:"<b>1. SCHIUSA:</b><p>L'uovo si schiude in 7 secondi! Il pet nasce con parametri al 40%.</p><br><b>2. TEMPO REALE:</b><p>Il tempo scorre anche ad app chiusa. Evoluzione ogni 3 giorni.</p><br><b>3. DECADIMENTO:</b><p>Fame -20%/1h, Pulizia -20%/1h30, Felicita -20%/2h, Energia -20%/3h, Forma -20%/4h, Intelligenza -20%/3h.</p><br><b>4. CACCA:</b><p>3 volte al giorno, -3 pallini Pulizia. La doccia rimette al 100%.</p><br><b>5. MALATTIA:</b><p>Da malato: occhi a X e -20% Salute/ora. Non dormendo.</p><br><b>6. SVAGO:</b><p>Parco, Coccole o Carta-Forbice-Sasso (5 round). [X] per uscire.</p><br><b>7. PALESTRA:</b><p>Gioca o vedi il record.</p><br><b>8. GARE:</b><p>Ogni 2 giorni una gara. Vinci se Forma 95-100%, altrimenti casuale. Classifica in INFO parte da 0 e si azzera a ogni nuovo pet.</p><br><b>9. NANNA:</b><p>Dormendo: Felicita non cala, niente malattie, Energia +20%/ora.</p>",
+infoTitle:"INFORMAZIONI PET",infoBack:"TORNA AL GIOCO",lblName:"NOME:",lblGender:"GENERE:",lblGen:"GENERAZIONE:",lblAge:"ETA:",lblDays:"giorni",lblStage:"STADIO:",lblHun:"FAME (HUN):",lblCln:"PULIZIA (CLN):",lblHap:"FELICITA (HAP):",lblHlt:"SALUTE (HLT):",lblNrg:"ENERGIA (NRG):",lblFit:"FORMA FISICA (FIT):",lblInt:"INTELLIGENZA (INT):",settingsTitle:"IMPOSTAZIONI",lblLang:"LINGUA / LANGUAGE:",lblBgStyle:"SFONDO PIXEL-ART 8-BIT:",lblShell:"COLORE GUSCIO:",lblReset:"RESET PET:",btnReset:"RESET PET",btnBackSettings:"TORNA AL GIOCO",btnKitchen:"Cucina",btnPark:"Svago",btnGym:"Palestra",btnClinic:"Infermeria",btnShower:"Doccia",btnStudy:"Studio",btnMeal:"Pasto",btnSnack:"Snack",btnCloseKitchen:"Esci",btnParkPlay:"Parco",btnCuddle:"Coccole",btnRpsPlay:"Gioco",btnCloseFun:"X",btnGymPlay:"Gioca",btnGymRecord:"Record",btnCloseGym:"X",btnLight:"LUCE",btnSettings:"IMPOSTAZIONI",btnInfo:"INFO",rankTitle:"CLASSIFICA GARE",rankName:"NOME",rankPoints:"PUNTI",eggWarming:"L'uovo si sta scaldando...",sickTag:"[MALATO!]",poopMsg:"L'animaletto ha fatto la cacca!",hatchedMsg:"L'uovo si e schiuso!",evoMsg:"EVOLUZIONE COMPIUTA!",deathMsg:"IL TUO PET E MORTO!",deathRebirthMsg:"Il pet ci ha lasciati per vecchiaia...",rebirthPrompt:(n)=>`Il tuo pet e morto di vecchiaia.\n\nE disponibile un nuovo pet: ${n}.\nVuoi adottarlo? (OK = Si, Annulla = No)`,rebirthNamePrompt:"Dai un nome al nuovo pet:",rebirthDone:(n)=>`E nato un nuovo UOVO: ${n}!`,rebirthDeclined:"Nessun nuovo pet adottato.",waitEggMsg:"Aspetta la schiusa dell'uovo!",mealMsg:"Pasto consumato (Pollo)!",snackMsg:"Snack gustato (Caramella)!",parkMsg:"Parco! Felicita +1 Pallino",cuddleMsg:"Coccole! Felicita +1 Pallino",showerDirtyMsg:"Doccia fatta! Tutto pulito.",showerCleanMsg:"Pet lavato e profumato!",clinicSickMsg:"Cura somministrata! Pet guarito.",studyMsg:"Studio in corso! Intelligenza +1, Felicita -1",lightOffMsg:"Luce spenta. Addormentamento...",lightRestMsg:"Luce spenta. Riposo in corso...",lightOnMsg:"Luce riaccesa!",gymMsg:"PALESTRA! Salta i cactus [TAP/SPAZIO]",gymExitMsg:"Uscito dalla Palestra.",gymRecordMsg:(hi)=>`PUNTEGGIO RECORD: ${hi}`,racePrompt:(r)=>`C'e una gara contro ${r}! Vuoi partecipare?`,raceDeclined:"Gara rifiutata! Forma -20%, scendi in classifica.",raceWin:(r)=>`Hai battuto ${r}! Felicita +2, +2 punti!`,raceLose:(r)=>`${r} ti ha battuto! Felicita -2.`,raceDraw:(r)=>`Pareggio con ${r}! +1 punto.`,rpsMsg:"CARTA-FORBICE-SASSO! Al meglio di 5 round.",rpsRound:(r,ps,cs)=>`Round ${r}/5 - Tu ${ps} : ${cs} CPU`,rpsRoundWin:"Round vinto!",rpsRoundLose:"Round perso!",rpsRoundDraw:"Round pari!",rpsWin:"HAI VINTO LA PARTITA! Felicita +2 pallini!",rpsLose:"Hai perso la partita. Felicita +1 pallino.",rpsDraw:"Partita in pareggio. Felicita +1 pallino.",resetConfirm:"Sei sicuro di voler resettare il pet? Tutti i progressi andranno persi definitivamente.",genderM:"M MASCHIO",genderF:"F FEMMINA",bgNone:"VUOTO",bgSea:"MARE",bgForest:"BOSCO",bgCity:"CITTA",bgSky:"CIELO",bgSpace:"SPAZIO"},
+en:{titleSel:"DINOMIO - SELECT PET",lblInputName:"NAME:",lblInputGender:"GENDER:",manualBtn:"MANUAL / RULES",btnChooseAreaMenu:"CHOOSE AREA",titleChooseArea:"CHOOSE YOUR AREA",areaBirth:"Birth",areaForest:"Forest",areaBeach:"Beach",areaCity:"City",areaMountain:"Mountain",areaCastle:"Castle",areaIsland:"Island",areaSpace:"Space",areaMagic:"Magic",btnBackArea:"BACK",travelMsg:"Traveling to: ",rulesTitle:"REAL RULES",rulesBack:"BACK TO SELECTION",
+rulesContent:"<b>1. HATCHING:</b><p>The egg hatches in 7 seconds! The pet is born with stats at 40%.</p><br><b>2. REAL TIME:</b><p>Time passes even when the app is closed. Evolution every 3 days.</p><br><b>3. DECAY:</b><p>Hunger -20%/1h, Cleanliness -20%/1h30, Happiness -20%/2h, Energy -20%/3h, Fitness -20%/4h, Intelligence -20%/3h.</p><br><b>4. POOP:</b><p>3 times a day, -3 Cleanliness dots. The shower restores 100%.</p><br><b>5. ILLNESS:</b><p>When sick: X eyes and -20% Health/hour. Not while sleeping.</p><br><b>6. FUN:</b><p>Park, Cuddles or Rock-Paper-Scissors (5 rounds). [X] to exit.</p><br><b>7. GYM:</b><p>Play or check the record.</p><br><b>8. RACES:</b><p>A race every 2 days. You win if Fitness is 95-100%, otherwise random. Ranking in INFO starts at 0 and resets with every new pet.</p><br><b>9. SLEEP:</b><p>While sleeping: Happiness does not drop, no illness, Energy +20%/hour.</p>",
+infoTitle:"PET INFORMATION",infoBack:"BACK TO GAME",lblName:"NAME:",lblGender:"GENDER:",lblGen:"GENERATION:",lblAge:"AGE:",lblDays:"days",lblStage:"STAGE:",lblHun:"HUNGER (HUN):",lblCln:"CLEANLINESS (CLN):",lblHap:"HAPPINESS (HAP):",lblHlt:"HEALTH (HLT):",lblNrg:"ENERGY (NRG):",lblFit:"FITNESS (FIT):",lblInt:"INTELLIGENCE (INT):",settingsTitle:"SETTINGS",lblLang:"LINGUA / LANGUAGE:",lblBgStyle:"8-BIT PIXEL-ART BACKGROUND:",lblShell:"SHELL COLOR:",lblReset:"RESET PET:",btnReset:"RESET PET",btnBackSettings:"BACK TO GAME",btnKitchen:"Kitchen",btnPark:"Fun",btnGym:"Gym",btnClinic:"Clinic",btnShower:"Shower",btnStudy:"Study",btnMeal:"Meal",btnSnack:"Snack",btnCloseKitchen:"Exit",btnParkPlay:"Park",btnCuddle:"Cuddle",btnRpsPlay:"Game",btnCloseFun:"X",btnGymPlay:"Play",btnGymRecord:"Record",btnCloseGym:"X",btnLight:"LIGHT",btnSettings:"SETTINGS",btnInfo:"INFO",rankTitle:"RACE RANKING",rankName:"NAME",rankPoints:"POINTS",eggWarming:"The egg is warming up...",sickTag:"[SICK!]",poopMsg:"The pet pooped!",hatchedMsg:"The egg has hatched!",evoMsg:"EVOLUTION COMPLETE!",deathMsg:"YOUR PET HAS DIED!",deathRebirthMsg:"The pet passed away from old age...",rebirthPrompt:(n)=>`Your pet died of old age.\n\nA new pet is available: ${n}.\nDo you want to adopt it? (OK = Yes, Cancel = No)`,rebirthNamePrompt:"Give the new pet a name:",rebirthDone:(n)=>`A new EGG was born: ${n}!`,rebirthDeclined:"No new pet adopted.",waitEggMsg:"Wait for the egg to hatch!",mealMsg:"Meal eaten (Chicken)!",snackMsg:"Snack enjoyed (Candy)!",parkMsg:"Park! Happiness +1 Dot",cuddleMsg:"Cuddles! Happiness +1 Dot",showerDirtyMsg:"Shower done! All clean.",showerCleanMsg:"Pet washed and fresh!",clinicSickMsg:"Treatment given! Pet healed.",studyMsg:"Studying! Intelligence +1, Happiness -1",lightOffMsg:"Light off. Falling asleep...",lightRestMsg:"Light off. Resting...",lightOnMsg:"Light back on!",gymMsg:"GYM! Jump the cactus [TAP/SPACE]",gymExitMsg:"Left the Gym.",gymRecordMsg:(hi)=>`RECORD SCORE: ${hi}`,racePrompt:(r)=>`There is a race against ${r}! Do you want to join?`,raceDeclined:"Race declined! Fitness -20%, you drop in the ranking.",raceWin:(r)=>`You beat ${r}! Happiness +2, +2 points!`,raceLose:(r)=>`${r} beat you! Happiness -2.`,raceDraw:(r)=>`Draw with ${r}! +1 point.`,rpsMsg:"ROCK-PAPER-SCISSORS! Best of 5 rounds.",rpsRound:(r,ps,cs)=>`Round ${r}/5 - You ${ps} : ${cs} CPU`,rpsRoundWin:"Round won!",rpsRoundLose:"Round lost!",rpsRoundDraw:"Round tied!",rpsWin:"YOU WON THE MATCH! Happiness +2 dots!",rpsLose:"You lost the match. Happiness +1 dot.",rpsDraw:"Match tied. Happiness +1 dot.",resetConfirm:"Are you sure you want to reset the pet? All progress will be permanently lost.",genderM:"M MALE",genderF:"F FEMALE",bgNone:"NONE",bgSea:"SEA",bgForest:"FOREST",bgCity:"CITY",bgSky:"SKY",bgSpace:"SPACE"}
+};
+
+function updateTexts(){const t=i18n[currentLang];
+document.getElementById('title-selection').innerText=t.titleSel;
+document.getElementById('lbl-input-name').innerText=t.lblInputName;
+document.getElementById('lbl-input-gender').innerText=t.lblInputGender;
+document.getElementById('btn-manual').innerText=t.manualBtn;
+document.getElementById('btn-choose-area-menu').innerText=t.btnChooseAreaMenu;
+document.getElementById('title-choose-area').innerText=t.titleChooseArea;
+document.getElementById('area-birth').innerText=t.areaBirth;document.getElementById('area-forest').innerText=t.areaForest;document.getElementById('area-beach').innerText=t.areaBeach;document.getElementById('area-city').innerText=t.areaCity;document.getElementById('area-mountain').innerText=t.areaMountain;document.getElementById('area-castle').innerText=t.areaCastle;document.getElementById('area-island').innerText=t.areaIsland;document.getElementById('area-space').innerText=t.areaSpace;document.getElementById('area-magic').innerText=t.areaMagic;document.getElementById('btn-back-area').innerText=t.btnBackArea;
+document.getElementById('title-rules').innerText=t.rulesTitle;document.getElementById('btn-back-sel').innerText=t.rulesBack;document.getElementById('rules-body').innerHTML=t.rulesContent;
+document.getElementById('title-info').innerText=t.infoTitle;document.getElementById('btn-back-game').innerText=t.infoBack;
+document.getElementById('lbl-name').innerText=t.lblName;document.getElementById('lbl-gender').innerText=t.lblGender;document.getElementById('lbl-gen').innerText=t.lblGen;document.getElementById('lbl-age').innerText=t.lblAge;document.getElementById('lbl-days').innerText=t.lblDays;document.getElementById('lbl-stage').innerText=t.lblStage;
+document.getElementById('lbl-hun').innerText=t.lblHun;document.getElementById('lbl-cln').innerText=t.lblCln;document.getElementById('lbl-hap').innerText=t.lblHap;document.getElementById('lbl-hlt').innerText=t.lblHlt;document.getElementById('lbl-nrg').innerText=t.lblNrg;document.getElementById('lbl-fit').innerText=t.lblFit;document.getElementById('lbl-int').innerText=t.lblInt;
+document.getElementById('lbl-rank-title').innerText=t.rankTitle;document.getElementById('lbl-rank-name').innerText=t.rankName;document.getElementById('lbl-rank-points').innerText=t.rankPoints;
+document.getElementById('title-settings').innerText=t.settingsTitle;document.getElementById('lbl-lang').innerText=t.lblLang;document.getElementById('lbl-bg-style').innerText=t.lblBgStyle;document.getElementById('lbl-shell-color').innerText=t.lblShell;document.getElementById('lbl-reset-opt').innerText=t.lblReset;document.getElementById('btn-reset-game').innerText=t.btnReset;document.getElementById('btn-back-settings').innerText=t.btnBackSettings;
+document.getElementById('bg-btn-none').innerText=t.bgNone;document.getElementById('bg-btn-sea').innerText=t.bgSea;document.getElementById('bg-btn-forest').innerText=t.bgForest;document.getElementById('bg-btn-city').innerText=t.bgCity;document.getElementById('bg-btn-sky').innerText=t.bgSky;document.getElementById('bg-btn-space').innerText=t.bgSpace;
+document.getElementById('btn-kitchen').innerText=t.btnKitchen;document.getElementById('btn-park').innerText=t.btnPark;document.getElementById('btn-gym').innerText=t.btnGym;document.getElementById('btn-clinic').innerText=t.btnClinic;document.getElementById('btn-shower').innerText=t.btnShower;document.getElementById('btn-study').innerText=t.btnStudy;
+document.getElementById('btn-meal').innerText=t.btnMeal;document.getElementById('btn-snack').innerText=t.btnSnack;document.getElementById('btn-close-kitchen').innerText=t.btnCloseKitchen;
+document.getElementById('btn-park-play').innerText=t.btnParkPlay;document.getElementById('btn-cuddle').innerText=t.btnCuddle;document.getElementById('btn-rps-play').innerText=t.btnRpsPlay;document.getElementById('btn-close-fun').innerText=t.btnCloseFun;
+document.getElementById('btn-gym-play').innerText=t.btnGymPlay;document.getElementById('btn-gym-record').innerText=t.btnGymRecord;document.getElementById('btn-close-gym').innerText=t.btnCloseGym;
+document.getElementById('btn-light').innerText=t.btnLight;document.getElementById('btn-settings-main').innerText=t.btnSettings;document.getElementById('btn-info-main').innerText=t.btnInfo;document.getElementById('sick-tag').innerText=t.sickTag;}
+
+function toggleLanguage(){currentLang=currentLang==='it'?'en':'it';updateTexts();saveGameState();}
+function setShellColor(c){currentShellColor=c;const s=document.getElementById('shell-container');s.className='tamagotchi-container';if(c!=='default')s.classList.add('shell-'+c);saveGameState();}
+function setBackgroundStyle(st){currentBgStyle=st;document.querySelectorAll('.bg-picker-grid .glossy-btn').forEach(b=>b.classList.remove('active-bg'));const a=document.getElementById('bg-btn-'+st);if(a)a.classList.add('active-bg');drawBackground();saveGameState();}
+
+function drawBackground(){const c=document.getElementById('bg-canvas');if(!c)return;const x=c.getContext('2d');x.clearRect(0,0,128,128);
+if(currentBgStyle==='none')return;
+else if(currentBgStyle==='sea'){x.fillStyle="#8fd4f0";x.fillRect(0,0,128,84);x.fillStyle="#ffe14d";x.beginPath();x.arc(104,22,12,0,Math.PI*2);x.fill();x.fillStyle="#ffd000";x.beginPath();x.arc(104,22,8,0,Math.PI*2);x.fill();x.fillStyle="#ffffff";x.fillRect(20,18,22,5);x.fillRect(16,22,30,5);x.fillStyle="#1f7fc4";x.fillRect(0,84,128,44);x.fillStyle="#ffffff";for(let i=0;i<128;i+=20){x.fillRect(i,90,8,2);x.fillRect(i+10,100,8,2);x.fillRect(i+4,112,8,2);x.fillRect(i+14,122,8,2);}x.fillStyle="#e6cf82";x.fillRect(44,82,40,6);x.fillStyle="#8a5a2b";x.fillRect(62,58,4,22);x.fillStyle="#3fae4f";x.fillRect(50,54,14,4);x.fillRect(64,54,14,4);x.fillRect(56,50,16,4);}
+else if(currentBgStyle==='forest'){x.fillStyle="#5a8a4e";x.fillRect(0,112,128,16);[8,36,72,100].forEach(p=>{x.fillStyle="#6a4f30";x.fillRect(p+10,88,6,24);x.fillStyle="#3f7a42";x.fillRect(p+2,64,22,24);x.fillRect(p+6,52,14,12);x.fillRect(p+10,44,6,8);});}
+else if(currentBgStyle==='city'){x.fillStyle="#6a7280";x.fillRect(0,116,128,12);const bs=[{x:4,y:30,w:24,h:86,c:"#5f7290"},{x:32,y:50,w:28,h:66,c:"#556a86"},{x:64,y:20,w:26,h:96,c:"#627690"},{x:94,y:60,w:30,h:56,c:"#586c88"}];bs.forEach(b=>{x.fillStyle=b.c;x.fillRect(b.x,b.y,b.w,b.h);x.fillStyle="#c4b476";for(let y=b.y+6;y<b.y+b.h-6;y+=12){x.fillRect(b.x+4,y,5,5);x.fillRect(b.x+b.w-9,y,5,5);}});}
+else if(currentBgStyle==='sky'){x.fillStyle="#d6dce2";[{x:8,y:16},{x:72,y:32},{x:20,y:68},{x:80,y:84}].forEach(c2=>{x.fillRect(c2.x+8,c2.y,24,6);x.fillRect(c2.x+4,c2.y+6,32,6);x.fillRect(c2.x,c2.y+12,40,6);});x.fillStyle="#c4b476";x.fillRect(98,14,16,16);}
+else if(currentBgStyle==='space'){const st2=[{x:12,y:12},{x:45,y:20},{x:90,y:15},{x:115,y:35},{x:25,y:55},{x:70,y:60},{x:105,y:75},{x:15,y:95},{x:55,y:100},{x:85,y:110}];x.fillStyle="#c4c48a";st2.forEach((s,i)=>{if(i%2===0){x.fillRect(s.x,s.y-2,2,6);x.fillRect(s.x-2,s.y,6,2);}else x.fillRect(s.x,s.y,2,2);});x.fillStyle="#6a7280";x.fillRect(94,12,16,16);x.fillStyle="#8a929c";x.fillRect(96,14,6,6);}}
+
+let audioCtx=null;
+function initAudio(){if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();}
+function playBeep(f=440,t='square',d=0.08){initAudio();if(!audioCtx)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=t;o.frequency.setValueAtTime(f,audioCtx.currentTime);g.gain.setValueAtTime(0.1,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+d);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+d);}
+document.addEventListener('click',function(e){if(e.target.tagName==='BUTTON'||e.target.closest('button'))playBeep(600,'square',0.05);});
+function playSyncopatedEggBeep(){initAudio();playBeep(220,'square',0.05);setTimeout(()=>playBeep(440,'square',0.04),90);}
+function playHappyEndSound(){initAudio();[523.25,659.25,783.99,1046.50].forEach((f,i)=>setTimeout(()=>playBeep(f,'square',0.1),i*80));}
+function playSadSound(){initAudio();[392,349.23,293.66].forEach((f,i)=>setTimeout(()=>playBeep(f,'square',0.12),i*100));}
+function playRpsRoundSound(){initAudio();playBeep(660,'square',0.07);setTimeout(()=>playBeep(880,'square',0.06),80);}
+function playRpsMatchEndSound(){initAudio();[523.25,587.33,659.25,783.99,880,1046.50].forEach((f,i)=>setTimeout(()=>playBeep(f,'square',0.16),i*110));}
+let alarmPlayedThisWarning=false;
+function playAlarmSound3Sec(){initAudio();const nd=0.12,p=0.08;for(let i=0;i<14;i++){const f=(i%2===0)?880:587.33;setTimeout(()=>playBeep(f,'sawtooth',nd),i*(nd+p)*1000);}}
+function checkStatsWarning(){if(isDead||petStage===0)return;const low=(hunger<50||happiness<50||health<50||energy<50||cleanliness<50);if(low){if(!alarmPlayedThisWarning){playAlarmSound3Sec();alarmPlayedThisWarning=true;}}else alarmPlayedThisWarning=false;}
+let currentPetIndex=0,petStage=0;
+let hunger=40,happiness=40,health=40,energy=40,fitness=40,intelligence=40,cleanliness=40;
+let generation=1,ageInDays=0,secondsInCurrentStage=0,totalGameSeconds=0,lastRealTimestamp=0;
+let isDirty=false,isSick=false,isDead=false,isSleeping=false,sleepTimer=null,isEatingAnimation=false,isCustomAnimation=false,gameTimer=null,poopSmokeFrame=0;
+let inRunnerMode=false,runnerAnimId=null,runnerPetY=0,runnerVY=0,runnerJumping=false,runnerObstacles=[],runnerScore=0;
+let runnerHighScore=parseInt(localStorage.getItem('dinomio_runner_highscore')||'0');
+let runnerSpeed=3,minObstacleDistance=90;
+let poopSchedule=[],poopDoneToday=[false,false,false],poopScheduleDay=-1;
+let leaderboard=[],myRacePoints=0,lastRaceDay=-1,raceActive=false,currentRival="";
+let inRpsMode=false,rpsRound=0,rpsPetScore=0,rpsCpuScore=0,rpsBusy=false;
+const RPS_TOTAL_ROUNDS=5;
+const stageNames=["EGG","BABY","TODDLER","TEEN","ADULT","DEAD"];
+const DECAY={hunger:3600,cleanliness:5400,happiness:7200,energy:10800,fitness:14400,intelligence:10800};
+const SECONDS_PER_DAY=86400;
+const ILLNESS_CHANCE_PER_SEC=200/864000;
+const POOP_CLEANLINESS_LOSS=60;
+
+function cestSecondsOfDay(ms){const c=ms+2*3600*1000;return Math.floor((c/1000)%SECONDS_PER_DAY);}
+function cestDayIndex(ms){const c=ms+2*3600*1000;return Math.floor(c/1000/SECONDS_PER_DAY);}
+function generatePoopSchedule(){poopSchedule=[];const mn=7*3600,mx=22*3600;for(let i=0;i<3;i++)poopSchedule.push(Math.floor(Math.random()*(mx-mn))+mn);poopSchedule.sort((a,b)=>a-b);poopDoneToday=[false,false,false];}
+function generateLeaderboard(){const n=[...RIVAL_NAMES].sort(()=>Math.random()-0.5).slice(0,9);leaderboard=n.map(x=>({name:x,points:0}));}
+function raceDayIndex(){return Math.floor(totalGameSeconds/(SECONDS_PER_DAY*2));}
+function resetLeaderboardForNewPet(){generateLeaderboard();myRacePoints=0;lastRaceDay=raceDayIndex();}
+
+function saveGameState(){const g={currentPetIndex,petCustomName,petGender,petStage,hunger,happiness,health,energy,fitness,intelligence,cleanliness,generation,ageInDays,secondsInCurrentStage,totalGameSeconds,lastRealTimestamp,isDirty,isSick,isDead,isSleeping,poopSchedule,poopDoneToday,poopScheduleDay,currentLang,currentShellColor,currentBgStyle,alarmPlayedThisWarning,leaderboard,myRacePoints,lastRaceDay,gameActive:true};localStorage.setItem('dinomio_save',JSON.stringify(g));}
+
+function loadGameState(){const sd=localStorage.getItem('dinomio_save');if(!sd)return false;try{const s=JSON.parse(sd);if(!s.gameActive)return false;
+currentPetIndex=s.currentPetIndex;petCustomName=s.petCustomName||"SPIKE";petGender=s.petGender||"M";petStage=s.petStage;hunger=s.hunger;happiness=s.happiness;health=s.health;energy=s.energy;fitness=s.fitness;intelligence=s.intelligence;cleanliness=s.cleanliness!==undefined?s.cleanliness:40;generation=s.generation;ageInDays=s.ageInDays;secondsInCurrentStage=s.secondsInCurrentStage;totalGameSeconds=s.totalGameSeconds;lastRealTimestamp=s.lastRealTimestamp||Math.floor(Date.now()/1000);isDirty=s.isDirty;isSick=s.isSick;isDead=s.isDead;isSleeping=s.isSleeping;poopSchedule=s.poopSchedule||[];poopDoneToday=s.poopDoneToday||[false,false,false];poopScheduleDay=s.poopScheduleDay!==undefined?s.poopScheduleDay:-1;currentLang=s.currentLang||'en';currentShellColor=s.currentShellColor||'default';currentBgStyle=s.currentBgStyle||'none';alarmPlayedThisWarning=s.alarmPlayedThisWarning||false;leaderboard=(s.leaderboard&&s.leaderboard.length)?s.leaderboard:[];myRacePoints=s.myRacePoints||0;lastRaceDay=s.lastRaceDay!==undefined?s.lastRaceDay:-1;
+if(leaderboard.length===0)generateLeaderboard();
+setShellColor(currentShellColor);setBackgroundStyle(currentBgStyle);updateTexts();updateBadgeProfile();
+if(poopSchedule.length===0)generatePoopSchedule();
+document.getElementById('selection-screen').style.display='none';document.getElementById('choose-area-screen').style.display='none';document.getElementById('rules-screen').style.display='none';document.getElementById('info-screen').style.display='none';document.getElementById('settings-screen').style.display='none';document.getElementById('gameplay-screen').style.display='flex';
+const mc=document.getElementById('game-canvas');
+if(petStage===0){mc.classList.add('egg-wobble');mc.classList.remove('pet-idle-bounce');document.getElementById('action-msg').innerText=i18n[currentLang].eggWarming;}else{mc.classList.remove('egg-wobble');mc.classList.add('pet-idle-bounce');document.getElementById('action-msg').innerText="";}
+applySickAnimClass();
+if(isSleeping&&!isDead){document.getElementById('pet-display-box').classList.add('lights-off');document.getElementById('zzz-layer').style.display='block';mc.style.display='none';}
+catchUpRealTime();updateDisplay();maybeShowRacePrompt();
+if(gameTimer)clearInterval(gameTimer);gameTimer=setInterval(gameLoop,1000);return true;}catch(e){return false;}}
+
+function clearGameState(){localStorage.removeItem('dinomio_save');}
+function updateBadgeProfile(){document.getElementById('badge-pet-name').innerText=petCustomName;document.getElementById('badge-pet-gender').innerText=petGender==='M'?'\u2642':'\u2640';}
+function applySickAnimClass(){const mc=document.getElementById('game-canvas');if(!mc)return;if(isSick&&!isDead&&petStage>0&&petStage<5&&!isSleeping){mc.classList.add('pet-sick-anim');mc.classList.remove('pet-idle-bounce');}else{mc.classList.remove('pet-sick-anim');if(petStage>0&&petStage<5&&!isSleeping)mc.classList.add('pet-idle-bounce');}}
+
+function drawPoopSprite(af=0){const c=document.getElementById('poop-canvas');if(!c)return;const x=c.getContext('2d');x.clearRect(0,0,32,32);if(!isDirty)return;
+x.fillStyle=POOP_COLOR;x.fillRect(8,24,16,6);x.fillRect(10,20,12,4);x.fillRect(13,17,6,3);x.fillRect(15,15,2,2);
+x.fillStyle=POOP_COLOR_DARK;x.fillRect(18,26,5,3);x.fillRect(17,21,4,2);x.fillStyle="rgba(255,255,255,0.4)";x.fillRect(11,25,2,1);
+x.fillStyle=SMOKE_COLOR;if(af%2===0){x.fillRect(12,11,2,2);x.fillRect(18,12,2,2);x.fillRect(11,7,2,2);x.fillRect(19,8,2,2);}else{x.fillRect(13,12,2,2);x.fillRect(17,10,2,2);x.fillRect(14,8,2,2);x.fillRect(18,6,2,2);}}
+
+function drawPixelSprite(cid,type,stage,mouthOpen=false,overlayItem=null,animFrame=0,sick=false){
+const canvas=typeof cid==='string'?document.getElementById(cid):cid;if(!canvas)return;const ctx=canvas.getContext('2d');ctx.clearRect(0,0,32,32);ctx.imageSmoothingEnabled=false;
+const pal=PET_PALETTE[type]||PET_PALETTE[0];const squish=(sick&&stage>0&&stage<5);
+function px(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));}
+function drawBlockBody(cx,cy,r){const s=Math.round(r*2),x=Math.round(cx-r),y=Math.round(cy-r),cut=Math.max(1,Math.round(r*0.28));
+px(x-1,y+cut,s+2,s-cut*2+2,pal.outline);px(x+cut-1,y-1,s-cut*2+2,s+2,pal.outline);px(x+cut-1,y+cut-1,2,2,pal.outline);px(x+s-cut-1,y+cut-1,2,2,pal.outline);px(x+cut-1,y+s-cut-1,2,2,pal.outline);px(x+s-cut-1,y+s-cut-1,2,2,pal.outline);
+px(x,y+cut,s,s-cut*2,pal.body);px(x+cut,y,s-cut*2,s,pal.body);px(x+cut,y+cut,cut,cut,pal.body);px(x+s-cut*2,y+cut,cut,cut,pal.body);px(x+cut,y+s-cut*2,cut,cut,pal.body);px(x+s-cut*2,y+s-cut*2,cut,cut,pal.body);
+px(x+cut,y+cut,Math.max(1,Math.round(s*0.28)),Math.max(1,Math.round(s*0.18)),pal.light);px(x+cut,y+s-Math.max(2,Math.round(s*0.22)),s-cut*2,Math.max(1,Math.round(s*0.18)),pal.shade);}
+function drawSpots(cx,cy,r){px(cx-r*0.5,cy-r*0.2,Math.max(2,r*0.4),Math.max(2,r*0.35),pal.spot);px(cx+r*0.15,cy+r*0.15,Math.max(2,r*0.32),Math.max(2,r*0.3),pal.spot);}
+function drawBlockEar(cx,cy,r){const s=Math.max(2,Math.round(r*0.7));px(cx-s/2-1,cy-s/2-1,s+2,s+2,pal.outline);px(cx-s/2,cy-s/2,s,s,pal.body);px(cx-s/2,cy-s/2,Math.max(1,s*0.4),Math.max(1,s*0.4),pal.light);}
+function drawBlockFoot(cx,cy,w,h){px(cx-w/2-1,cy-h/2-1,w+2,h+2,pal.outline);px(cx-w/2,cy-h/2,w,h,pal.shade);}
+function drawLegs(cx,cy,r,sp=0.5,len=0.35,th=0.22){const lw=Math.max(2,Math.round(r*0.28)),lh=Math.max(2,Math.round(r*(0.4+len)));px(cx-r*sp-lw/2-1,cy+r*0.75-1,lw+2,lh+2,pal.outline);px(cx+r*sp-lw/2-1,cy+r*0.75-1,lw+2,lh+2,pal.outline);px(cx-r*sp-lw/2,cy+r*0.75,lw,lh,pal.shade);px(cx+r*sp-lw/2,cy+r*0.75,lw,lh,pal.shade);}
+function drawArms(cx,cy,r){const aw=Math.max(2,Math.round(r*0.5)),ah=Math.max(2,Math.round(r*0.26));px(cx-r-aw-1,cy-ah/2-1,aw+2,ah+2,pal.outline);px(cx+r-1,cy-ah/2-1,aw+2,ah+2,pal.outline);px(cx-r-aw,cy-ah/2,aw,ah,pal.shade);px(cx+r,cy-ah/2,aw,ah,pal.shade);}
+function drawTail(cx,cy,r,len=0.9){const tw=Math.max(2,Math.round(r*0.5));px(cx+r*len-1,cy+r*0.3-1,tw+2,tw+2,pal.outline);px(cx+r*len,cy+r*0.3,tw,tw,pal.shade);}
+function drawWings(cx,cy,r,size=0.6){const ww=Math.max(2,Math.round(r*size)),wh=Math.max(2,Math.round(r*size*0.8));px(cx-r*0.9-ww-1,cy-r*0.4-1,ww+2,wh+2,pal.outline);px(cx+r*0.9-1,cy-r*0.4-1,ww+2,wh+2,pal.outline);px(cx-r*0.9-ww,cy-r*0.4,ww,wh,pal.light);px(cx+r*0.9,cy-r*0.4,ww,wh,pal.light);}
+function drawXEye(exc,eyc,sz){const h=Math.max(2,Math.round(sz));ctx.strokeStyle=EYE_COLOR;ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(exc-h/2,eyc-h/2);ctx.lineTo(exc+h/2,eyc+h/2);ctx.moveTo(exc+h/2,eyc-h/2);ctx.lineTo(exc-h/2,eyc+h/2);ctx.stroke();}
+function drawFace(cx,cy,r,mO){const eDX=Math.round(r*0.42),eY=Math.round(cy-r*0.1),eS=Math.max(2,Math.round(r*0.24));
+if(sick){drawXEye(cx-eDX,eY,r*0.34);drawXEye(cx+eDX,eY,r*0.34);px(cx-2,cy+r*0.36,4,1,EYE_COLOR);return;}
+px(cx-eDX-eS/2,eY-eS/2,eS,eS,EYE_COLOR);px(cx+eDX-eS/2,eY-eS/2,eS,eS,EYE_COLOR);px(cx-eDX-eS/2,eY-eS/2,1,1,"#e8ecf0");px(cx+eDX-eS/2,eY-eS/2,1,1,"#e8ecf0");
+if(mO)px(cx-2,cy+r*0.32,4,3,EYE_COLOR);else px(cx-2,cy+r*0.34,4,1,EYE_COLOR);}
+function drawBackRidges(cx,cy,r,n){for(let i=0;i<n;i++){const t=(i/(n-1))-0.5,rx=Math.round(cx+t*r*1.2),ry=Math.round(cy-r*0.95);px(rx-1,ry-2,3,4,pal.outline);px(rx,ry-1,1,3,pal.shade);}}
+if(overlayItem==='parco'){px(2,18,2,8,"#3f6a3f");px(0,10,6,8,"#3f6a3f");px(1,8,4,2,"#3f6a3f");px(28,18,2,8,"#3f6a3f");px(26,10,6,8,"#3f6a3f");px(27,8,4,2,"#3f6a3f");px(0,26,32,2,"#5a8a5a");}
+if(stage===5){px(11,10,10,10,"#4a4f56");px(12,11,8,8,"#c4c8ce");px(13,13,2,2,EYE_COLOR);px(17,13,2,2,EYE_COLOR);px(14,17,4,1,"#4a4f56");px(13,20,2,2,"#c4c8ce");px(17,20,2,2,"#c4c8ce");return;}
+if(stage===0){const egg=EGG_COLORS[type]||EGG_COLORS[0];px(10,8,12,18,egg.out);px(11,9,10,16,egg.sh);px(12,10,8,14,egg.hi);px(13,13,2,2,pal.spot);px(18,17,2,2,pal.spot);px(14,20,2,2,pal.spot);px(12,10,2,3,"#ffffff");return;}
+if(type===4){let r=5.5+stage*1.7;const cx=16;let cy=18+((overlayItem==='parco'&&animFrame%2===0)?-2:0);if(squish){r*=1.12;cy+=3;}if(stage>=3)drawTail(cx,cy,r,1.0);if(stage>=2)drawLegs(cx,cy,r,0.55,stage>=4?0.5:0.35,stage>=4?0.3:0.22);if(stage>=3)drawBackRidges(cx,cy,r,stage>=4?5:3);if(stage>=4&&!squish)px(cx-r*0.4,cy-r*1.1,r*0.8,r*0.5,pal.body);drawBlockBody(cx,cy,r);drawSpots(cx,cy,r);drawFace(cx,cy,r,mouthOpen);drawActionOverlays(ctx,cx,cy,r,overlayItem,animFrame);return;}
+let r=6+stage*1.6;const cx=16;let cy=17+((overlayItem==='parco'&&animFrame%2===0)?-2:0);if(squish){r*=1.12;cy+=3;}
+if(type===0){if(stage>=3)drawTail(cx,cy,r,0.95);if(stage>=2)drawLegs(cx,cy,r,0.5,stage>=4?0.45:0.35,stage>=4?0.26:0.22);drawBlockEar(cx+r*0.85,cy-r*0.75,r);}
+else if(type===1){if(stage>=3)drawWings(cx,cy,r,stage>=4?0.8:0.55);if(stage>=2)drawLegs(cx,cy,r,0.5,0.35,0.22);drawBlockEar(cx-r*0.9,cy-r*0.7,r*0.8);drawBlockEar(cx+r*0.9,cy-r*0.7,r*0.8);}
+else if(type===2){if(stage>=3)drawLegs(cx,cy,r,0.45,stage>=4?0.5:0.32,stage>=4?0.3:0.18);drawBlockEar(cx-r*0.45,cy-r*1.1,r*0.6);drawBlockEar(cx+r*0.45,cy-r*1.1,r*0.6);}
+else if(type===3){if(stage>=3)drawArms(cx,cy,r);drawBlockFoot(cx-r*0.5,cy+r*1.0,Math.max(2,r*0.5),Math.max(2,r*0.32));drawBlockFoot(cx+r*0.5,cy+r*1.0,Math.max(2,r*0.5),Math.max(2,r*0.32));}
+drawBlockBody(cx,cy,r);drawSpots(cx,cy,r);drawFace(cx,cy,r,mouthOpen);drawActionOverlays(ctx,cx,cy,r,overlayItem,animFrame);}
+
+function drawActionOverlays(ctx,cx,cy,r,overlayItem,animFrame){function px(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));}
+if(overlayItem==='pasto'){const rr=Math.max(1,3-animFrame);if(rr>0)px(2,15,rr+1,rr+1,"#8a6a2f");}
+else if(overlayItem==='snack'){const rr=Math.max(1,3-animFrame);if(rr>0){px(3,15,rr+1,rr+1,"#9a7a4a");px(1,16,2,1,"#9a7a4a");px(6,16,2,1,"#9a7a4a");}}
+if(overlayItem==='siringa'&&(animFrame%2===0)){px(28,2,2,3,"#5a90a4");px(27,5,4,1,"#5a90a4");px(28,6,2,10,"#7ab0c4");px(28,16,2,2,"#4f7f90");px(28,18,1,6,"#4f7f90");}
+if(overlayItem==='doccia'){const sx=4+(animFrame%3)*6;px(sx,cy-r,5,4,"#c4b46a");const r1=(animFrame*4)%28,r2=((animFrame*4)+12)%28;px(6,r1,1,3,"#5a90b4");px(14,r2,1,3,"#5a90b4");px(22,r1,1,3,"#5a90b4");px(28,r2,1,3,"#5a90b4");}
+if(overlayItem==='studio'){px(20,20,10,8,"#6a4f2f");px(21,21,4,6,"#e2d6b8");px(25,21,4,6,"#e2d6b8");px(24,20,1,8,"#6a4f2f");if(animFrame%2===0)px(23,22,2,4,"#8a6a42");}
+if(overlayItem==='coccole'){const hx2=1+(animFrame%3)*2;px(hx2,cy-2,5,4,"#e0b48a");px(hx2+5,cy-3,2,6,"#e0b48a");px(hx2-1,cy+2,2,3,"#e0b48a");px(hx2,cy-2,5,1,"#c99a6a");const beat=(animFrame%2===0),hx=22,hy=4,hs=beat?3:2;ctx.fillStyle="#e0506a";ctx.fillRect(hx,hy,hs,hs);ctx.fillRect(hx+hs+1,hy,hs,hs);ctx.fillRect(hx,hy+hs,hs*2+1,hs);ctx.fillRect(hx+Math.floor(hs*0.6),hy+hs*2,hs,hs);}}
+
+function drawRpsHand(cid,choice,flip){const canvas=typeof cid==='string'?document.getElementById(cid):cid;if(!canvas)return;const ctx=canvas.getContext('2d');const W=20,H=20;ctx.clearRect(0,0,W,H);ctx.imageSmoothingEnabled=false;ctx.save();if(flip){ctx.translate(W,0);ctx.scale(-1,1);}
+const B="#1a1a1a",F="#f4d0a4",FS="#d8ac7c";function rect(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(x,y,w,h);}
+if(choice==='rock'){
+// SASSO: pugno chiuso compatto
+rect(5,7,11,9,B);rect(6,8,9,7,F);
+rect(6,8,9,1,"#ffe6c4");rect(6,14,9,1,FS);
+rect(6,9,2,2,FS);rect(9,9,2,2,FS);rect(12,9,2,2,FS);
+rect(4,10,2,4,B);rect(5,11,1,2,F);
+}
+else if(choice==='paper'){
+// CARTA: mano completamente aperta, 4 dita + pollice
+rect(4,9,11,7,B);rect(5,10,9,5,F);
+rect(4,3,2,7,B);rect(4,4,2,5,F);
+rect(7,2,2,8,B);rect(7,3,2,6,F);
+rect(10,2,2,8,B);rect(10,3,2,6,F);
+rect(13,4,2,6,B);rect(13,5,2,4,F);
+rect(2,10,2,4,B);rect(2,11,2,2,F);
+}
+else if(choice==='scissors'){
+// FORBICE: pugno chiuso con indice e medio alzati a V (segno vittoria)
+rect(6,10,9,6,B);rect(7,11,7,4,F);
+rect(6,2,2,9,B);rect(6,3,2,7,F);
+rect(11,2,2,9,B);rect(11,3,2,7,F);
+rect(5,2,1,3,B);rect(13,2,1,3,B);
+rect(4,12,2,3,B);rect(4,13,2,1,F);
+}
+ctx.restore();}
+function initPreviews(){for(let p=0;p<5;p++)drawPixelSprite('p'+(p+1)+'_baby',p,1);updateTexts();loadGameState();}
+
+function selectPet(index,defaultName){const ci=document.getElementById('custom-pet-name').value.trim();petCustomName=ci?ci.toUpperCase():defaultName;const g=document.querySelector('input[name="pet-gender"]:checked');petGender=g?g.value:"M";
+currentPetIndex=index;petStage=0;hunger=40;happiness=40;health=40;energy=40;fitness=40;intelligence=40;cleanliness=40;ageInDays=0;secondsInCurrentStage=0;totalGameSeconds=0;lastRealTimestamp=Math.floor(Date.now()/1000);isDirty=false;isSick=false;isDead=false;isSleeping=false;alarmPlayedThisWarning=false;if(sleepTimer)clearTimeout(sleepTimer);isEatingAnimation=false;isCustomAnimation=false;
+generatePoopSchedule();poopScheduleDay=cestDayIndex(Date.now());resetLeaderboardForNewPet();stopRunner();
+document.getElementById('selection-screen').style.display='none';document.getElementById('choose-area-screen').style.display='none';document.getElementById('rules-screen').style.display='none';document.getElementById('info-screen').style.display='none';document.getElementById('settings-screen').style.display='none';document.getElementById('gameplay-screen').style.display='flex';document.getElementById('kitchen-sub-menu').style.display='none';document.getElementById('fun-sub-menu').style.display='none';document.getElementById('gym-sub-menu').style.display='none';
+const mc=document.getElementById('game-canvas');mc.classList.add('egg-wobble');mc.classList.remove('pet-idle-bounce');mc.classList.remove('pet-sick-anim');mc.style.display='block';
+document.getElementById('action-msg').innerText=i18n[currentLang].eggWarming;
+updateBadgeProfile();drawBackground();updateDisplay();saveGameState();
+if(gameTimer)clearInterval(gameTimer);gameTimer=setInterval(gameLoop,1000);}
+
+function stepOneSecond(sim){if(isDead)return;totalGameSeconds++;secondsInCurrentStage++;const nowMs=lastRealTimestamp*1000;ageInDays=Math.floor(totalGameSeconds/SECONDS_PER_DAY);const T3=SECONDS_PER_DAY*3;
+const di=cestDayIndex(nowMs);if(di!==poopScheduleDay){generatePoopSchedule();poopScheduleDay=di;}
+if(petStage>0&&!isDirty){const sod=cestSecondsOfDay(nowMs);let pooped=false;for(let i=0;i<poopSchedule.length;i++){if(!poopDoneToday[i]&&sod>=poopSchedule[i]){poopDoneToday[i]=true;pooped=true;}}if(pooped){isDirty=true;cleanliness=Math.max(0,cleanliness-POOP_CLEANLINESS_LOSS);if(!sim)setActionMessage(i18n[currentLang].poopMsg);}}
+if(petStage===0){if(!sim)playSyncopatedEggBeep();if(secondsInCurrentStage>=7){petStage=1;secondsInCurrentStage=0;hunger=40;happiness=40;health=40;energy=40;fitness=40;intelligence=40;cleanliness=40;if(!sim){const mc=document.getElementById('game-canvas');mc.classList.remove('egg-wobble');mc.classList.add('pet-idle-bounce');setActionMessage(i18n[currentLang].hatchedMsg);playHappyEndSound();}}}
+else if(petStage>=1&&petStage<4){if(secondsInCurrentStage>=T3){petStage++;secondsInCurrentStage=0;if(!sim){setActionMessage(i18n[currentLang].evoMsg);playHappyEndSound();}}}
+else if(petStage===4){if(secondsInCurrentStage>=T3){triggerNaturalDeath(sim);return;}}
+if(petStage>0){if(totalGameSeconds%DECAY.hunger===0)hunger=Math.max(0,hunger-20);if(totalGameSeconds%DECAY.cleanliness===0)cleanliness=Math.max(0,cleanliness-20);if(!isSleeping&&totalGameSeconds%DECAY.happiness===0)happiness=Math.max(0,happiness-20);if(!isSleeping&&totalGameSeconds%DECAY.energy===0)energy=Math.max(0,energy-20);if(totalGameSeconds%DECAY.fitness===0)fitness=Math.max(0,fitness-20);if(totalGameSeconds%DECAY.intelligence===0)intelligence=Math.max(0,intelligence-20);if(!isSick&&!isSleeping&&Math.random()<ILLNESS_CHANCE_PER_SEC)isSick=true;if(isSick&&totalGameSeconds%3600===0)health=Math.max(0,health-20);}
+if(isSleeping&&petStage>0)energy=Math.min(100,energy+(20/3600));
+if(health<=0){isDead=true;petStage=5;if(!sim){turnOffSleepingState();document.getElementById('game-canvas').classList.remove('pet-idle-bounce');document.getElementById('game-canvas').classList.remove('pet-sick-anim');document.getElementById('action-msg').innerText=i18n[currentLang].deathMsg;generateLeaderboard();myRacePoints=0;lastRaceDay=raceDayIndex();if(gameTimer)clearInterval(gameTimer);saveGameState();}}}
+
+function catchUpRealTime(){const ns=Math.floor(Date.now()/1000);if(!lastRealTimestamp){lastRealTimestamp=ns;return;}let el=ns-lastRealTimestamp;if(el<=0)return;const MX=SECONDS_PER_DAY*30;if(el>MX)el=MX;for(let i=0;i<el;i++){lastRealTimestamp++;stepOneSecond(true);if(isDead)break;}lastRealTimestamp=ns;checkStatsWarning();}
+
+function gameLoop(){if(inRunnerMode||inRpsMode||raceActive)return;if(isDead)return;poopSmokeFrame++;const ns=Math.floor(Date.now()/1000);let steps=ns-lastRealTimestamp;if(steps<1)steps=1;if(steps>SECONDS_PER_DAY*30)steps=SECONDS_PER_DAY*30;for(let i=0;i<steps;i++){lastRealTimestamp++;stepOneSecond(i===steps-1?false:true);if(isDead)break;}lastRealTimestamp=ns;checkStatsWarning();applySickAnimClass();updateDisplay();maybeShowRacePrompt();saveGameState();}
+
+function triggerNaturalDeath(sim){isDead=true;petStage=5;if(sim){if(!gameTimer)return;}turnOffSleepingState();if(gameTimer)clearInterval(gameTimer);updateDisplay();const t=i18n[currentLang];document.getElementById('action-msg').innerText=t.deathRebirthMsg;
+setTimeout(()=>{const ni=Math.floor(Math.random()*5);const dn=["SPIKE","NIBBLE","BUBBLE","PUFF","DINO"];const pn=dn[ni];
+const acc=window.confirm(t.rebirthPrompt(pn));if(!acc){setActionMessage(t.rebirthDeclined);generateLeaderboard();myRacePoints=0;lastRaceDay=raceDayIndex();saveGameState();return;}
+let cn=window.prompt(t.rebirthNamePrompt,pn);if(!cn||!cn.trim())cn=pn;cn=cn.trim().toUpperCase().slice(0,10);
+generation++;currentPetIndex=ni;petCustomName=cn;petStage=0;ageInDays=0;secondsInCurrentStage=0;totalGameSeconds=0;lastRealTimestamp=Math.floor(Date.now()/1000);hunger=40;happiness=40;health=40;energy=40;fitness=40;intelligence=40;cleanliness=40;isDirty=false;isSick=false;isDead=false;isSleeping=false;alarmPlayedThisWarning=false;
+generatePoopSchedule();poopScheduleDay=cestDayIndex(Date.now());resetLeaderboardForNewPet();
+const mc=document.getElementById('game-canvas');mc.style.display='block';mc.classList.add('egg-wobble');mc.classList.remove('pet-idle-bounce');mc.classList.remove('pet-sick-anim');
+updateBadgeProfile();setActionMessage(t.rebirthDone(cn));updateDisplay();saveGameState();
+if(gameTimer)clearInterval(gameTimer);gameTimer=setInterval(gameLoop,1000);},300);}
+
+function awardRivalRacePoints(){if(!leaderboard||leaderboard.length===0)return;leaderboard.forEach(r=>{const x=Math.random();if(x<0.45)r.points+=2;else if(x<0.55)r.points+=1;});}
+function maybeShowRacePrompt(){if(isDead||petStage===0||petStage===5||isSleeping)return;if(raceActive||inRunnerMode||inRpsMode)return;const rd=raceDayIndex();if(rd>lastRaceDay){lastRaceDay=rd;awardRivalRacePoints();currentRival=RIVAL_NAMES[Math.floor(Math.random()*RIVAL_NAMES.length)];document.getElementById('race-prompt-text').innerText=i18n[currentLang].racePrompt(currentRival);document.getElementById('race-prompt').style.display='flex';playSyncopatedEggBeep();saveGameState();}}
+function answerRace(a){document.getElementById('race-prompt').style.display='none';if(!a){fitness=Math.max(0,fitness-20);myRacePoints=Math.max(0,myRacePoints-1);playSadSound();setActionMessage(i18n[currentLang].raceDeclined,2500);updateDisplay();saveGameState();return;}startRaceAnimation();}
+
+function startRaceAnimation(){raceActive=true;document.getElementById('game-canvas').style.display='none';document.getElementById('race-container').style.display='block';
+let outcome;if(fitness>=95)outcome='win';else{const r=Math.random();if(r<0.45)outcome='win';else if(r<0.90)outcome='lose';else outcome='draw';}
+const canvas=document.getElementById('race-canvas'),ctx=canvas.getContext('2d');const pal=PET_PALETTE[currentPetIndex]||PET_PALETTE[0];const rp=PET_PALETTE[Math.floor(Math.random()*PET_PALETTE.length)];
+const dur=10000,start=Date.now(),fx=176,sx=8;
+function draw(){const el=Date.now()-start;const p=Math.min(1,el/dur);ctx.clearRect(0,0,canvas.width,canvas.height);ctx.fillStyle="#5a8a4e";ctx.fillRect(0,62,canvas.width,18);ctx.fillStyle="#3f7a42";ctx.fillRect(0,62,canvas.width,2);for(let y=20;y<62;y+=6){ctx.fillStyle=(Math.floor(y/6)%2===0)?"#3a4653":"#e4ebef";ctx.fillRect(fx+6,y,4,6);}
+let myP=p,rvP=p;if(outcome==='win'){myP=Math.min(1,p*1.05);rvP=p*0.92;}else if(outcome==='lose'){myP=p*0.92;rvP=Math.min(1,p*1.05);}const bob=Math.sin(el/90)*2;
+drawMiniRacer(ctx,sx+myP*(fx-sx),30+bob,pal);drawMiniRacer(ctx,sx+rvP*(fx-sx),48-bob,rp);
+ctx.fillStyle="#3a4653";ctx.font='8px "Courier New"';ctx.fillText(petCustomName,4,12);ctx.fillText(currentRival,100,12);
+if(el<dur)requestAnimationFrame(draw);else finishRace(outcome);}
+draw();playSyncopatedEggBeep();}
+function drawMiniRacer(ctx,x,y,pal){ctx.fillStyle=pal.outline;ctx.fillRect(x-1,y-1,14,14);ctx.fillStyle=pal.body;ctx.fillRect(x,y,12,12);ctx.fillStyle=pal.light;ctx.fillRect(x+2,y+2,4,3);ctx.fillStyle=EYE_COLOR;ctx.fillRect(x+8,y+4,2,2);}
+function finishRace(o){raceActive=false;document.getElementById('race-container').style.display='none';if(!isDead)document.getElementById('game-canvas').style.display='block';const t=i18n[currentLang];
+if(o==='win'){happiness=Math.min(100,happiness+40);myRacePoints+=2;playHappyEndSound();setActionMessage(t.raceWin(currentRival),3000);}
+else if(o==='lose'){happiness=Math.max(0,happiness-40);playSadSound();setActionMessage(t.raceLose(currentRival),3000);}
+else{myRacePoints+=1;setActionMessage(t.raceDraw(currentRival),3000);}
+lastRealTimestamp=Math.floor(Date.now()/1000);applySickAnimClass();updateDisplay();saveGameState();}
+
+function renderLeaderboard(){const tb=document.getElementById('rank-tbody');if(!tb)return;const all=leaderboard.map(r=>({name:r.name,points:r.points,self:false}));all.push({name:petCustomName,points:myRacePoints,self:true});all.sort((a,b)=>b.points-a.points);tb.innerHTML="";all.forEach((row,i)=>{const tr=document.createElement('tr');if(row.self)tr.className='rank-row-self';tr.innerHTML=`<td>${i+1}</td><td>${row.name}</td><td>${row.points}</td>`;tb.appendChild(tr);});}
+
+function closeAllSubMenus(ex){['kitchen-sub-menu','fun-sub-menu','gym-sub-menu'].forEach(id=>{if(id!==ex)document.getElementById(id).style.display='none';});}
+function toggleKitchenMenu(){if(isDead||petStage===0||inRunnerMode||inRpsMode||raceActive)return;const m=document.getElementById('kitchen-sub-menu');const w=m.style.display==='none';closeAllSubMenus('kitchen-sub-menu');m.style.display=w?'flex':'none';}
+function toggleFunMenu(){if(isDead||petStage===0||inRunnerMode||inRpsMode||raceActive)return;const m=document.getElementById('fun-sub-menu');const w=m.style.display==='none';closeAllSubMenus('fun-sub-menu');m.style.display=w?'flex':'none';}
+function toggleGymMenu(){if(isDead||petStage===0||inRunnerMode||inRpsMode||raceActive)return;const m=document.getElementById('gym-sub-menu');const w=m.style.display==='none';closeAllSubMenus('gym-sub-menu');m.style.display=w?'flex':'none';}
+function showGymRecord(){if(isDead||petStage===0)return;setActionMessage(i18n[currentLang].gymRecordMsg(runnerHighScore),3000);playHappyEndSound();}
+
+function feedPet(type){if(isEatingAnimation||isCustomAnimation||isDead||petStage===0||inRunnerMode||inRpsMode||raceActive)return;isEatingAnimation=true;if(isSleeping)turnOffSleepingState();let step=0;const c=document.getElementById('game-canvas');let m="";
+if(type==='pasto'){hunger=Math.min(100,hunger+40);m=i18n[currentLang].mealMsg;}else{happiness=Math.min(100,happiness+20);hunger=Math.min(100,hunger+20);fitness=Math.max(0,fitness-20);m=i18n[currentLang].snackMsg;}
+const iv=setInterval(()=>{step++;const mo=(step%2!==0),pr=Math.floor(step/2);playBeep(350+(step*50),'square',0.05);drawPixelSprite(c,currentPetIndex,petStage,mo,type,pr,isSick);if(step>=6){clearInterval(iv);isEatingAnimation=false;playHappyEndSound();setActionMessage(m);updateDisplay();saveGameState();}},400);}
+
+function turnOffSleepingState(){isSleeping=false;if(sleepTimer)clearTimeout(sleepTimer);document.getElementById('pet-display-box').classList.remove('lights-off');document.getElementById('zzz-layer').style.display='none';if(!isDead)document.getElementById('game-canvas').style.display='block';}
+
+function interactArea(area){if(isDead||isEatingAnimation||isCustomAnimation||raceActive)return;if(petStage===0){setActionMessage(i18n[currentLang].waitEggMsg);return;}closeAllSubMenus();if(inRunnerMode&&area!=='Palestra')stopRunner();if(inRpsMode)stopRpsGame();if(area!=='Luce'&&isSleeping)turnOffSleepingState();const c=document.getElementById('game-canvas');
+switch(area){
+case 'Parco':happiness=Math.min(100,happiness+20);energy=Math.max(0,energy-20);cleanliness=Math.max(0,cleanliness-20);isCustomAnimation=true;let ps=0;const pi=setInterval(()=>{playBeep(400+(ps%2*150),'square',0.06);drawPixelSprite(c,currentPetIndex,petStage,false,'parco',ps,isSick);ps++;if(ps>8){clearInterval(pi);isCustomAnimation=false;playHappyEndSound();setActionMessage(i18n[currentLang].parkMsg);updateDisplay();saveGameState();}},250);break;
+case 'Coccole':happiness=Math.min(100,happiness+20);isCustomAnimation=true;let cs=0;const ct=16;const cci=setInterval(()=>{if(cs%2===0)playBeep(520+(cs%4*40),'sine',0.05);drawPixelSprite(c,currentPetIndex,petStage,false,'coccole',cs,isSick);cs++;if(cs>=ct){clearInterval(cci);isCustomAnimation=false;playHappyEndSound();setActionMessage(i18n[currentLang].cuddleMsg);updateDisplay();saveGameState();}},250);break;
+case 'Doccia':energy=Math.min(100,energy+20);let sm=isDirty?i18n[currentLang].showerDirtyMsg:i18n[currentLang].showerCleanMsg;isCustomAnimation=true;let bs=0;const bi=setInterval(()=>{playBeep(600-(bs*30),'square',0.05);drawPixelSprite(c,currentPetIndex,petStage,false,'doccia',bs,isSick);bs++;if(bs>8){clearInterval(bi);isCustomAnimation=false;isDirty=false;cleanliness=100;playHappyEndSound();setActionMessage(sm);updateDisplay();saveGameState();}},250);break;
+case 'Infermeria':health=100;isSick=false;let cm=i18n[currentLang].clinicSickMsg;isCustomAnimation=true;let is=0;const ii=setInterval(()=>{playBeep(500+(is%2*200),'triangle',0.08);drawPixelSprite(c,currentPetIndex,petStage,false,'siringa',is,false);is++;if(is>=6){clearInterval(ii);isCustomAnimation=false;applySickAnimClass();playHappyEndSound();setActionMessage(cm);updateDisplay();saveGameState();}},500);break;
+case 'Palestra':fitness=Math.min(100,fitness+20);happiness=Math.min(100,happiness+20);hunger=Math.max(0,hunger-20);cleanliness=Math.max(0,cleanliness-20);energy=Math.max(0,energy-20);updateDisplay();saveGameState();startRunnerMode();break;
+case 'Studio':intelligence=Math.min(100,intelligence+20);happiness=Math.max(0,happiness-20);isCustomAnimation=true;let ss=0;const si=setInterval(()=>{playBeep(450+(ss%2*100),'square',0.06);drawPixelSprite(c,currentPetIndex,petStage,false,'studio',ss,isSick);ss++;if(ss>8){clearInterval(si);isCustomAnimation=false;playHappyEndSound();setActionMessage(i18n[currentLang].studyMsg);updateDisplay();saveGameState();}},250);break;
+case 'Luce':isSleeping=!isSleeping;const db=document.getElementById('pet-display-box'),zl=document.getElementById('zzz-layer');playBeep(isSleeping?300:600,'square',0.08);if(isSleeping){db.classList.add('lights-off');c.style.display='none';c.classList.remove('pet-sick-anim');setActionMessage(i18n[currentLang].lightOffMsg);if(sleepTimer)clearTimeout(sleepTimer);sleepTimer=setTimeout(()=>{if(isSleeping){zl.style.display='block';setActionMessage(i18n[currentLang].lightRestMsg);}},2000);}else{turnOffSleepingState();applySickAnimClass();setActionMessage(i18n[currentLang].lightOnMsg);playHappyEndSound();updateDisplay();}saveGameState();break;}}
+
+function startRunnerMode(){inRunnerMode=true;document.getElementById('game-canvas').style.display='none';document.getElementById('runner-container').style.display='block';setActionMessage(i18n[currentLang].gymMsg);runnerPetY=0;runnerVY=0;runnerJumping=false;runnerObstacles=[];runnerScore=0;runnerSpeed=2;minObstacleDistance=110;window.addEventListener('keydown',handleRunnerInput);runnerLoop();}
+function triggerJumpInRunner(){if(inRunnerMode&&!runnerJumping){runnerVY=-7;runnerJumping=true;playBeep(450,'square',0.06);}}
+function handleRunnerInput(e){if((e.code==='Space'||e.code==='ArrowUp')&&inRunnerMode){e.preventDefault();triggerJumpInRunner();}}
+function stopRunner(){if(!inRunnerMode){document.getElementById('runner-container').style.display='none';return;}inRunnerMode=false;if(runnerAnimId)cancelAnimationFrame(runnerAnimId);window.removeEventListener('keydown',handleRunnerInput);document.getElementById('runner-container').style.display='none';if(!isSleeping&&!isDead)document.getElementById('game-canvas').style.display='block';lastRealTimestamp=Math.floor(Date.now()/1000);setActionMessage(i18n[currentLang].gymExitMsg);playHappyEndSound();saveGameState();}
+function runnerLoop(){if(!inRunnerMode)return;const canvas=document.getElementById('runner-canvas'),ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);
+runnerSpeed=2+Math.floor(runnerScore/80)*0.35;minObstacleDistance=110+Math.floor(runnerScore/80)*8;runnerPetY+=runnerVY;runnerVY+=0.5;if(runnerPetY>=0){runnerPetY=0;runnerVY=0;runnerJumping=false;}
+ctx.fillStyle="#5a8a4e";ctx.fillRect(0,70,canvas.width,10);ctx.fillStyle="#3f7a42";ctx.fillRect(0,70,canvas.width,2);
+const pal=PET_PALETTE[currentPetIndex]||PET_PALETTE[0];const py=52+runnerPetY;ctx.fillStyle=pal.outline;ctx.fillRect(19,py-1,18,18);ctx.fillStyle=pal.body;ctx.fillRect(20,py,16,16);ctx.fillStyle=pal.light;ctx.fillRect(22,py+2,5,4);ctx.fillStyle=EYE_COLOR;ctx.fillRect(30,py+5,2,2);
+const lo=runnerObstacles[runnerObstacles.length-1];const dl=lo?(200-lo.x):999;const rg=Math.floor(Math.random()*60)+minObstacleDistance;if(dl>rg&&Math.random()<0.03)runnerObstacles.push({x:200,width:8,height:16});
+for(let i=0;i<runnerObstacles.length;i++){let o=runnerObstacles[i];o.x-=runnerSpeed;ctx.fillStyle="#3f7a42";ctx.fillRect(o.x,70-o.height,o.width,o.height);ctx.fillRect(o.x-2,60,2,4);ctx.fillRect(o.x+o.width,56,2,4);ctx.fillStyle="#2f5f32";ctx.fillRect(o.x,70-o.height,2,o.height);
+if(o.x<36&&o.x+o.width>20&&py+16>70-o.height){playBeep(150,'sawtooth',0.2);if(runnerScore>runnerHighScore){runnerHighScore=runnerScore;localStorage.setItem('dinomio_runner_highscore',runnerHighScore);}setActionMessage(`PTS: ${runnerScore} | HI: ${runnerHighScore}`);stopRunner();updateDisplay();return;}}
+runnerObstacles=runnerObstacles.filter(o=>o.x>-10);runnerScore++;if(runnerScore>runnerHighScore){runnerHighScore=runnerScore;localStorage.setItem('dinomio_runner_highscore',runnerHighScore);}
+ctx.fillStyle="#3a4653";ctx.font='8px "Courier New"';ctx.fillText(`SCORE: ${runnerScore} HI: ${runnerHighScore}`,90,12);runnerAnimId=requestAnimationFrame(runnerLoop);}
+
+function startRpsGame(){if(isDead||petStage===0||inRunnerMode||raceActive)return;closeAllSubMenus();if(isSleeping)turnOffSleepingState();inRpsMode=true;rpsRound=0;rpsPetScore=0;rpsCpuScore=0;rpsBusy=false;document.getElementById('game-canvas').style.display='none';document.getElementById('rps-container').style.display='flex';drawRpsHand('rps-hand-pet','rock',false);drawRpsHand('rps-hand-cpu','rock',true);drawRpsHand('rps-btn-rock','rock',false);drawRpsHand('rps-btn-paper','paper',false);drawRpsHand('rps-btn-scissors','scissors',false);document.getElementById('rps-result').innerText='';document.getElementById('rps-info').innerText=i18n[currentLang].rpsRound(1,0,0);setActionMessage(i18n[currentLang].rpsMsg,2500);}
+function stopRpsGame(){if(!inRpsMode){document.getElementById('rps-container').style.display='none';return;}inRpsMode=false;document.getElementById('rps-container').style.display='none';if(!isSleeping&&!isDead)document.getElementById('game-canvas').style.display='block';lastRealTimestamp=Math.floor(Date.now()/1000);saveGameState();}
+function playRps(pc){if(!inRpsMode||rpsBusy)return;if(rpsRound>=RPS_TOTAL_ROUNDS)return;rpsBusy=true;const ch=['rock','paper','scissors'];const cc=ch[Math.floor(Math.random()*3)];drawRpsHand('rps-hand-pet',pc,false);drawRpsHand('rps-hand-cpu',cc,true);
+let rr;if(pc===cc)rr='draw';else if((pc==='rock'&&cc==='scissors')||(pc==='scissors'&&cc==='paper')||(pc==='paper'&&cc==='rock'))rr='win';else rr='lose';
+const t=i18n[currentLang],re=document.getElementById('rps-result');if(rr==='win'){rpsPetScore++;re.innerText=t.rpsRoundWin;}else if(rr==='lose'){rpsCpuScore++;re.innerText=t.rpsRoundLose;}else{re.innerText=t.rpsRoundDraw;}playRpsRoundSound();
+rpsRound++;document.getElementById('rps-info').innerText=t.rpsRound(Math.min(rpsRound+1,RPS_TOTAL_ROUNDS),rpsPetScore,rpsCpuScore);
+if(rpsRound>=RPS_TOTAL_ROUNDS)setTimeout(finishRps,900);else setTimeout(()=>{rpsBusy=false;},700);}
+function finishRps(){const t=i18n[currentLang];let m;if(rpsPetScore>rpsCpuScore){happiness=Math.min(100,happiness+40);m=t.rpsWin;}else if(rpsPetScore<rpsCpuScore){happiness=Math.min(100,happiness+20);m=t.rpsLose;}else{happiness=Math.min(100,happiness+20);m=t.rpsDraw;}playRpsMatchEndSound();stopRpsGame();setActionMessage(m,3500);updateDisplay();saveGameState();}
+
+function updateDisplay(){const pc=document.getElementById('poop-canvas');if(isDirty){pc.style.display='block';drawPoopSprite(poopSmokeFrame);}else pc.style.display='none';
+document.getElementById('sick-tag').style.display=isSick?'block':'none';
+if(!isEatingAnimation&&!isCustomAnimation&&!inRunnerMode&&!inRpsMode&&!raceActive)drawPixelSprite(document.getElementById('game-canvas'),currentPetIndex,petStage,false,null,0,isSick);
+document.getElementById('mini-hunger').innerText=getDots(hunger);document.getElementById('mini-cleanliness').innerText=getDots(cleanliness);document.getElementById('mini-happy').innerText=getDots(happiness);document.getElementById('mini-health').innerText=getDots(health);document.getElementById('mini-energy').innerText=getDots(energy);document.getElementById('mini-fitness').innerText=getDots(fitness);document.getElementById('mini-intelligence').innerText=getDots(intelligence);}
+function getDots(v){v=Math.round(v);if(v>=80)return '\u25CF\u25CF\u25CF\u25CF\u25CF';if(v>=60)return '\u25CF\u25CF\u25CF\u25CF\u25CB';if(v>=40)return '\u25CF\u25CF\u25CF\u25CB\u25CB';if(v>=20)return '\u25CF\u25CF\u25CB\u25CB\u25CB';if(v>0)return '\u25CF\u25CB\u25CB\u25CB\u25CB';return '\u25CB\u25CB\u25CB\u25CB\u25CB';}
+
+function showInfo(){const t=i18n[currentLang];document.getElementById('info-name').innerText=petCustomName;document.getElementById('info-gender').innerText=petGender==='M'?t.genderM:t.genderF;document.getElementById('info-gen').innerText=generation;document.getElementById('info-age').innerText=ageInDays;document.getElementById('info-stage').innerText=stageNames[petStage];document.getElementById('info-hunger').innerText=getDots(hunger);document.getElementById('info-cleanliness').innerText=getDots(cleanliness);document.getElementById('info-happy').innerText=getDots(happiness);document.getElementById('info-health').innerText=getDots(health);document.getElementById('info-energy').innerText=getDots(energy);document.getElementById('info-fitness').innerText=getDots(fitness);document.getElementById('info-intelligence').innerText=getDots(intelligence);renderLeaderboard();document.getElementById('gameplay-screen').style.display='none';document.getElementById('info-screen').style.display='flex';}
+function hideInfo(){document.getElementById('info-screen').style.display='none';document.getElementById('gameplay-screen').style.display='flex';}
+function showSettings(){document.getElementById('gameplay-screen').style.display='none';document.getElementById('settings-screen').style.display='flex';}
+function hideSettings(){document.getElementById('settings-screen').style.display='none';document.getElementById('gameplay-screen').style.display='flex';}
+function showRules(){document.getElementById('selection-screen').style.display='none';document.getElementById('rules-screen').style.display='flex';}
+function hideRules(){document.getElementById('rules-screen').style.display='none';document.getElementById('selection-screen').style.display='block';}
+function showChooseArea(){document.getElementById('selection-screen').style.display='none';document.getElementById('choose-area-screen').style.display='flex';}
+function hideChooseArea(){document.getElementById('choose-area-screen').style.display='none';document.getElementById('selection-screen').style.display='block';}
+function navigateToLocation(l){playHappyEndSound();alert(i18n[currentLang].travelMsg+l);}
+function resetGame(){if(!window.confirm(i18n[currentLang].resetConfirm))return;stopRunner();if(inRpsMode)stopRpsGame();if(gameTimer)clearInterval(gameTimer);turnOffSleepingState();document.getElementById('race-prompt').style.display='none';raceActive=false;document.getElementById('race-container').style.display='none';clearGameState();generation=1;isDead=false;alarmPlayedThisWarning=false;leaderboard=[];myRacePoints=0;lastRaceDay=-1;currentBgStyle='none';setBackgroundStyle('none');const mc=document.getElementById('game-canvas');mc.classList.remove('egg-wobble');mc.classList.remove('pet-idle-bounce');mc.classList.remove('pet-sick-anim');mc.style.display='block';document.getElementById('gameplay-screen').style.display='none';document.getElementById('info-screen').style.display='none';document.getElementById('settings-screen').style.display='none';document.getElementById('rules-screen').style.display='none';document.getElementById('choose-area-screen').style.display='none';document.getElementById('selection-screen').style.display='block';}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!isDead&&petStage!==undefined){const gp=document.getElementById('gameplay-screen');if(gp&&gp.style.display!=='none'&&!inRunnerMode&&!inRpsMode&&!raceActive){catchUpRealTime();applySickAnimClass();updateDisplay();maybeShowRacePrompt();saveGameState();}}});
+window.onload=initPreviews;
+</script>
 </body>
 </html>
