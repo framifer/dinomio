@@ -92,7 +92,6 @@ h1, h2 { font-size: 0.9rem; text-align: center; color: #3a4653; text-transform: 
 .explore-setup-actions .go-btn { background: linear-gradient(180deg,#4f6d86,#3c566c); box-shadow: 0 3px 0 #2c4152; }
 .explore-setup-actions .cancel-btn { background: linear-gradient(180deg,#c47a7a,#a85a5a); box-shadow:0 3px 0 #8c4646; }
 .explore-setup-actions button:active { transform: translateY(3px); box-shadow: none; }
-/* Sottomenu SVAGO: X piccola, Esplorazione piu larga, testo che non fuoriesce */
 #fun-sub-menu .kitchen-btn { min-width: 0; font-size: 0.55rem; padding: 6px 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 #fun-sub-menu #btn-explore-play { flex: 1.6; }
 #fun-sub-menu #btn-close-fun { flex: 0 0 26px; min-width: 26px; padding: 6px 0; }
@@ -440,6 +439,54 @@ else if(currentBgStyle==='city'){x.fillStyle="#6a7280";x.fillRect(0,116,128,12);
 else if(currentBgStyle==='sky'){x.fillStyle="#d6dce2";[{x:8,y:16},{x:72,y:32},{x:20,y:68},{x:80,y:84}].forEach(c2=>{x.fillRect(c2.x+8,c2.y,24,6);x.fillRect(c2.x+4,c2.y+6,32,6);x.fillRect(c2.x,c2.y+12,40,6);});x.fillStyle="#c4b476";x.fillRect(98,14,16,16);}
 else if(currentBgStyle==='space'){const st2=[{x:12,y:12},{x:45,y:20},{x:90,y:15},{x:115,y:35},{x:25,y:55},{x:70,y:60},{x:105,y:75},{x:15,y:95},{x:55,y:100},{x:85,y:110}];x.fillStyle="#c4c48a";st2.forEach((s,i)=>{if(i%2===0){x.fillRect(s.x,s.y-2,2,6);x.fillRect(s.x-2,s.y,6,2);}else x.fillRect(s.x,s.y,2,2);});x.fillStyle="#6a7280";x.fillRect(94,12,16,16);x.fillStyle="#8a929c";x.fillRect(96,14,6,6);}}
 
+/* ===== NUOVA: scena Parco a piena dimensione (128x128) sul bg-canvas ===== */
+function drawParkScene(animFrame){
+const c=document.getElementById('bg-canvas');if(!c)return;
+const x=c.getContext('2d');x.imageSmoothingEnabled=false;x.clearRect(0,0,128,128);
+// cielo
+x.fillStyle="#bfe3f0";x.fillRect(0,0,128,128);
+// sole
+x.fillStyle="#ffe14d";x.fillRect(104,10,16,16);x.fillStyle="#ffd000";x.fillRect(108,14,8,8);
+// nuvole
+x.fillStyle="#ffffff";x.fillRect(14,16,20,5);x.fillRect(10,20,28,5);x.fillRect(60,28,18,5);x.fillRect(56,32,26,5);
+// prato che riempie tutto il fondo
+const groundY=94;
+x.fillStyle="#6aae4f";x.fillRect(0,groundY,128,128-groundY);
+x.fillStyle="#5a9a42";x.fillRect(0,groundY,128,3);
+// ciuffi d'erba
+x.fillStyle="#5a9a42";for(let gx=4;gx<128;gx+=14){const off=(animFrame%2===0)?0:1;x.fillRect(gx+off,groundY+6,2,4);x.fillRect(gx+4,groundY+9,2,3);}
+// albero grande
+function bigTree(cx,trunkBottom,scale){
+const trunkW=Math.round(10*scale),trunkH=Math.round(36*scale);
+const cw=Math.round(48*scale),ch=Math.round(48*scale);
+const tx=Math.round(cx-trunkW/2),ty=trunkBottom-trunkH;
+x.fillStyle="#3a2a18";x.fillRect(tx-1,ty-1,trunkW+2,trunkH+2);
+x.fillStyle="#6a4f30";x.fillRect(tx,ty,trunkW,trunkH);
+x.fillStyle="#553d24";x.fillRect(tx+Math.round(trunkW*0.6),ty,Math.max(1,Math.round(trunkW*0.3)),trunkH);
+const chY=ty-ch+Math.round(8*scale),chX=Math.round(cx-cw/2);
+x.fillStyle="#2f5f32";x.fillRect(chX-2,chY-2,cw+4,ch+4);
+x.fillStyle="#3f7a42";x.fillRect(chX,chY,cw,ch);
+x.fillStyle="#5a9a5a";x.fillRect(chX+Math.round(cw*0.14),chY+Math.round(ch*0.14),Math.round(cw*0.36),Math.round(ch*0.3));
+x.fillStyle="#2f5f32";x.fillRect(chX+Math.round(cw*0.55),chY+Math.round(ch*0.5),Math.round(cw*0.3),Math.round(ch*0.3));
+}
+// cespuglio grande
+function bigBush(cx,groundBottom,scale){
+const w=Math.round(42*scale),h=Math.round(26*scale);
+const bx=Math.round(cx-w/2),by=groundBottom-h;
+x.fillStyle="#2f5f32";x.fillRect(bx-2,by-2,w+4,h+4);
+x.fillStyle="#3f7a42";x.fillRect(bx,by,w,h);
+x.fillStyle="#5a9a5a";x.fillRect(bx+Math.round(w*0.15),by+Math.round(h*0.2),Math.round(w*0.32),Math.round(h*0.42));
+x.fillStyle="#ffe14d";if(animFrame%2===0)x.fillRect(bx+Math.round(w*0.62),by+Math.round(h*0.5),2,2);
+}
+// alberi grandi ai lati, a tutta altezza del riquadro
+bigTree(20,groundY+2,1.2);
+bigTree(108,groundY+2,1.05);
+// cespugli grandi lungo il prato
+bigBush(58,128,1.05);
+bigBush(92,128,0.85);
+bigBush(12,128,0.7);
+}
+
 let audioCtx=null;
 function initAudio(){if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();}
 function playBeep(f=440,t='square',d=0.08){initAudio();if(!audioCtx)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=t;o.frequency.setValueAtTime(f,audioCtx.currentTime);g.gain.setValueAtTime(0.1,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+d);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+d);}
@@ -568,7 +615,7 @@ px(cx-eDX-eS/2,eY-eS/2,eS,eS,EYE_COLOR);px(cx+eDX-eS/2,eY-eS/2,eS,eS,EYE_COLOR);
 if(mO)px(cx-2,cy+r*0.32,4,3,EYE_COLOR);else px(cx-2,cy+r*0.34,4,1,EYE_COLOR);}
 function drawBackRidges(cx,cy,r,n){for(let i=0;i<n;i++){const t=(i/(n-1))-0.5,rx=Math.round(cx+t*r*1.2),ry=Math.round(cy-r*0.95);px(rx-1,ry-2,3,4,pal.outline);px(rx,ry-1,1,3,pal.shade);}}
 function drawParkTree(cx,groundY,th){const trunkW=Math.max(2,Math.round(th*0.22)),trunkH=Math.max(4,Math.round(th*0.42)),cw=Math.max(6,Math.round(th*0.75)),chH=Math.max(6,Math.round(th*0.7));const tx=Math.round(cx-trunkW/2),ty=Math.round(groundY-trunkH);px(tx-1,ty-1,trunkW+2,trunkH+2,"#3a2a18");px(tx,ty,trunkW,trunkH,"#6a4f30");const chY=ty-chH+2,chX=Math.round(cx-cw/2);px(chX-1,chY-1,cw+2,chH+2,"#2f5f32");px(chX,chY,cw,chH,"#3f7a42");px(chX+2,chY+2,Math.max(2,Math.round(cw*0.35)),Math.max(2,Math.round(chH*0.3)),"#5a9a5a");px(chX+Math.round(cw*0.3),chY-Math.max(2,Math.round(chH*0.25)),Math.round(cw*0.4),Math.max(2,Math.round(chH*0.3)),"#3f7a42");}
-if(overlayItem==='parco'){const _s=(stage>=1?stage:1);const petR=6+_s*1.6;const th=Math.max(14,Math.round(petR*2.6));const gy=Math.min(30,Math.round(17+petR*0.85));const off=Math.round(petR+th*0.4+2);px(0,gy,32,32-gy,"#6aae4f");px(0,gy,32,1,"#5a9a42");drawParkTree(16-off,gy,th);drawParkTree(16+off,gy,th*0.9);}
+if(overlayItem==='parco'){const gy=28;px(0,gy,32,32-gy,"#6aae4f");px(0,gy,32,1,"#5a9a42");}
 if(stage===5){px(11,10,10,10,"#4a4f56");px(12,11,8,8,"#c4c8ce");px(13,13,2,2,EYE_COLOR);px(17,13,2,2,EYE_COLOR);px(14,17,4,1,"#4a4f56");px(13,20,2,2,"#c4c8ce");px(17,20,2,2,"#c4c8ce");return;}
 if(stage===0){const egg=EGG_COLORS[type]||EGG_COLORS[0];px(10,8,12,18,egg.out);px(11,9,10,16,egg.sh);px(12,10,8,14,egg.hi);px(13,13,2,2,pal.spot);px(18,17,2,2,pal.spot);px(14,20,2,2,pal.spot);px(12,10,2,3,"#ffffff");return;}
 if(type===4){let r=5.5+stage*1.7;const cx=16;let cy=18+((overlayItem==='parco'&&animFrame%2===0)?-2:0);if(squish){r*=1.12;cy+=3;}if(stage>=3)drawTail(cx,cy,r,1.0);if(stage>=4){drawTail(cx,cy,r,1.25);px(cx+r*1.25,cy+r*0.15,2,2,pal.outline);px(cx+r*1.35,cy+r*0.05,2,2,pal.outline);}if(stage>=2)drawLegs(cx,cy,r,0.55,stage>=4?0.5:0.35,stage>=4?0.3:0.22);if(stage>=3)drawBackRidges(cx,cy,r,stage>=4?7:3);if(stage>=4&&!squish)px(cx-r*0.4,cy-r*1.1,r*0.8,r*0.5,pal.body);drawBlockBody(cx,cy,r);drawSpots(cx,cy,r);if(stage>=4)drawFin(cx,cy,r);drawFace(cx,cy,r,mouthOpen);drawActionOverlays(ctx,cx,cy,r,overlayItem,animFrame);return;}
@@ -684,7 +731,7 @@ function turnOffSleepingState(){isSleeping=false;if(sleepTimer)clearTimeout(slee
 
 function interactArea(area){if(isDead||isEatingAnimation||isCustomAnimation||raceActive||inExploreMode)return;if(petStage===0){setActionMessage(i18n[currentLang].waitEggMsg);return;}closeAllSubMenus();if(inRunnerMode&&area!=='Palestra')stopRunner();if(inRpsMode)stopRpsGame();if(area!=='Luce'&&isSleeping)turnOffSleepingState();const c=document.getElementById('game-canvas');
 switch(area){
-case 'Parco':happiness=Math.min(100,happiness+20);energy=Math.max(0,energy-20);cleanliness=Math.max(0,cleanliness-20);isCustomAnimation=true;let ps=0;const pi=setInterval(()=>{playBeep(400+(ps%2*150),'square',0.06);drawPixelSprite(c,currentPetIndex,petStage,false,'parco',ps,isSick);ps++;if(ps>8){clearInterval(pi);isCustomAnimation=false;playHappyEndSound();setActionMessage(i18n[currentLang].parkMsg);updateDisplay();saveGameState();}},250);break;
+case 'Parco':happiness=Math.min(100,happiness+20);energy=Math.max(0,energy-20);cleanliness=Math.max(0,cleanliness-20);isCustomAnimation=true;let ps=0;drawParkScene(0);const pi=setInterval(()=>{playBeep(400+(ps%2*150),'square',0.06);drawParkScene(ps);drawPixelSprite(c,currentPetIndex,petStage,false,'parco',ps,isSick);ps++;if(ps>8){clearInterval(pi);isCustomAnimation=false;drawBackground();playHappyEndSound();setActionMessage(i18n[currentLang].parkMsg);updateDisplay();saveGameState();}},250);break;
 case 'Coccole':happiness=Math.min(100,happiness+20);isCustomAnimation=true;let cs=0;const ct=16;const cci=setInterval(()=>{if(cs%2===0)playBeep(520+(cs%4*40),'sine',0.05);drawPixelSprite(c,currentPetIndex,petStage,false,'coccole',cs,isSick);cs++;if(cs>=ct){clearInterval(cci);isCustomAnimation=false;playHappyEndSound();setActionMessage(i18n[currentLang].cuddleMsg);updateDisplay();saveGameState();}},250);break;
 case 'Doccia':energy=Math.min(100,energy+20);let sm=isDirty?i18n[currentLang].showerDirtyMsg:i18n[currentLang].showerCleanMsg;isCustomAnimation=true;let bs=0;const bi=setInterval(()=>{playBeep(600-(bs*30),'square',0.05);drawPixelSprite(c,currentPetIndex,petStage,false,'doccia',bs,isSick);bs++;if(bs>8){clearInterval(bi);isCustomAnimation=false;isDirty=false;cleanliness=100;playHappyEndSound();setActionMessage(sm);updateDisplay();saveGameState();}},250);break;
 case 'Infermeria':health=100;isSick=false;let cm=i18n[currentLang].clinicSickMsg;isCustomAnimation=true;let is=0;const ii=setInterval(()=>{playBeep(500+(is%2*200),'triangle',0.08);drawPixelSprite(c,currentPetIndex,petStage,false,'siringa',is,false);is++;if(is>=6){clearInterval(ii);isCustomAnimation=false;applySickAnimClass();playHappyEndSound();setActionMessage(cm);updateDisplay();saveGameState();}},500);break;
