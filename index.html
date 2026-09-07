@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,6 +73,14 @@ h1, h2 { font-size: 0.9rem; text-align: center; color: #3a4653; text-transform: 
 .rps-choices button { flex: 1; height: 46px; background: #f6f9fb; color: #1a2028; border: 2px solid #1a2028; border-radius: 8px; cursor: pointer; box-shadow: 0 3px 0 #1a2028; display: flex; align-items: center; justify-content: center; }
 .rps-choices button:active { transform: translateY(3px); box-shadow: none; }
 .rps-choice-canvas { width: 32px; height: 32px; image-rendering: pixelated; }
+#memory-container { position: absolute; inset: 0; display: none; z-index: 7; flex-direction: column; align-items: center; justify-content: flex-start; background: linear-gradient(180deg,#eef2f5 0%,#dde5ea 100%); padding: 6px; }
+#memory-info { font-size: 0.6rem; font-weight: bold; color: #1a2028; text-align: center; margin: 2px 0 4px; min-height: 14px; }
+#memory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; width: 100%; flex: 1; }
+.mem-card { border: 2px solid #3c566c; border-radius: 6px; background: linear-gradient(180deg,#6a869e,#45627a); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; box-shadow: 0 2px 0 #2c4152; user-select: none; -webkit-user-select: none; }
+.mem-card:active { transform: translateY(2px); box-shadow: none; }
+.mem-card.revealed { background: #f6f9fb; border-color: #1a2028; cursor: default; }
+.mem-card.matched { background: #bfe6c4; border-color: #3f7a52; cursor: default; }
+.mem-card .mem-face { pointer-events: none; }
 #explore-container { position: absolute; inset: 0; display: none; z-index: 8; flex-direction: column; align-items: center; justify-content: flex-start; background: linear-gradient(180deg,#eef2f5 0%,#dde5ea 100%); padding: 6px; }
 #explore-canvas { width: 100%; flex: 1; image-rendering: pixelated; background: #10161d; border: 2px solid #3a4653; border-radius: 6px; }
 #explore-info { font-size: 0.6rem; font-weight: bold; color: #1a2028; text-align: center; margin: 3px 0; min-height: 14px; }
@@ -92,6 +101,7 @@ h1, h2 { font-size: 0.9rem; text-align: center; color: #3a4653; text-transform: 
 .explore-setup-actions .go-btn { background: linear-gradient(180deg,#4f6d86,#3c566c); box-shadow: 0 3px 0 #2c4152; }
 .explore-setup-actions .cancel-btn { background: linear-gradient(180deg,#c47a7a,#a85a5a); box-shadow:0 3px 0 #8c4646; }
 .explore-setup-actions button:active { transform: translateY(3px); box-shadow: none; }
+/* Sottomenu SVAGO: X piccola, Esplorazione piu larga, testo che non fuoriesce */
 #fun-sub-menu .kitchen-btn { min-width: 0; font-size: 0.55rem; padding: 6px 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 #fun-sub-menu #btn-explore-play { flex: 1.6; }
 #fun-sub-menu #btn-close-fun { flex: 0 0 26px; min-width: 26px; padding: 6px 0; }
@@ -111,6 +121,18 @@ h1, h2 { font-size: 0.9rem; text-align: center; color: #3a4653; text-transform: 
 .rank-table th, .rank-table td { border: 1px solid #c4ccd6; padding: 2px 4px; text-align: left; }
 .rank-table th { background: #d4ede0; }
 .rank-row-self { background: #fff3c4; font-weight: bold; }
+.ach-badge { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; border:2px solid #a3b3c0; border-radius:8px; padding:4px 2px; background:linear-gradient(180deg,#eef2f5,#dde5ea); text-align:center; }
+.ach-badge .ach-icon { font-size:1.1rem; line-height:1; }
+.ach-badge .ach-name { font-size:0.45rem; font-weight:bold; color:#3a4653; line-height:1.05; }
+.ach-badge.locked { filter:grayscale(1); opacity:0.45; }
+.shop-item { display:flex; flex-direction:column; align-items:center; gap:2px; border:2px solid #a3b3c0; border-radius:8px; padding:5px 2px; background:linear-gradient(180deg,#eef2f5,#dde5ea); text-align:center; cursor:pointer; box-shadow:0 3px 0 #b0bcc7; }
+.shop-item:active { transform:translateY(3px); box-shadow:none; }
+.shop-item .si-icon { font-size:1.2rem; line-height:1; }
+.shop-item .si-name { font-size:0.5rem; font-weight:bold; color:#3a4653; line-height:1.05; }
+.shop-item .si-cost { font-size:0.5rem; font-weight:bold; color:#3f6a8a; }
+.shop-item.owned { background:linear-gradient(180deg,#dff0e2,#c4e6cc); border-color:#3f7a52; }
+.shop-item.equipped { background:linear-gradient(180deg,#fff3c4,#ffe9a0); border-color:#d9a400; }
+.shop-item.cant { opacity:0.5; }
 .race-prompt-overlay { display: none; position: absolute; inset: 0; z-index: 30; background: rgba(20,26,34,0.75); align-items: center; justify-content: center; }
 .race-prompt-box { background: linear-gradient(180deg,#f2f6f8 0%,#e4ebef 100%); border: 3px solid #5f7a92; border-radius: 12px; padding: 14px; width: 80%; max-width: 300px; text-align: center; color: #3a4653; font-size: 0.72rem; box-shadow: 0 6px 20px rgba(0,0,0,0.5); }
 .race-prompt-box .rp-buttons { display: flex; gap: 8px; margin-top: 12px; }
@@ -219,6 +241,9 @@ h1, h2 { font-size: 0.9rem; text-align: center; color: #3a4653; text-transform: 
 <hr style="margin: 6px 0; border-color:#c4ccd6;">
 <p style="font-weight:bold;" id="lbl-explore-title">SCOPERTE</p>
 <p id="info-explore-stats" style="font-size:0.62rem;"></p>
+<hr style="margin: 6px 0; border-color:#c4ccd6;">
+<p style="font-weight:bold;" id="lbl-ach-title">TRAGUARDI</p>
+<div id="ach-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;"></div>
 </div>
 <button class="action-btn" id="btn-back-game" onclick="hideInfo()">TORNA AL GIOCO</button>
 </div>
@@ -235,14 +260,10 @@ h1, h2 { font-size: 0.9rem; text-align: center; color: #3a4653; text-transform: 
 <button class="action-btn" style="width: 100%; margin-top:0;" onclick="toggleLanguage()" id="btn-lang-toggle">Italiano / English</button>
 </div>
 <div class="settings-group">
-<label id="lbl-bg-style">SFONDO PIXEL-ART 8-BIT:</label>
-<div class="bg-picker-grid">
-<button class="glossy-btn active-bg" id="bg-btn-none" onclick="setBackgroundStyle('none')">VUOTO</button>
-<button class="glossy-btn" id="bg-btn-sea" onclick="setBackgroundStyle('sea')">MARE</button>
-<button class="glossy-btn" id="bg-btn-forest" onclick="setBackgroundStyle('forest')">BOSCO</button>
-<button class="glossy-btn" id="bg-btn-city" onclick="setBackgroundStyle('city')">CITTA</button>
-<button class="glossy-btn" id="bg-btn-sky" onclick="setBackgroundStyle('sky')">CIELO</button>
-<button class="glossy-btn" id="bg-btn-space" onclick="setBackgroundStyle('space')">SPAZIO</button>
+<label id="lbl-bg-style">SFONDO / SFONDO REALE:</label>
+<div class="bg-picker-grid" style="grid-template-columns: repeat(2, 1fr);">
+<button class="glossy-btn active-bg" id="bg-btn-basic" onclick="setBackgroundStyle('basic')">BASIC</button>
+<button class="glossy-btn" id="bg-btn-real" onclick="setBackgroundStyle('real')">REAL</button>
 </div>
 </div>
 <div class="settings-group">
@@ -260,6 +281,25 @@ h1, h2 { font-size: 0.9rem; text-align: center; color: #3a4653; text-transform: 
 </div>
 </div>
 <button class="action-btn" id="btn-back-settings" onclick="hideSettings()">TORNA AL GIOCO</button>
+</div>
+
+<div id="shop-screen" class="settings-screen">
+<h2 id="title-shop">NEGOZIO</h2>
+<div class="settings-content">
+<div class="settings-group" style="display:flex;justify-content:space-between;align-items:center;">
+<label id="lbl-gems" style="margin:0;">GEMME:</label>
+<span id="shop-gems" style="font-weight:bold;font-size:0.8rem;">&#128142; 0</span>
+</div>
+<div class="settings-group">
+<label id="lbl-shop-food">CIBO SPECIALE:</label>
+<div id="shop-food-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;"></div>
+</div>
+<div class="settings-group">
+<label id="lbl-shop-acc">ACCESSORI:</label>
+<div id="shop-acc-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;"></div>
+</div>
+</div>
+<button class="action-btn" id="btn-back-shop" onclick="hideShop()">TORNA AL GIOCO</button>
 </div>
 
 <div id="gameplay-screen" class="gameplay-screen">
@@ -320,6 +360,11 @@ h1, h2 { font-size: 0.9rem; text-align: center; color: #3a4653; text-transform: 
 </div>
 </div>
 <div id="race-container"><canvas id="race-canvas" width="200" height="80"></canvas></div>
+<div id="memory-container">
+<button class="close-gym-btn" onclick="event.stopPropagation(); stopMemoryGame();">X</button>
+<div id="memory-info"></div>
+<div id="memory-grid"></div>
+</div>
 <div class="zzz-container" id="zzz-layer"><div class="zzz-text">Z</div><div class="zzz-text">z</div><div class="zzz-text">Z</div></div>
 <canvas id="poop-canvas" width="32" height="32" class="poop-indicator"></canvas>
 <div id="action-msg" style="font-size: 0.55rem; margin-top: 2px; position: relative; z-index: 3; color:#3a5f52;">L'uovo si sta scaldando...</div>
@@ -347,7 +392,7 @@ h1, h2 { font-size: 0.9rem; text-align: center; color: #3a4653; text-transform: 
 <button class="area-btn" id="btn-gym" onclick="toggleGymMenu()">Palestra</button>
 <button class="area-btn" id="btn-clinic" onclick="interactArea('Infermeria')">Infermeria</button>
 <button class="area-btn" id="btn-shower" onclick="interactArea('Doccia')">Doccia</button>
-<button class="area-btn" id="btn-study" onclick="interactArea('Studio')">Studio</button>
+<button class="area-btn" id="btn-study" onclick="toggleStudyMenu()">Studio</button>
 </div>
 <div id="kitchen-sub-menu" class="kitchen-options" style="display: none;">
 <button class="area-btn kitchen-btn" id="btn-meal" onclick="feedPet('pasto')">Pasto</button>
@@ -366,9 +411,15 @@ h1, h2 { font-size: 0.9rem; text-align: center; color: #3a4653; text-transform: 
 <button class="area-btn kitchen-btn" id="btn-gym-record" onclick="showGymRecord()">Record</button>
 <button class="area-btn kitchen-btn" id="btn-close-gym" onclick="toggleGymMenu()">X</button>
 </div>
+<div id="study-sub-menu" class="kitchen-options" style="display: none;">
+<button class="area-btn kitchen-btn" id="btn-study-play" onclick="interactArea('Studio')">Studia</button>
+<button class="area-btn kitchen-btn" id="btn-memory-play" onclick="startMemoryGame()">Memory</button>
+<button class="area-btn kitchen-btn" id="btn-close-study" onclick="toggleStudyMenu()">X</button>
+</div>
 </div>
 <div class="bottom-bar">
 <button class="info-btn" id="btn-settings-main" onclick="showSettings()">IMPOSTAZIONI</button>
+<button class="info-btn" id="btn-shop-main" onclick="showShop()">NEGOZIO</button>
 <button class="info-btn" id="btn-info-main" onclick="showInfo()">INFO</button>
 <button class="info-btn" id="btn-light" onclick="interactArea('Luce')">LUCE</button>
 </div>
@@ -377,7 +428,7 @@ h1, h2 { font-size: 0.9rem; text-align: center; color: #3a4653; text-transform: 
 </div>
 </div>
 <script>
-let currentLang='en',currentShellColor='default',currentBgStyle='none',actionMsgTimer=null;
+let currentLang='en',currentShellColor='default',currentBgStyle='basic',actionMsgTimer=null;
 let petCustomName="SPIKE",petGender="M";
 const PET_PALETTE=[
 {outline:"#264d3a",body:"#5a9e6e",shade:"#3f7a52",light:"#8fc99e",spot:"#2f5f42"},
@@ -394,12 +445,12 @@ function setActionMessage(msg,delay=2000){const e=document.getElementById('actio
 const i18n={
 it:{titleSel:"DINOMIO - SELEZIONA PET",lblInputName:"NOME:",lblInputGender:"GENERE:",manualBtn:"MANUALE / REGOLE",btnChooseAreaMenu:"SCEGLI AREA",titleChooseArea:"SCEGLI LA TUA AREA",areaBirth:"Nascita",areaForest:"Bosco",areaBeach:"Spiaggia",areaCity:"Citta",areaMountain:"Montagna",areaCastle:"Castello",areaIsland:"Isola",areaSpace:"Spazio",areaMagic:"Magia",btnBackArea:"INDIETRO",travelMsg:"Ti stai spostando in: ",rulesTitle:"REGOLE REALI",rulesBack:"TORNA ALLA SELEZIONE",
 rulesContent:"<b>1. SCHIUSA:</b><p>L'uovo si schiude in 7 secondi! Il pet nasce con parametri al 40%.</p><br><b>2. TEMPO REALE:</b><p>Il tempo scorre anche ad app chiusa. Evoluzione ogni 3 giorni.</p><br><b>3. DECADIMENTO:</b><p>Fame -20%/1h, Pulizia -20%/1h30, Felicita -20%/2h, Energia -20%/3h, Forma -20%/4h, Intelligenza -20%/3h.</p><br><b>4. CACCA:</b><p>3 volte al giorno, -3 pallini Pulizia. La doccia rimette al 100%.</p><br><b>5. MALATTIA:</b><p>Max una volta al giorno. Da malato: occhi a X e -20% Salute/ora. Mai a luce spenta.</p><br><b>6. SVAGO:</b><p>Parco, Coccole, Carta-Forbice-Sasso o Esplorazione. [X] per uscire.</p><br><b>7. PALESTRA:</b><p>Gioca o vedi il record.</p><br><b>8. GARE:</b><p>Ogni 2 giorni una gara. Vinci se Forma 95-100%, altrimenti casuale. Classifica in INFO parte da 0 e si azzera a ogni nuovo pet.</p><br><b>9. NANNA:</b><p>Dormendo: Felicita non cala, niente malattie, Energia +20%/ora.</p><br><b>10. ESPLORAZIONE:</b><p>Il pet esplora un mondo 25x25. Si muove 1 cella ogni ora. Scegli quante ore (max 24) e puoi fermarti quando vuoi. La mappa si salva.</p>",
-infoTitle:"INFORMAZIONI PET",infoBack:"TORNA AL GIOCO",lblName:"NOME:",lblGender:"GENERE:",lblGen:"GENERAZIONE:",lblAge:"ETA:",lblDays:"giorni",lblStage:"STADIO:",lblHun:"FAME (HUN):",lblCln:"PULIZIA (CLN):",lblHap:"FELICITA (HAP):",lblHlt:"SALUTE (HLT):",lblNrg:"ENERGIA (NRG):",lblFit:"FORMA FISICA (FIT):",lblInt:"INTELLIGENZA (INT):",settingsTitle:"IMPOSTAZIONI",lblLang:"LINGUA / LANGUAGE:",lblBgStyle:"SFONDO PIXEL-ART 8-BIT:",lblShell:"COLORE GUSCIO:",lblReset:"RESET PET:",btnReset:"RESET PET",btnBackSettings:"TORNA AL GIOCO",btnKitchen:"Cucina",btnPark:"Svago",btnGym:"Palestra",btnClinic:"Infermeria",btnShower:"Doccia",btnStudy:"Studio",btnMeal:"Pasto",btnSnack:"Snack",btnCloseKitchen:"Esci",btnParkPlay:"Parco",btnCuddle:"Coccole",btnRpsPlay:"Gioco",btnExplorePlay:"Esplorazione",btnCloseFun:"X",btnGymPlay:"Gioca",btnGymRecord:"Record",btnCloseGym:"X",btnLight:"LUCE",btnSettings:"IMPOSTAZIONI",btnInfo:"INFO",rankTitle:"CLASSIFICA GARE",rankName:"NOME",rankPoints:"PUNTI",exploreCollTitle:"SCOPERTE",exploreStatsTxt:(cells,treasures,flowers,fruits)=>`Celle esplorate: ${cells}/625 | Tesori: ${treasures} | Fiori: ${flowers} | Frutti: ${fruits}`,exploreSetupTitle:"ORE DI ESPLORAZIONE",exploreUnit:"ore",exploreGo:"CONTINUA",exploreCancel:"ANNULLA",eggWarming:"L'uovo si sta scaldando...",sickTag:"[MALATO!]",poopMsg:"L'animaletto ha fatto la cacca!",hatchedMsg:"L'uovo si e schiuso!",evoMsg:"EVOLUZIONE COMPIUTA!",deathMsg:"IL TUO PET E MORTO!",deathRebirthMsg:"Il pet ci ha lasciati per vecchiaia...",rebirthPrompt:(n)=>`Il tuo pet e morto di vecchiaia.\n\nE disponibile un nuovo pet: ${n}.\nVuoi adottarlo? (OK = Si, Annulla = No)`,rebirthNamePrompt:"Dai un nome al nuovo pet:",rebirthDone:(n)=>`E nato un nuovo UOVO: ${n}!`,rebirthDeclined:"Nessun nuovo pet adottato.",waitEggMsg:"Aspetta la schiusa dell'uovo!",mealMsg:"Pasto consumato (Pollo)!",snackMsg:"Snack gustato (Caramella)!",parkMsg:"Parco! Felicita +1 Pallino",cuddleMsg:"Coccole! Felicita +1 Pallino",showerDirtyMsg:"Doccia fatta! Tutto pulito.",showerCleanMsg:"Pet lavato e profumato!",clinicSickMsg:"Cura somministrata! Pet guarito.",studyMsg:"Studio in corso! Intelligenza +1, Felicita -1",lightOffMsg:"Luce spenta. Addormentamento...",lightRestMsg:"Luce spenta. Riposo in corso...",lightOnMsg:"Luce riaccesa!",gymMsg:"PALESTRA! Salta i cactus [TAP/SPAZIO]",gymExitMsg:"Uscito dalla Palestra.",gymRecordMsg:(hi)=>`PUNTEGGIO RECORD: ${hi}`,racePrompt:(r)=>`C'e una gara contro ${r}! Vuoi partecipare?`,raceDeclined:"Gara rifiutata! Forma -20%, scendi in classifica.",raceWin:(r)=>`Hai battuto ${r}! Felicita +2, +2 punti!`,raceLose:(r)=>`${r} ti ha battuto! Felicita -2.`,raceDraw:(r)=>`Pareggio con ${r}! +1 punto.`,rpsMsg:"CARTA-FORBICE-SASSO! Al meglio di 5 round.",rpsRound:(r,ps,cs)=>`Round ${r}/5 - Tu ${ps} : ${cs} CPU`,rpsRoundWin:"Round vinto!",rpsRoundLose:"Round perso!",rpsRoundDraw:"Round pari!",rpsWin:"HAI VINTO LA PARTITA! Felicita +2 pallini!",rpsLose:"Hai perso la partita. Felicita +1 pallino.",rpsDraw:"Partita in pareggio. Felicita +1 pallino.",resetConfirm:"Sei sicuro di voler resettare il pet? Tutti i progressi andranno persi definitivamente.",
+infoTitle:"INFORMAZIONI PET",infoBack:"TORNA AL GIOCO",lblName:"NOME:",lblGender:"GENERE:",lblGen:"GENERAZIONE:",lblAge:"ETA:",lblDays:"giorni",lblStage:"STADIO:",lblHun:"FAME (HUN):",lblCln:"PULIZIA (CLN):",lblHap:"FELICITA (HAP):",lblHlt:"SALUTE (HLT):",lblNrg:"ENERGIA (NRG):",lblFit:"FORMA FISICA (FIT):",lblInt:"INTELLIGENZA (INT):",settingsTitle:"IMPOSTAZIONI",lblLang:"LINGUA / LANGUAGE:",lblBgStyle:"SFONDO / SFONDO REALE:",bgBasic:"BASIC",bgReal:"REAL",lblShell:"COLORE GUSCIO:",lblReset:"RESET PET:",btnReset:"RESET PET",btnBackSettings:"TORNA AL GIOCO",btnKitchen:"Cucina",btnPark:"Svago",btnGym:"Palestra",btnClinic:"Infermeria",btnShower:"Doccia",btnStudy:"Studio",btnMeal:"Pasto",btnSnack:"Snack",btnCloseKitchen:"Esci",btnParkPlay:"Parco",btnCuddle:"Coccole",btnRpsPlay:"Gioco",btnExplorePlay:"Esplorazione",btnCloseFun:"X",btnGymPlay:"Gioca",btnGymRecord:"Record",btnCloseGym:"X",btnStudyPlay:"Studia",btnMemoryPlay:"Memory",btnCloseStudy:"X",memoryMsg:"MEMORY! Trova tutte le coppie.",memoryProgress:(m,tot,mv)=>`Coppie: ${m}/${tot} | Mosse: ${mv}`,memoryWin:"MEMORY COMPLETATO! Intelligenza +2, Felicita +2!",titleShop:"NEGOZIO",lblGems:"GEMME:",lblShopFood:"CIBO SPECIALE:",lblShopAcc:"ACCESSORI:",shopEquip:"EQUIPAGGIA",shopEquipped:"INDOSSATO",shopNoGems:"Gemme insufficienti!",shopBought:(n)=>`Comprato: ${n}!`,btnShop:"NEGOZIO",btnBackShop:"TORNA AL GIOCO",btnLight:"LUCE",btnSettings:"IMPOSTAZIONI",btnInfo:"INFO",rankTitle:"CLASSIFICA GARE",rankName:"NOME",rankPoints:"PUNTI",exploreCollTitle:"SCOPERTE",achTitle:"TRAGUARDI",exploreStatsTxt:(cells,treasures,flowers,fruits)=>`Celle esplorate: ${cells}/625 | Tesori: ${treasures} | Fiori: ${flowers} | Frutti: ${fruits}`,exploreSetupTitle:"ORE DI ESPLORAZIONE",exploreUnit:"ore",exploreGo:"CONTINUA",exploreCancel:"ANNULLA",eggWarming:"L'uovo si sta scaldando...",sickTag:"[MALATO!]",poopMsg:"L'animaletto ha fatto la cacca!",hatchedMsg:"L'uovo si e schiuso!",evoMsg:"EVOLUZIONE COMPIUTA!",deathMsg:"IL TUO PET E MORTO!",deathRebirthMsg:"Il pet ci ha lasciati per vecchiaia...",rebirthPrompt:(n)=>`Il tuo pet e morto di vecchiaia.\n\nE disponibile un nuovo pet: ${n}.\nVuoi adottarlo? (OK = Si, Annulla = No)`,rebirthNamePrompt:"Dai un nome al nuovo pet:",rebirthDone:(n)=>`E nato un nuovo UOVO: ${n}!`,rebirthDeclined:"Nessun nuovo pet adottato.",waitEggMsg:"Aspetta la schiusa dell'uovo!",mealMsg:"Pasto consumato (Pollo)!",snackMsg:"Snack gustato (Caramella)!",parkMsg:"Parco! Felicita +1 Pallino",cuddleMsg:"Coccole! Felicita +1 Pallino",showerDirtyMsg:"Doccia fatta! Tutto pulito.",showerCleanMsg:"Pet lavato e profumato!",clinicSickMsg:"Cura somministrata! Pet guarito.",studyMsg:"Studio in corso! Intelligenza +1, Felicita -1",lightOffMsg:"Luce spenta. Addormentamento...",lightRestMsg:"Luce spenta. Riposo in corso...",lightOnMsg:"Luce riaccesa!",gymMsg:"PALESTRA! Salta i cactus [TAP/SPAZIO]",gymExitMsg:"Uscito dalla Palestra.",gymRecordMsg:(hi)=>`PUNTEGGIO RECORD: ${hi}`,racePrompt:(r)=>`C'e una gara contro ${r}! Vuoi partecipare?`,raceDeclined:"Gara rifiutata! Forma -20%, scendi in classifica.",raceWin:(r)=>`Hai battuto ${r}! Felicita +2, +2 punti!`,raceLose:(r)=>`${r} ti ha battuto! Felicita -2.`,raceDraw:(r)=>`Pareggio con ${r}! +1 punto.`,rpsMsg:"CARTA-FORBICE-SASSO! Al meglio di 5 round.",rpsRound:(r,ps,cs)=>`Round ${r}/5 - Tu ${ps} : ${cs} CPU`,rpsRoundWin:"Round vinto!",rpsRoundLose:"Round perso!",rpsRoundDraw:"Round pari!",rpsWin:"HAI VINTO LA PARTITA! Felicita +2 pallini!",rpsLose:"Hai perso la partita. Felicita +1 pallino.",rpsDraw:"Partita in pareggio. Felicita +1 pallino.",resetConfirm:"Sei sicuro di voler resettare il pet? Tutti i progressi andranno persi definitivamente.",
 exploreIdle:"In pausa. Riapri per impostare nuove ore.",exploreActive:(h)=>`Sta esplorando... ${h}h rimaste (1 cella/ora)`,exploreStopped:"Esplorazione fermata. Progressi salvati.",exploreDone:"Esplorazione completata!",exploreStarted:(h)=>`Esplorazione avviata: ${h}h!`,exploreFoundTreasure:"Ha trovato un TESORO! Felicita +2, Intelligenza +1",exploreFoundFlower:"Ha trovato un FIORE! Felicita +1",exploreFoundFruit:"Ha trovato un FRUTTO! Fame +1",exploreNewCell:"Nuova area scoperta!",
 genderM:"M MASCHIO",genderF:"F FEMMINA",bgNone:"VUOTO",bgSea:"MARE",bgForest:"BOSCO",bgCity:"CITTA",bgSky:"CIELO",bgSpace:"SPAZIO"},
 en:{titleSel:"DINOMIO - SELECT PET",lblInputName:"NAME:",lblInputGender:"GENDER:",manualBtn:"MANUAL / RULES",btnChooseAreaMenu:"CHOOSE AREA",titleChooseArea:"CHOOSE YOUR AREA",areaBirth:"Birth",areaForest:"Forest",areaBeach:"Beach",areaCity:"City",areaMountain:"Mountain",areaCastle:"Castle",areaIsland:"Island",areaSpace:"Space",areaMagic:"Magic",btnBackArea:"BACK",travelMsg:"Traveling to: ",rulesTitle:"REAL RULES",rulesBack:"BACK TO SELECTION",
 rulesContent:"<b>1. HATCHING:</b><p>The egg hatches in 7 seconds! The pet is born with stats at 40%.</p><br><b>2. REAL TIME:</b><p>Time passes even when the app is closed. Evolution every 3 days.</p><br><b>3. DECAY:</b><p>Hunger -20%/1h, Cleanliness -20%/1h30, Happiness -20%/2h, Energy -20%/3h, Fitness -20%/4h, Intelligence -20%/3h.</p><br><b>4. POOP:</b><p>3 times a day, -3 Cleanliness dots. The shower restores 100%.</p><br><b>5. ILLNESS:</b><p>At most once a day. When sick: X eyes and -20% Health/hour. Never while the light is off.</p><br><b>6. FUN:</b><p>Park, Cuddles, Rock-Paper-Scissors or Exploration. [X] to exit.</p><br><b>7. GYM:</b><p>Play or check the record.</p><br><b>8. RACES:</b><p>A race every 2 days. You win if Fitness is 95-100%, otherwise random. Ranking in INFO starts at 0 and resets with every new pet.</p><br><b>9. SLEEP:</b><p>While sleeping: Happiness does not drop, no illness, Energy +20%/hour.</p><br><b>10. EXPLORATION:</b><p>The pet explores a 25x25 world. It moves 1 tile per hour. Choose how many hours (max 24) and stop anytime. The map is saved.</p>",
-infoTitle:"PET INFORMATION",infoBack:"BACK TO GAME",lblName:"NAME:",lblGender:"GENDER:",lblGen:"GENERATION:",lblAge:"AGE:",lblDays:"days",lblStage:"STAGE:",lblHun:"HUNGER (HUN):",lblCln:"CLEANLINESS (CLN):",lblHap:"HAPPINESS (HAP):",lblHlt:"HEALTH (HLT):",lblNrg:"ENERGY (NRG):",lblFit:"FITNESS (FIT):",lblInt:"INTELLIGENCE (INT):",settingsTitle:"SETTINGS",lblLang:"LINGUA / LANGUAGE:",lblBgStyle:"8-BIT PIXEL-ART BACKGROUND:",lblShell:"SHELL COLOR:",lblReset:"RESET PET:",btnReset:"RESET PET",btnBackSettings:"BACK TO GAME",btnKitchen:"Kitchen",btnPark:"Fun",btnGym:"Gym",btnClinic:"Clinic",btnShower:"Shower",btnStudy:"Study",btnMeal:"Meal",btnSnack:"Snack",btnCloseKitchen:"Exit",btnParkPlay:"Park",btnCuddle:"Cuddle",btnRpsPlay:"Game",btnExplorePlay:"Exploration",btnCloseFun:"X",btnGymPlay:"Play",btnGymRecord:"Record",btnCloseGym:"X",btnLight:"LIGHT",btnSettings:"SETTINGS",btnInfo:"INFO",rankTitle:"RACE RANKING",rankName:"NAME",rankPoints:"POINTS",exploreCollTitle:"DISCOVERIES",exploreStatsTxt:(cells,treasures,flowers,fruits)=>`Explored tiles: ${cells}/625 | Treasures: ${treasures} | Flowers: ${flowers} | Fruits: ${fruits}`,exploreSetupTitle:"EXPLORATION HOURS",exploreUnit:"hours",exploreGo:"CONTINUE",exploreCancel:"CANCEL",eggWarming:"The egg is warming up...",sickTag:"[SICK!]",poopMsg:"The pet pooped!",hatchedMsg:"The egg has hatched!",evoMsg:"EVOLUTION COMPLETE!",deathMsg:"YOUR PET HAS DIED!",deathRebirthMsg:"The pet passed away from old age...",rebirthPrompt:(n)=>`Your pet died of old age.\n\nA new pet is available: ${n}.\nDo you want to adopt it? (OK = Yes, Cancel = No)`,rebirthNamePrompt:"Give the new pet a name:",rebirthDone:(n)=>`A new EGG was born: ${n}!`,rebirthDeclined:"No new pet adopted.",waitEggMsg:"Wait for the egg to hatch!",mealMsg:"Meal eaten (Chicken)!",snackMsg:"Snack enjoyed (Candy)!",parkMsg:"Park! Happiness +1 Dot",cuddleMsg:"Cuddles! Happiness +1 Dot",showerDirtyMsg:"Shower done! All clean.",showerCleanMsg:"Pet washed and fresh!",clinicSickMsg:"Treatment given! Pet healed.",studyMsg:"Studying! Intelligence +1, Happiness -1",lightOffMsg:"Light off. Falling asleep...",lightRestMsg:"Light off. Resting...",lightOnMsg:"Light back on!",gymMsg:"GYM! Jump the cactus [TAP/SPACE]",gymExitMsg:"Left the Gym.",gymRecordMsg:(hi)=>`RECORD SCORE: ${hi}`,racePrompt:(r)=>`There is a race against ${r}! Do you want to join?`,raceDeclined:"Race declined! Fitness -20%, you drop in the ranking.",raceWin:(r)=>`You beat ${r}! Happiness +2, +2 points!`,raceLose:(r)=>`${r} beat you! Happiness -2.`,raceDraw:(r)=>`Draw with ${r}! +1 point.`,rpsMsg:"ROCK-PAPER-SCISSORS! Best of 5 rounds.",rpsRound:(r,ps,cs)=>`Round ${r}/5 - You ${ps} : ${cs} CPU`,rpsRoundWin:"Round won!",rpsRoundLose:"Round lost!",rpsRoundDraw:"Round tied!",rpsWin:"YOU WON THE MATCH! Happiness +2 dots!",rpsLose:"You lost the match. Happiness +1 dot.",rpsDraw:"Match tied. Happiness +1 dot.",resetConfirm:"Are you sure you want to reset the pet? All progress will be permanently lost.",
+infoTitle:"PET INFORMATION",infoBack:"BACK TO GAME",lblName:"NAME:",lblGender:"GENDER:",lblGen:"GENERATION:",lblAge:"AGE:",lblDays:"days",lblStage:"STAGE:",lblHun:"HUNGER (HUN):",lblCln:"CLEANLINESS (CLN):",lblHap:"HAPPINESS (HAP):",lblHlt:"HEALTH (HLT):",lblNrg:"ENERGY (NRG):",lblFit:"FITNESS (FIT):",lblInt:"INTELLIGENCE (INT):",settingsTitle:"SETTINGS",lblLang:"LINGUA / LANGUAGE:",lblBgStyle:"BACKGROUND / REAL BACKGROUND:",bgBasic:"BASIC",bgReal:"REAL",lblShell:"SHELL COLOR:",lblReset:"RESET PET:",btnReset:"RESET PET",btnBackSettings:"BACK TO GAME",btnKitchen:"Kitchen",btnPark:"Fun",btnGym:"Gym",btnClinic:"Clinic",btnShower:"Shower",btnStudy:"Study",btnMeal:"Meal",btnSnack:"Snack",btnCloseKitchen:"Exit",btnParkPlay:"Park",btnCuddle:"Cuddle",btnRpsPlay:"Game",btnExplorePlay:"Exploration",btnCloseFun:"X",btnGymPlay:"Play",btnGymRecord:"Record",btnCloseGym:"X",btnStudyPlay:"Study",btnMemoryPlay:"Memory",btnCloseStudy:"X",memoryMsg:"MEMORY! Find all the pairs.",memoryProgress:(m,tot,mv)=>`Pairs: ${m}/${tot} | Moves: ${mv}`,memoryWin:"MEMORY COMPLETE! Intelligence +2, Happiness +2!",titleShop:"SHOP",lblGems:"GEMS:",lblShopFood:"SPECIAL FOOD:",lblShopAcc:"ACCESSORIES:",shopEquip:"EQUIP",shopEquipped:"WORN",shopNoGems:"Not enough gems!",shopBought:(n)=>`Bought: ${n}!`,btnShop:"SHOP",btnBackShop:"BACK TO GAME",btnLight:"LIGHT",btnSettings:"SETTINGS",btnInfo:"INFO",rankTitle:"RACE RANKING",rankName:"NAME",rankPoints:"POINTS",exploreCollTitle:"DISCOVERIES",achTitle:"ACHIEVEMENTS",exploreStatsTxt:(cells,treasures,flowers,fruits)=>`Explored tiles: ${cells}/625 | Treasures: ${treasures} | Flowers: ${flowers} | Fruits: ${fruits}`,exploreSetupTitle:"EXPLORATION HOURS",exploreUnit:"hours",exploreGo:"CONTINUE",exploreCancel:"CANCEL",eggWarming:"The egg is warming up...",sickTag:"[SICK!]",poopMsg:"The pet pooped!",hatchedMsg:"The egg has hatched!",evoMsg:"EVOLUTION COMPLETE!",deathMsg:"YOUR PET HAS DIED!",deathRebirthMsg:"The pet passed away from old age...",rebirthPrompt:(n)=>`Your pet died of old age.\n\nA new pet is available: ${n}.\nDo you want to adopt it? (OK = Yes, Cancel = No)`,rebirthNamePrompt:"Give the new pet a name:",rebirthDone:(n)=>`A new EGG was born: ${n}!`,rebirthDeclined:"No new pet adopted.",waitEggMsg:"Wait for the egg to hatch!",mealMsg:"Meal eaten (Chicken)!",snackMsg:"Snack enjoyed (Candy)!",parkMsg:"Park! Happiness +1 Dot",cuddleMsg:"Cuddles! Happiness +1 Dot",showerDirtyMsg:"Shower done! All clean.",showerCleanMsg:"Pet washed and fresh!",clinicSickMsg:"Treatment given! Pet healed.",studyMsg:"Studying! Intelligence +1, Happiness -1",lightOffMsg:"Light off. Falling asleep...",lightRestMsg:"Light off. Resting...",lightOnMsg:"Light back on!",gymMsg:"GYM! Jump the cactus [TAP/SPACE]",gymExitMsg:"Left the Gym.",gymRecordMsg:(hi)=>`RECORD SCORE: ${hi}`,racePrompt:(r)=>`There is a race against ${r}! Do you want to join?`,raceDeclined:"Race declined! Fitness -20%, you drop in the ranking.",raceWin:(r)=>`You beat ${r}! Happiness +2, +2 points!`,raceLose:(r)=>`${r} beat you! Happiness -2.`,raceDraw:(r)=>`Draw with ${r}! +1 point.`,rpsMsg:"ROCK-PAPER-SCISSORS! Best of 5 rounds.",rpsRound:(r,ps,cs)=>`Round ${r}/5 - You ${ps} : ${cs} CPU`,rpsRoundWin:"Round won!",rpsRoundLose:"Round lost!",rpsRoundDraw:"Round tied!",rpsWin:"YOU WON THE MATCH! Happiness +2 dots!",rpsLose:"You lost the match. Happiness +1 dot.",rpsDraw:"Match tied. Happiness +1 dot.",resetConfirm:"Are you sure you want to reset the pet? All progress will be permanently lost.",
 exploreIdle:"Paused. Reopen to set new hours.",exploreActive:(h)=>`Exploring... ${h}h left (1 tile/hour)`,exploreStopped:"Exploration stopped. Progress saved.",exploreDone:"Exploration complete!",exploreStarted:(h)=>`Exploration started: ${h}h!`,exploreFoundTreasure:"Found a TREASURE! Happiness +2, Intelligence +1",exploreFoundFlower:"Found a FLOWER! Happiness +1",exploreFoundFruit:"Found a FRUIT! Hunger +1",exploreNewCell:"New area discovered!",
 genderM:"M MALE",genderF:"F FEMALE",bgNone:"NONE",bgSea:"SEA",bgForest:"FOREST",bgCity:"CITY",bgSky:"SKY",bgSpace:"SPACE"}
 };
@@ -418,26 +469,87 @@ document.getElementById('lbl-name').innerText=t.lblName;document.getElementById(
 document.getElementById('lbl-hun').innerText=t.lblHun;document.getElementById('lbl-cln').innerText=t.lblCln;document.getElementById('lbl-hap').innerText=t.lblHap;document.getElementById('lbl-hlt').innerText=t.lblHlt;document.getElementById('lbl-nrg').innerText=t.lblNrg;document.getElementById('lbl-fit').innerText=t.lblFit;document.getElementById('lbl-int').innerText=t.lblInt;
 document.getElementById('lbl-rank-title').innerText=t.rankTitle;document.getElementById('lbl-rank-name').innerText=t.rankName;document.getElementById('lbl-rank-points').innerText=t.rankPoints;
 document.getElementById('lbl-explore-title').innerText=t.exploreCollTitle;
+document.getElementById('lbl-ach-title').innerText=t.achTitle;
 document.getElementById('explore-setup-title').innerText=t.exploreSetupTitle;document.getElementById('explore-counter-unit').innerText=t.exploreUnit;document.getElementById('explore-go-btn').innerText=t.exploreGo;document.getElementById('explore-cancel-btn').innerText=t.exploreCancel;
 document.getElementById('title-settings').innerText=t.settingsTitle;document.getElementById('lbl-lang').innerText=t.lblLang;document.getElementById('lbl-bg-style').innerText=t.lblBgStyle;document.getElementById('lbl-shell-color').innerText=t.lblShell;document.getElementById('lbl-reset-opt').innerText=t.lblReset;document.getElementById('btn-reset-game').innerText=t.btnReset;document.getElementById('btn-back-settings').innerText=t.btnBackSettings;
-document.getElementById('bg-btn-none').innerText=t.bgNone;document.getElementById('bg-btn-sea').innerText=t.bgSea;document.getElementById('bg-btn-forest').innerText=t.bgForest;document.getElementById('bg-btn-city').innerText=t.bgCity;document.getElementById('bg-btn-sky').innerText=t.bgSky;document.getElementById('bg-btn-space').innerText=t.bgSpace;
+document.getElementById('bg-btn-basic').innerText=t.bgBasic;document.getElementById('bg-btn-real').innerText=t.bgReal;
 document.getElementById('btn-kitchen').innerText=t.btnKitchen;document.getElementById('btn-park').innerText=t.btnPark;document.getElementById('btn-gym').innerText=t.btnGym;document.getElementById('btn-clinic').innerText=t.btnClinic;document.getElementById('btn-shower').innerText=t.btnShower;document.getElementById('btn-study').innerText=t.btnStudy;
 document.getElementById('btn-meal').innerText=t.btnMeal;document.getElementById('btn-snack').innerText=t.btnSnack;document.getElementById('btn-close-kitchen').innerText=t.btnCloseKitchen;
 document.getElementById('btn-park-play').innerText=t.btnParkPlay;document.getElementById('btn-cuddle').innerText=t.btnCuddle;document.getElementById('btn-rps-play').innerText=t.btnRpsPlay;document.getElementById('btn-explore-play').innerText=t.btnExplorePlay;document.getElementById('btn-close-fun').innerText=t.btnCloseFun;
 document.getElementById('btn-gym-play').innerText=t.btnGymPlay;document.getElementById('btn-gym-record').innerText=t.btnGymRecord;document.getElementById('btn-close-gym').innerText=t.btnCloseGym;
-document.getElementById('btn-light').innerText=t.btnLight;document.getElementById('btn-settings-main').innerText=t.btnSettings;document.getElementById('btn-info-main').innerText=t.btnInfo;document.getElementById('sick-tag').innerText=t.sickTag;}
+document.getElementById('btn-study-play').innerText=t.btnStudyPlay;document.getElementById('btn-memory-play').innerText=t.btnMemoryPlay;document.getElementById('btn-close-study').innerText=t.btnCloseStudy;
+document.getElementById('btn-light').innerText=t.btnLight;document.getElementById('btn-settings-main').innerText=t.btnSettings;document.getElementById('btn-info-main').innerText=t.btnInfo;document.getElementById('sick-tag').innerText=t.sickTag;
+document.getElementById('btn-shop-main').innerText=t.btnShop;document.getElementById('title-shop').innerText=t.titleShop;document.getElementById('lbl-gems').innerText=t.lblGems;document.getElementById('lbl-shop-food').innerText=t.lblShopFood;document.getElementById('lbl-shop-acc').innerText=t.lblShopAcc;document.getElementById('btn-back-shop').innerText=t.btnBackShop;}
 
 function toggleLanguage(){currentLang=currentLang==='it'?'en':'it';updateTexts();if(inExploreMode)renderExplore();saveGameState();}
 function setShellColor(c){currentShellColor=c;const s=document.getElementById('shell-container');s.className='tamagotchi-container';if(c!=='default')s.classList.add('shell-'+c);saveGameState();}
-function setBackgroundStyle(st){currentBgStyle=st;document.querySelectorAll('.bg-picker-grid .glossy-btn').forEach(b=>b.classList.remove('active-bg'));const a=document.getElementById('bg-btn-'+st);if(a)a.classList.add('active-bg');drawBackground();saveGameState();}
+function setBackgroundStyle(st){if(st!=='basic'&&st!=='real')st='basic';currentBgStyle=st;document.querySelectorAll('.bg-picker-grid .glossy-btn').forEach(b=>b.classList.remove('active-bg'));const a=document.getElementById('bg-btn-'+st);if(a)a.classList.add('active-bg');drawBackground();saveGameState();}
 
-function drawBackground(){const c=document.getElementById('bg-canvas');if(!c)return;const x=c.getContext('2d');x.clearRect(0,0,128,128);
-if(currentBgStyle==='none')return;
-else if(currentBgStyle==='sea'){x.fillStyle="#8fd4f0";x.fillRect(0,0,128,84);x.fillStyle="#ffe14d";x.beginPath();x.arc(104,22,12,0,Math.PI*2);x.fill();x.fillStyle="#ffd000";x.beginPath();x.arc(104,22,8,0,Math.PI*2);x.fill();x.fillStyle="#ffffff";x.fillRect(20,18,22,5);x.fillRect(16,22,30,5);x.fillStyle="#1f7fc4";x.fillRect(0,84,128,44);x.fillStyle="#ffffff";for(let i=0;i<128;i+=20){x.fillRect(i,90,8,2);x.fillRect(i+10,100,8,2);x.fillRect(i+4,112,8,2);x.fillRect(i+14,122,8,2);}x.fillStyle="#e6cf82";x.fillRect(44,82,40,6);x.fillStyle="#8a5a2b";x.fillRect(62,58,4,22);x.fillStyle="#3fae4f";x.fillRect(50,54,14,4);x.fillRect(64,54,14,4);x.fillRect(56,50,16,4);}
-else if(currentBgStyle==='forest'){x.fillStyle="#5a8a4e";x.fillRect(0,112,128,16);[8,36,72,100].forEach(p=>{x.fillStyle="#6a4f30";x.fillRect(p+10,88,6,24);x.fillStyle="#3f7a42";x.fillRect(p+2,64,22,24);x.fillRect(p+6,52,14,12);x.fillRect(p+10,44,6,8);});}
-else if(currentBgStyle==='city'){x.fillStyle="#6a7280";x.fillRect(0,116,128,12);const bs=[{x:4,y:30,w:24,h:86,c:"#5f7290"},{x:32,y:50,w:28,h:66,c:"#556a86"},{x:64,y:20,w:26,h:96,c:"#627690"},{x:94,y:60,w:30,h:56,c:"#586c88"}];bs.forEach(b=>{x.fillStyle=b.c;x.fillRect(b.x,b.y,b.w,b.h);x.fillStyle="#c4b476";for(let y=b.y+6;y<b.y+b.h-6;y+=12){x.fillRect(b.x+4,y,5,5);x.fillRect(b.x+b.w-9,y,5,5);}});}
-else if(currentBgStyle==='sky'){x.fillStyle="#d6dce2";[{x:8,y:16},{x:72,y:32},{x:20,y:68},{x:80,y:84}].forEach(c2=>{x.fillRect(c2.x+8,c2.y,24,6);x.fillRect(c2.x+4,c2.y+6,32,6);x.fillRect(c2.x,c2.y+12,40,6);});x.fillStyle="#c4b476";x.fillRect(98,14,16,16);}
-else if(currentBgStyle==='space'){const st2=[{x:12,y:12},{x:45,y:20},{x:90,y:15},{x:115,y:35},{x:25,y:55},{x:70,y:60},{x:105,y:75},{x:15,y:95},{x:55,y:100},{x:85,y:110}];x.fillStyle="#c4c48a";st2.forEach((s,i)=>{if(i%2===0){x.fillRect(s.x,s.y-2,2,6);x.fillRect(s.x-2,s.y,6,2);}else x.fillRect(s.x,s.y,2,2);});x.fillStyle="#6a7280";x.fillRect(94,12,16,16);x.fillStyle="#8a929c";x.fillRect(96,14,6,6);}}
+// Ritorna {hour, month} secondo l'ora reale di Roma (Europe/Rome, gestisce ora legale)
+function romeNow(){try{const p=new Intl.DateTimeFormat('en-US',{timeZone:'Europe/Rome',hour:'numeric',hour12:false,minute:'numeric',month:'numeric'}).formatToParts(new Date());let h=0,mn=0,mo=1;p.forEach(o=>{if(o.type==='hour')h=parseInt(o.value)%24;else if(o.type==='minute')mn=parseInt(o.value);else if(o.type==='month')mo=parseInt(o.value);});return{hour:h+mn/60,month:mo};}catch(e){const d=new Date();return{hour:d.getHours()+d.getMinutes()/60,month:d.getMonth()+1};}}
+// Stagione: 0=inverno,1=primavera,2=estate,3=autunno
+function romeSeason(month){if(month===12||month===1||month===2)return 0;if(month>=3&&month<=5)return 1;if(month>=6&&month<=8)return 2;return 3;}
+
+function drawBackground(){const c=document.getElementById('bg-canvas');if(!c)return;const x=c.getContext('2d');x.imageSmoothingEnabled=false;x.clearRect(0,0,128,128);
+if(currentBgStyle!=='real')return; // 'basic' = sfondo neutro (vuoto)
+const t=romeNow(),h=t.hour,season=romeSeason(t.month);
+// Fase del giorno: alba 6-8, giorno 8-18, tramonto 18-20, notte 20-6
+let phase;if(h>=6&&h<8)phase='dawn';else if(h>=8&&h<18)phase='day';else if(h>=18&&h<20)phase='dusk';else phase='night';
+// Palette cielo per fase, con tinte stagionali
+const skies={
+dawn:{top:"#ffb27a",bot:"#ffd9a8"},
+day:{top:"#7ec8f0",bot:"#bfe6f7"},
+dusk:{top:"#ff8a5c",bot:"#a86ab0"},
+night:{top:"#10203f",bot:"#243a63"}
+};
+let sky=skies[phase];
+if(season===2&&phase==='day'){sky={top:"#4db8f0",bot:"#a8e6ff"};} // estate: azzurri piu accesi
+if(season===2&&phase==='dusk'){sky={top:"#ff7a3c",bot:"#ffcf5c"};} // estate: tramonto piu giallo
+if(season===0){ // inverno: cielo piu freddo/pallido
+if(phase==='day')sky={top:"#a8c4d8",bot:"#dbe8f0"};
+else if(phase==='dawn')sky={top:"#d6b8c4",bot:"#e8dbe0"};
+else if(phase==='dusk')sky={top:"#b89ac4",bot:"#8a7aa0"};
+}
+// gradiente cielo (a bande, stile 8-bit)
+for(let i=0;i<8;i++){const yy=i*16;x.fillStyle=lerpColor(sky.top,sky.bot,i/7);x.fillRect(0,yy,128,16);}
+// Astri
+if(phase==='night'){
+// stelle
+x.fillStyle="#e8ecf0";const stars=[[12,14],[30,22],[52,10],[70,26],[92,16],[112,30],[22,40],[64,44],[100,48],[40,54]];stars.forEach((s,i)=>{if(i%3===0){x.fillRect(s[0],s[1]-1,1,3);x.fillRect(s[0]-1,s[1],3,1);}else x.fillRect(s[0],s[1],1,1);});
+// luna
+x.fillStyle="#e6e6c4";x.fillRect(96,12,16,16);x.fillStyle=sky.top;x.fillRect(100,10,12,12);
+}else if(phase==='day'){
+// sole
+const sc=(season===2)?"#ffdf30":"#ffe14d";x.fillStyle=sc;x.fillRect(100,10,16,16);x.fillStyle="#ffd000";x.fillRect(104,14,8,8);
+// nuvole
+x.fillStyle="#ffffff";x.fillRect(14,18,20,5);x.fillRect(10,22,28,5);x.fillRect(58,30,18,5);x.fillRect(54,34,26,5);
+}else{
+// alba/tramonto: sole basso
+x.fillStyle=(phase==='dawn')?"#ffe0a0":"#ff9a4a";x.fillRect(90,40,16,16);x.fillStyle=(phase==='dawn')?"#ffd070":"#ff7a2a";x.fillRect(94,44,8,8);
+}
+// Terreno stagionale
+const groundY=100;
+let g1,g2;
+if(season===0){g1="#e8eef2";g2="#cdd8e0";} // inverno: neve
+else if(season===2){g1="#7ac24f";g2="#5fa838";} // estate: verde acceso
+else if(season===3){g1="#b58a4f";g2="#96703a";} // autunno: toni caldi
+else {g1="#6aae4f";g2="#5a9a42";} // primavera
+x.fillStyle=g1;x.fillRect(0,groundY,128,128-groundY);x.fillStyle=g2;x.fillRect(0,groundY,128,3);
+// Dettagli stagionali sul terreno
+if(season===0){ // cumuli di neve
+x.fillStyle="#ffffff";x.fillRect(14,groundY-3,20,4);x.fillRect(70,groundY-4,26,5);x.fillRect(48,groundY-2,14,3);
+}else if(season===1){ // primavera: fiori
+[[18,"#ff6ec7"],[40,"#ffe14d"],[66,"#ff6ec7"],[92,"#ffffff"],[112,"#ffe14d"]].forEach(f=>{x.fillStyle="#3f7a42";x.fillRect(f[0],groundY+6,1,4);x.fillStyle=f[1];x.fillRect(f[0]-1,groundY+4,3,3);});
+}else if(season===2){ // estate: ciuffi d'erba
+x.fillStyle=g2;for(let gx=6;gx<128;gx+=16){x.fillRect(gx,groundY+6,2,5);x.fillRect(gx+4,groundY+8,2,4);}
+}else{ // autunno: foglie cadute
+[[16,"#c46a2a"],[38,"#d99a3a"],[62,"#a8542a"],[88,"#c46a2a"],[110,"#d99a3a"]].forEach(f=>{x.fillStyle=f[1];x.fillRect(f[0],groundY+7,3,2);x.fillRect(f[0]+1,groundY+6,1,1);});
+}
+// Neve che cade in inverno di notte/alba per atmosfera
+if(season===0){x.fillStyle="rgba(255,255,255,0.8)";const flakes=[[20,20],[50,40],[80,15],[104,55],[36,70],[70,80],[110,88],[14,50]];flakes.forEach(fl=>x.fillRect(fl[0],fl[1],2,2));}
+}
+// interpolazione colori esadecimali per il gradiente cielo
+function lerpColor(a,b,t){const ai=parseInt(a.slice(1),16),bi=parseInt(b.slice(1),16);const ar=(ai>>16)&255,ag=(ai>>8)&255,ab=ai&255,br=(bi>>16)&255,bg=(bi>>8)&255,bb=bi&255;const r=Math.round(ar+(br-ar)*t),gg=Math.round(ag+(bg-ag)*t),bl=Math.round(ab+(bb-ab)*t);return "rgb("+r+","+gg+","+bl+")";}
 
 /* ===== NUOVA: scena Parco a piena dimensione (128x128) sul bg-canvas ===== */
 function drawParkScene(animFrame){
@@ -506,12 +618,42 @@ let hunger=40,happiness=40,health=40,energy=40,fitness=40,intelligence=40,cleanl
 let generation=1,ageInDays=0,secondsInCurrentStage=0,totalGameSeconds=0,lastRealTimestamp=0;
 let isDirty=false,isSick=false,isDead=false,isSleeping=false,sleepTimer=null,isEatingAnimation=false,isCustomAnimation=false,gameTimer=null,poopSmokeFrame=0;
 let illnessRolledDay=-1;
+let isTired=false;
+function checkTired(){isTired=(hunger<45||cleanliness<45||happiness<45||health<45||energy<45);}
+let achievements={},totalRacesWon=0,memoryCompletions=0;
+let gems=0,ownedAccessories=[],equippedAccessory=null;
+// Catalogo cibo speciale (consumo immediato)
+const SHOP_FOOD=[
+{id:'torta',cost:15,icon:'\uD83C\uDF70',it:'Torta',en:'Cake',eff:{hunger:60,happiness:20}},
+{id:'gelato',cost:10,icon:'\uD83C\uDF66',it:'Gelato',en:'Ice cream',eff:{happiness:40,hunger:20}},
+{id:'pozione',cost:20,icon:'\uD83E\uDDEA',it:'Pozione',en:'Potion',eff:{health:60,energy:40}},
+{id:'energetico',cost:12,icon:'\u26A1',it:'Energetico',en:'Energy drink',eff:{energy:60}}
+];
+// Catalogo accessori (equipaggiabili, disegnati sullo sprite)
+const SHOP_ACCESSORIES=[
+{id:'hat',cost:25,icon:'\uD83C\uDFA9',it:'Cappellino',en:'Hat'},
+{id:'glasses',cost:20,icon:'\uD83D\uDD76\uFE0F',it:'Occhiali',en:'Glasses'},
+{id:'bow',cost:18,icon:'\uD83C\uDF80',it:'Fiocco',en:'Bow'}
+];
+const ACHIEVEMENTS=[
+{id:'firstHatch',icon:'\uD83E\uDD5A',it:'Primo pet schiuso',en:'First pet hatched'},
+{id:'firstTreasure',icon:'\uD83D\uDC8E',it:'Primo tesoro trovato',en:'First treasure found'},
+{id:'race5',icon:'\uD83C\uDFC6',it:'Vinci 5 gare',en:'Win 5 races'},
+{id:'map100',icon:'\uD83D\uDDFA\uFE0F',it:'Mappa 100% esplorata',en:'Map 100% explored'},
+{id:'memory10',icon:'\uD83E\uDDE0',it:'Completa Memory 10 volte',en:'Complete Memory 10 times'},
+{id:'gen2',icon:'\uD83D\uDC74',it:'Raggiungi la 2a generazione',en:'Reach 2nd generation'},
+{id:'firstBuy',icon:'\uD83D\uDECD\uFE0F',it:'Primo acquisto al negozio',en:'First shop purchase'}
+];
+function unlockAchievement(id){if(achievements[id])return;achievements[id]=true;const a=ACHIEVEMENTS.find(x=>x.id===id);if(a){const label=currentLang==='it'?a.it:a.en;setActionMessage((currentLang==='it'?'\uD83C\uDF96\uFE0F SBLOCCATO: ':'\uD83C\uDF96\uFE0F UNLOCKED: ')+label,3500);playHappyEndSound();}saveGameState();}
+function checkMap100(){if(exploreCountCells()>=EXPLORE_GRID*EXPLORE_GRID)unlockAchievement('map100');}
 let inRunnerMode=false,runnerAnimId=null,runnerPetY=0,runnerVY=0,runnerJumping=false,runnerObstacles=[],runnerScore=0;
 let runnerHighScore=parseInt(localStorage.getItem('dinomio_runner_highscore')||'0');
 let runnerSpeed=3,minObstacleDistance=90;
 let poopSchedule=[],poopDoneToday=[false,false,false],poopScheduleDay=-1;
 let leaderboard=[],myRacePoints=0,lastRaceDay=-1,raceActive=false,currentRival="";
 let inRpsMode=false,rpsRound=0,rpsPetScore=0,rpsCpuScore=0,rpsBusy=false;
+let inMemoryMode=false,memCards=[],memFirst=-1,memSecond=-1,memBusy=false,memMatched=0,memMoves=0;
+const MEMORY_SYMBOLS=["\uD83C\uDF4E","\uD83C\uDF4C","\uD83C\uDF53","\uD83C\uDF4A","\uD83C\uDF47","\uD83C\uDF52","\uD83C\uDF51","\uD83C\uDF49"];
 const RPS_TOTAL_ROUNDS=5;
 const stageNames=["EGG","BABY","TODDLER","TEEN","ADULT","DEAD"];
 const DECAY={hunger:3600,cleanliness:5400,happiness:7200,energy:10800,fitness:14400,intelligence:10800};
@@ -526,15 +668,15 @@ const EXPLORE_BIOMES=["grass","water","forest","rock","sand","flowers"];
 function exploreInitMap(){exploreMap=[];for(let y=0;y<EXPLORE_GRID;y++){const row=[];for(let x=0;x<EXPLORE_GRID;x++)row.push(null);exploreMap.push(row);}explorePetX=12;explorePetY=12;exploreHoursLeft=0;exploreSecCounter=0;exploreTreasures=0;exploreFlowers=0;exploreFruits=0;exploreRevealCell(12,12,true);}
 function exploreRevealCell(x,y,silent){if(!exploreMap||x<0||y<0||x>=EXPLORE_GRID||y>=EXPLORE_GRID)return;if(exploreMap[y][x]!==null)return;const biome=EXPLORE_BIOMES[Math.floor(Math.random()*EXPLORE_BIOMES.length)];let item=0;if(!silent&&Math.random()<0.28){item=1+Math.floor(Math.random()*3);}exploreMap[y][x]={b:biome,i:item};
 if(!silent&&item>0){applyExploreReward(item);}}
-function applyExploreReward(item){const t=i18n[currentLang];if(item===1){exploreTreasures++;happiness=Math.min(100,happiness+40);intelligence=Math.min(100,intelligence+20);setActionMessage(t.exploreFoundTreasure,3000);}else if(item===2){exploreFlowers++;happiness=Math.min(100,happiness+20);setActionMessage(t.exploreFoundFlower,3000);}else if(item===3){exploreFruits++;hunger=Math.min(100,hunger+20);setActionMessage(t.exploreFoundFruit,3000);}playExploreFindSound();}
+function applyExploreReward(item){const t=i18n[currentLang];if(item===1){exploreTreasures++;gems+=10;happiness=Math.min(100,happiness+40);intelligence=Math.min(100,intelligence+20);setActionMessage(t.exploreFoundTreasure,3000);unlockAchievement('firstTreasure');}else if(item===2){exploreFlowers++;gems+=2;happiness=Math.min(100,happiness+20);setActionMessage(t.exploreFoundFlower,3000);}else if(item===3){exploreFruits++;gems+=3;hunger=Math.min(100,hunger+20);setActionMessage(t.exploreFoundFruit,3000);}playExploreFindSound();}
 function exploreStep(sim){if(!exploreMap||exploreHoursLeft<=0)return;const dirs=[[0,-1],[0,1],[-1,0],[1,0]];const unexplored=dirs.map(d=>[explorePetX+d[0],explorePetY+d[1]]).filter(p=>p[0]>=0&&p[1]>=0&&p[0]<EXPLORE_GRID&&p[1]<EXPLORE_GRID&&exploreMap[p[1]][p[0]]===null);let target;if(unexplored.length>0){target=unexplored[Math.floor(Math.random()*unexplored.length)];}else{const all=dirs.map(d=>[explorePetX+d[0],explorePetY+d[1]]).filter(p=>p[0]>=0&&p[1]>=0&&p[0]<EXPLORE_GRID&&p[1]<EXPLORE_GRID);target=all[Math.floor(Math.random()*all.length)];}
-if(target){explorePetX=target[0];explorePetY=target[1];const wasNew=(exploreMap[target[1]][target[0]]===null);exploreRevealCell(target[0],target[1],sim);if(!sim){playExploreStepSound();if(wasNew)setActionMessage(i18n[currentLang].exploreNewCell,1500);}}
+if(target){explorePetX=target[0];explorePetY=target[1];const wasNew=(exploreMap[target[1]][target[0]]===null);exploreRevealCell(target[0],target[1],sim);if(wasNew)checkMap100();if(!sim){playExploreStepSound();if(wasNew)setActionMessage(i18n[currentLang].exploreNewCell,1500);}}
 exploreHoursLeft--;if(exploreHoursLeft<=0&&!sim){setActionMessage(i18n[currentLang].exploreDone,2500);playHappyEndSound();}}
 function exploreTickSeconds(sim){if(!exploreMap||exploreHoursLeft<=0)return;exploreSecCounter++;if(exploreSecCounter>=EXPLORE_SECONDS_PER_STEP){exploreSecCounter=0;exploreStep(sim);}}
-function startExploreGame(){if(isDead||petStage===0||inRunnerMode||inRpsMode||raceActive)return;closeAllSubMenus();if(isSleeping)turnOffSleepingState();if(!exploreMap)exploreInitMap();inExploreMode=true;document.getElementById('game-canvas').style.display='none';document.getElementById('explore-container').style.display='flex';renderExplore();openExploreSetup();}
+function startExploreGame(){if(isDead||petStage===0||inRunnerMode||inRpsMode||raceActive||inMemoryMode)return;closeAllSubMenus();if(isSleeping)turnOffSleepingState();if(!exploreMap)exploreInitMap();inExploreMode=true;document.getElementById('game-canvas').style.display='none';document.getElementById('explore-container').style.display='flex';renderExplore();openExploreSetup();}
 function openExploreSetup(){exploreSetupValue=exploreHoursLeft>0?exploreHoursLeft:1;if(exploreSetupValue>EXPLORE_MAX_HOURS)exploreSetupValue=EXPLORE_MAX_HOURS;document.getElementById('explore-counter-val').innerText=exploreSetupValue;document.getElementById('explore-setup').style.display='flex';}
 function exploreCounterChange(d){exploreSetupValue+=d;if(exploreSetupValue<1)exploreSetupValue=1;if(exploreSetupValue>EXPLORE_MAX_HOURS)exploreSetupValue=EXPLORE_MAX_HOURS;document.getElementById('explore-counter-val').innerText=exploreSetupValue;playBeep(520,'square',0.04);}
-function confirmExploreSetup(){exploreHoursLeft=exploreSetupValue;exploreSecCounter=0;document.getElementById('explore-setup').style.display='none';setActionMessage(i18n[currentLang].exploreStarted(exploreHoursLeft),2500);playHappyEndSound();renderExplore();saveGameState();}
+function confirmExploreSetup(){exploreHoursLeft=exploreSetupValue;exploreSecCounter=0;happiness=Math.min(100,happiness+20);energy=Math.max(0,energy-20);document.getElementById('explore-setup').style.display='none';setActionMessage(i18n[currentLang].exploreStarted(exploreHoursLeft),2500);playHappyEndSound();renderExplore();saveGameState();}
 function cancelExploreSetup(){document.getElementById('explore-setup').style.display='none';closeExploreView();}
 function closeExploreView(){if(!inExploreMode){document.getElementById('explore-container').style.display='none';document.getElementById('explore-setup').style.display='none';return;}inExploreMode=false;document.getElementById('explore-setup').style.display='none';document.getElementById('explore-container').style.display='none';if(!isSleeping&&!isDead)document.getElementById('game-canvas').style.display='block';lastRealTimestamp=Math.floor(Date.now()/1000);updateDisplay();saveGameState();}
 function stopExploring(){exploreHoursLeft=0;exploreSecCounter=0;setActionMessage(i18n[currentLang].exploreStopped,2000);playBeep(300,'square',0.1);renderExplore();saveGameState();}
@@ -566,11 +708,13 @@ function generateLeaderboard(){const n=[...RIVAL_NAMES].sort(()=>Math.random()-0
 function raceDayIndex(){return Math.floor(totalGameSeconds/(SECONDS_PER_DAY*2));}
 function resetLeaderboardForNewPet(){generateLeaderboard();myRacePoints=0;lastRaceDay=raceDayIndex();}
 
-function saveGameState(){const g={currentPetIndex,petCustomName,petGender,petStage,hunger,happiness,health,energy,fitness,intelligence,cleanliness,generation,ageInDays,secondsInCurrentStage,totalGameSeconds,lastRealTimestamp,isDirty,isSick,isDead,isSleeping,poopSchedule,poopDoneToday,poopScheduleDay,illnessRolledDay,currentLang,currentShellColor,currentBgStyle,alarmPlayedThisWarning,leaderboard,myRacePoints,lastRaceDay,exploreMap,explorePetX,explorePetY,exploreHoursLeft,exploreSecCounter,exploreTreasures,exploreFlowers,exploreFruits,gameActive:true};localStorage.setItem('dinomio_save',JSON.stringify(g));}
+function saveGameState(){const g={currentPetIndex,petCustomName,petGender,petStage,hunger,happiness,health,energy,fitness,intelligence,cleanliness,generation,ageInDays,secondsInCurrentStage,totalGameSeconds,lastRealTimestamp,isDirty,isSick,isDead,isSleeping,poopSchedule,poopDoneToday,poopScheduleDay,illnessRolledDay,currentLang,currentShellColor,currentBgStyle,alarmPlayedThisWarning,leaderboard,myRacePoints,lastRaceDay,exploreMap,explorePetX,explorePetY,exploreHoursLeft,exploreSecCounter,exploreTreasures,exploreFlowers,exploreFruits,achievements,totalRacesWon,memoryCompletions,gems,ownedAccessories,equippedAccessory,gameActive:true};localStorage.setItem('dinomio_save',JSON.stringify(g));}
 
 function loadGameState(){const sd=localStorage.getItem('dinomio_save');if(!sd)return false;try{const s=JSON.parse(sd);if(!s.gameActive)return false;
 currentPetIndex=s.currentPetIndex;petCustomName=s.petCustomName||"SPIKE";petGender=s.petGender||"M";petStage=s.petStage;hunger=s.hunger;happiness=s.happiness;health=s.health;energy=s.energy;fitness=s.fitness;intelligence=s.intelligence;cleanliness=s.cleanliness!==undefined?s.cleanliness:40;generation=s.generation;ageInDays=s.ageInDays;secondsInCurrentStage=s.secondsInCurrentStage;totalGameSeconds=s.totalGameSeconds;lastRealTimestamp=s.lastRealTimestamp||Math.floor(Date.now()/1000);isDirty=s.isDirty;isSick=s.isSick;isDead=s.isDead;isSleeping=s.isSleeping;poopSchedule=s.poopSchedule||[];poopDoneToday=s.poopDoneToday||[false,false,false];poopScheduleDay=s.poopScheduleDay!==undefined?s.poopScheduleDay:-1;illnessRolledDay=s.illnessRolledDay!==undefined?s.illnessRolledDay:-1;currentLang=s.currentLang||'en';currentShellColor=s.currentShellColor||'default';currentBgStyle=s.currentBgStyle||'none';alarmPlayedThisWarning=s.alarmPlayedThisWarning||false;leaderboard=(s.leaderboard&&s.leaderboard.length)?s.leaderboard:[];myRacePoints=s.myRacePoints||0;lastRaceDay=s.lastRaceDay!==undefined?s.lastRaceDay:-1;
 exploreMap=s.exploreMap||null;explorePetX=s.explorePetX!==undefined?s.explorePetX:12;explorePetY=s.explorePetY!==undefined?s.explorePetY:12;exploreHoursLeft=s.exploreHoursLeft||0;exploreSecCounter=s.exploreSecCounter||0;exploreTreasures=s.exploreTreasures||0;exploreFlowers=s.exploreFlowers||0;exploreFruits=s.exploreFruits||0;
+achievements=s.achievements||{};totalRacesWon=s.totalRacesWon||0;memoryCompletions=s.memoryCompletions||0;
+gems=s.gems||0;ownedAccessories=s.ownedAccessories||[];equippedAccessory=s.equippedAccessory||null;
 if(leaderboard.length===0)generateLeaderboard();
 setShellColor(currentShellColor);setBackgroundStyle(currentBgStyle);updateTexts();updateBadgeProfile();
 if(poopSchedule.length===0)generatePoopSchedule();
@@ -593,7 +737,7 @@ x.fillStyle=SMOKE_COLOR;if(af%2===0){x.fillRect(12,11,2,2);x.fillRect(18,12,2,2)
 
 function drawPixelSprite(cid,type,stage,mouthOpen=false,overlayItem=null,animFrame=0,sick=false){
 const canvas=typeof cid==='string'?document.getElementById(cid):cid;if(!canvas)return;const ctx=canvas.getContext('2d');ctx.clearRect(0,0,32,32);ctx.imageSmoothingEnabled=false;
-const pal=PET_PALETTE[type]||PET_PALETTE[0];const squish=(sick&&stage>0&&stage<5);
+const pal=PET_PALETTE[type]||PET_PALETTE[0];const squish=(sick&&stage>0&&stage<5);const tired=(!sick&&isTired&&stage>0&&stage<5);
 function px(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));}
 function drawBlockBody(cx,cy,r){const s=Math.round(r*2),x=Math.round(cx-r),y=Math.round(cy-r),cut=Math.max(1,Math.round(r*0.28));
 px(x-1,y+cut,s+2,s-cut*2+2,pal.outline);px(x+cut-1,y-1,s-cut*2+2,s+2,pal.outline);px(x+cut-1,y+cut-1,2,2,pal.outline);px(x+s-cut-1,y+cut-1,2,2,pal.outline);px(x+cut-1,y+s-cut-1,2,2,pal.outline);px(x+s-cut-1,y+s-cut-1,2,2,pal.outline);
@@ -609,8 +753,13 @@ function drawWings(cx,cy,r,size=0.6){const ww=Math.max(2,Math.round(r*size)),wh=
 function drawXEye(exc,eyc,sz){const h=Math.max(2,Math.round(sz));ctx.strokeStyle=EYE_COLOR;ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(exc-h/2,eyc-h/2);ctx.lineTo(exc+h/2,eyc+h/2);ctx.moveTo(exc+h/2,eyc-h/2);ctx.lineTo(exc-h/2,eyc+h/2);ctx.stroke();}
 function drawCrown(cx,cy,r){const cw=Math.max(4,Math.round(r*1.1)),x0=Math.round(cx-cw/2),y0=Math.round(cy-r*1.25);px(x0,y0+2,cw,2,"#e0b84d");px(x0,y0+1,2,2,"#e0b84d");px(x0+cw-2,y0+1,2,2,"#e0b84d");px(x0+Math.round(cw/2)-1,y0,2,3,"#e0b84d");px(x0+Math.round(cw/2)-1,y0-1,1,1,"#ffe14d");}
 function drawFin(cx,cy,r){px(cx-1,Math.round(cy-r*1.35),3,Math.max(2,Math.round(r*0.5)),pal.shade);px(cx,Math.round(cy-r*1.5),1,Math.max(1,Math.round(r*0.3)),pal.light);}
+function drawAccessory(cx,cy,r){if(!equippedAccessory||stage===0||stage===5)return;
+if(equippedAccessory==='hat'){const hw=Math.round(r*1.3),hx=Math.round(cx-hw/2),hy=Math.round(cy-r*1.45);px(hx-1,hy+Math.round(r*0.5),hw+2,2,"#2a2a2a");px(hx+Math.round(hw*0.2),hy,Math.round(hw*0.6),Math.round(r*0.6),"#3a3a3a");px(hx+Math.round(hw*0.2),hy,Math.round(hw*0.6),2,"#c44a4a");}
+else if(equippedAccessory==='glasses'){const gy=Math.round(cy-r*0.1),gw=Math.max(2,Math.round(r*0.34)),gd=Math.round(r*0.42);px(cx-gd-gw/2-1,gy-gw/2-1,gw+2,gw+2,"#1a2028");px(cx+gd-gw/2-1,gy-gw/2-1,gw+2,gw+2,"#1a2028");px(cx-gd-gw/2,gy-gw/2,gw,gw,"#7fc0e0");px(cx+gd-gw/2,gy-gw/2,gw,gw,"#7fc0e0");px(cx-2,gy-1,4,2,"#1a2028");}
+else if(equippedAccessory==='bow'){const bx=Math.round(cx),by=Math.round(cy-r*1.15);px(bx-4,by-2,3,4,"#e0506a");px(bx+1,by-2,3,4,"#e0506a");px(bx-1,by-1,2,2,"#b83a52");}}
 function drawFace(cx,cy,r,mO){const eDX=Math.round(r*0.42),eY=Math.round(cy-r*0.1),eS=Math.max(2,Math.round(r*0.24));
 if(sick){drawXEye(cx-eDX,eY,r*0.34);drawXEye(cx+eDX,eY,r*0.34);px(cx-2,cy+r*0.36,4,1,EYE_COLOR);return;}
+if(tired){const ew=Math.max(3,Math.round(r*0.34)),lidY=Math.round(eY-eS*0.2);px(cx-eDX-ew/2,eY,ew,Math.max(1,Math.round(eS*0.5)),EYE_COLOR);px(cx+eDX-ew/2,eY,ew,Math.max(1,Math.round(eS*0.5)),EYE_COLOR);px(cx-eDX-ew/2,lidY,ew,1,pal.shade);px(cx+eDX-ew/2,lidY,ew,1,pal.shade);px(cx-Math.round(r*0.28),cy+r*0.4,2,1,EYE_COLOR);px(cx-2,cy+r*0.44,4,1,EYE_COLOR);px(cx+Math.round(r*0.18),cy+r*0.4,2,1,EYE_COLOR);return;}
 px(cx-eDX-eS/2,eY-eS/2,eS,eS,EYE_COLOR);px(cx+eDX-eS/2,eY-eS/2,eS,eS,EYE_COLOR);px(cx-eDX-eS/2,eY-eS/2,1,1,"#e8ecf0");px(cx+eDX-eS/2,eY-eS/2,1,1,"#e8ecf0");
 if(mO)px(cx-2,cy+r*0.32,4,3,EYE_COLOR);else px(cx-2,cy+r*0.34,4,1,EYE_COLOR);}
 function drawBackRidges(cx,cy,r,n){for(let i=0;i<n;i++){const t=(i/(n-1))-0.5,rx=Math.round(cx+t*r*1.2),ry=Math.round(cy-r*0.95);px(rx-1,ry-2,3,4,pal.outline);px(rx,ry-1,1,3,pal.shade);}}
@@ -618,13 +767,13 @@ function drawParkTree(cx,groundY,th){const trunkW=Math.max(2,Math.round(th*0.22)
 if(overlayItem==='parco'){const gy=28;px(0,gy,32,32-gy,"#6aae4f");px(0,gy,32,1,"#5a9a42");}
 if(stage===5){px(11,10,10,10,"#4a4f56");px(12,11,8,8,"#c4c8ce");px(13,13,2,2,EYE_COLOR);px(17,13,2,2,EYE_COLOR);px(14,17,4,1,"#4a4f56");px(13,20,2,2,"#c4c8ce");px(17,20,2,2,"#c4c8ce");return;}
 if(stage===0){const egg=EGG_COLORS[type]||EGG_COLORS[0];px(10,8,12,18,egg.out);px(11,9,10,16,egg.sh);px(12,10,8,14,egg.hi);px(13,13,2,2,pal.spot);px(18,17,2,2,pal.spot);px(14,20,2,2,pal.spot);px(12,10,2,3,"#ffffff");return;}
-if(type===4){let r=5.5+stage*1.7;const cx=16;let cy=18+((overlayItem==='parco'&&animFrame%2===0)?-2:0);if(squish){r*=1.12;cy+=3;}if(stage>=3)drawTail(cx,cy,r,1.0);if(stage>=4){drawTail(cx,cy,r,1.25);px(cx+r*1.25,cy+r*0.15,2,2,pal.outline);px(cx+r*1.35,cy+r*0.05,2,2,pal.outline);}if(stage>=2)drawLegs(cx,cy,r,0.55,stage>=4?0.5:0.35,stage>=4?0.3:0.22);if(stage>=3)drawBackRidges(cx,cy,r,stage>=4?7:3);if(stage>=4&&!squish)px(cx-r*0.4,cy-r*1.1,r*0.8,r*0.5,pal.body);drawBlockBody(cx,cy,r);drawSpots(cx,cy,r);if(stage>=4)drawFin(cx,cy,r);drawFace(cx,cy,r,mouthOpen);drawActionOverlays(ctx,cx,cy,r,overlayItem,animFrame);return;}
+if(type===4){let r=5.5+stage*1.7;const cx=16;let cy=18+((overlayItem==='parco'&&animFrame%2===0)?-2:0);if(squish){r*=1.12;cy+=3;}if(stage>=3)drawTail(cx,cy,r,1.0);if(stage>=4){drawTail(cx,cy,r,1.25);px(cx+r*1.25,cy+r*0.15,2,2,pal.outline);px(cx+r*1.35,cy+r*0.05,2,2,pal.outline);}if(stage>=2)drawLegs(cx,cy,r,0.55,stage>=4?0.5:0.35,stage>=4?0.3:0.22);if(stage>=3)drawBackRidges(cx,cy,r,stage>=4?7:3);if(stage>=4&&!squish)px(cx-r*0.4,cy-r*1.1,r*0.8,r*0.5,pal.body);drawBlockBody(cx,cy,r);drawSpots(cx,cy,r);if(stage>=4)drawFin(cx,cy,r);drawFace(cx,cy,r,mouthOpen);drawActionOverlays(ctx,cx,cy,r,overlayItem,animFrame);drawAccessory(cx,cy,r);return;}
 let r=6+stage*1.6;const cx=16;let cy=17+((overlayItem==='parco'&&animFrame%2===0)?-2:0);if(squish){r*=1.12;cy+=3;}
 if(type===0){if(stage>=3)drawTail(cx,cy,r,0.95);if(stage>=2)drawLegs(cx,cy,r,0.5,stage>=4?0.45:0.35,stage>=4?0.26:0.22);drawBlockEar(cx+r*0.85,cy-r*0.75,r);if(stage>=4)drawBlockEar(cx-r*0.85,cy-r*0.75,r*0.85);}
 else if(type===1){if(stage>=3)drawWings(cx,cy,r,stage>=4?0.95:0.55);if(stage>=2)drawLegs(cx,cy,r,0.5,0.35,0.22);drawBlockEar(cx-r*0.9,cy-r*0.7,r*0.8);drawBlockEar(cx+r*0.9,cy-r*0.7,r*0.8);if(stage>=4){px(cx-1,Math.round(cy-r*1.25),2,Math.max(2,Math.round(r*0.5)),pal.shade);px(cx-1,Math.round(cy-r*1.4),2,2,pal.light);}}
 else if(type===2){if(stage>=3)drawLegs(cx,cy,r,0.45,stage>=4?0.5:0.32,stage>=4?0.3:0.18);drawBlockEar(cx-r*0.45,cy-r*1.1,r*0.6);drawBlockEar(cx+r*0.45,cy-r*1.1,r*0.6);if(stage>=4)drawArms(cx,cy,r);}
 else if(type===3){if(stage>=3)drawArms(cx,cy,r);drawBlockFoot(cx-r*0.5,cy+r*1.0,Math.max(2,r*0.5),Math.max(2,r*0.32));drawBlockFoot(cx+r*0.5,cy+r*1.0,Math.max(2,r*0.5),Math.max(2,r*0.32));if(stage>=4)drawTail(cx,cy,r,0.95);}
-drawBlockBody(cx,cy,r);drawSpots(cx,cy,r);if(stage>=4)drawCrown(cx,cy,r);drawFace(cx,cy,r,mouthOpen);drawActionOverlays(ctx,cx,cy,r,overlayItem,animFrame);}
+drawBlockBody(cx,cy,r);drawSpots(cx,cy,r);if(stage>=4)drawCrown(cx,cy,r);drawFace(cx,cy,r,mouthOpen);drawActionOverlays(ctx,cx,cy,r,overlayItem,animFrame);drawAccessory(cx,cy,r);}
 
 function drawActionOverlays(ctx,cx,cy,r,overlayItem,animFrame){function px(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));}
 if(overlayItem==='pasto'){const rr=Math.max(1,3-animFrame);if(rr>0)px(2,15,rr+1,rr+1,"#8a6a2f");}
@@ -663,7 +812,7 @@ function initPreviews(){for(let p=0;p<5;p++)drawPixelSprite('p'+(p+1)+'_baby',p,
 function selectPet(index,defaultName){const ci=document.getElementById('custom-pet-name').value.trim();petCustomName=ci?ci.toUpperCase():defaultName;const g=document.querySelector('input[name="pet-gender"]:checked');petGender=g?g.value:"M";
 currentPetIndex=index;petStage=0;hunger=40;happiness=40;health=40;energy=40;fitness=40;intelligence=40;cleanliness=40;ageInDays=0;secondsInCurrentStage=0;totalGameSeconds=0;lastRealTimestamp=Math.floor(Date.now()/1000);isDirty=false;isSick=false;isDead=false;isSleeping=false;alarmPlayedThisWarning=false;illnessRolledDay=cestDayIndex(Date.now());if(sleepTimer)clearTimeout(sleepTimer);isEatingAnimation=false;isCustomAnimation=false;
 generatePoopSchedule();poopScheduleDay=cestDayIndex(Date.now());resetLeaderboardForNewPet();stopRunner();exploreInitMap();
-document.getElementById('selection-screen').style.display='none';document.getElementById('choose-area-screen').style.display='none';document.getElementById('rules-screen').style.display='none';document.getElementById('info-screen').style.display='none';document.getElementById('settings-screen').style.display='none';document.getElementById('gameplay-screen').style.display='flex';document.getElementById('kitchen-sub-menu').style.display='none';document.getElementById('fun-sub-menu').style.display='none';document.getElementById('gym-sub-menu').style.display='none';
+document.getElementById('selection-screen').style.display='none';document.getElementById('choose-area-screen').style.display='none';document.getElementById('rules-screen').style.display='none';document.getElementById('info-screen').style.display='none';document.getElementById('settings-screen').style.display='none';document.getElementById('gameplay-screen').style.display='flex';document.getElementById('kitchen-sub-menu').style.display='none';document.getElementById('fun-sub-menu').style.display='none';document.getElementById('gym-sub-menu').style.display='none';document.getElementById('study-sub-menu').style.display='none';
 const mc=document.getElementById('game-canvas');mc.classList.add('egg-wobble');mc.classList.remove('pet-idle-bounce');mc.classList.remove('pet-sick-anim');mc.style.display='block';
 document.getElementById('action-msg').innerText=i18n[currentLang].eggWarming;
 updateBadgeProfile();drawBackground();updateDisplay();saveGameState();
@@ -672,7 +821,7 @@ if(gameTimer)clearInterval(gameTimer);gameTimer=setInterval(gameLoop,1000);}
 function stepOneSecond(sim){if(isDead)return;totalGameSeconds++;secondsInCurrentStage++;const nowMs=lastRealTimestamp*1000;ageInDays=Math.floor(totalGameSeconds/SECONDS_PER_DAY);const T3=SECONDS_PER_DAY*3;
 const di=cestDayIndex(nowMs);if(di!==poopScheduleDay){generatePoopSchedule();poopScheduleDay=di;}
 if(petStage>0&&!isDirty){const sod=cestSecondsOfDay(nowMs);let pooped=false;for(let i=0;i<poopSchedule.length;i++){if(!poopDoneToday[i]&&sod>=poopSchedule[i]){poopDoneToday[i]=true;pooped=true;}}if(pooped){isDirty=true;cleanliness=Math.max(0,cleanliness-POOP_CLEANLINESS_LOSS);if(!sim)setActionMessage(i18n[currentLang].poopMsg);}}
-if(petStage===0){if(!sim)playSyncopatedEggBeep();if(secondsInCurrentStage>=7){petStage=1;secondsInCurrentStage=0;hunger=40;happiness=40;health=40;energy=40;fitness=40;intelligence=40;cleanliness=40;if(!sim){const mc=document.getElementById('game-canvas');mc.classList.remove('egg-wobble');mc.classList.add('pet-idle-bounce');setActionMessage(i18n[currentLang].hatchedMsg);playHappyEndSound();}}}
+if(petStage===0){if(!sim)playSyncopatedEggBeep();if(secondsInCurrentStage>=7){petStage=1;secondsInCurrentStage=0;hunger=40;happiness=40;health=40;energy=40;fitness=40;intelligence=40;cleanliness=40;unlockAchievement('firstHatch');if(!sim){const mc=document.getElementById('game-canvas');mc.classList.remove('egg-wobble');mc.classList.add('pet-idle-bounce');setActionMessage(i18n[currentLang].hatchedMsg);playHappyEndSound();}}}
 else if(petStage>=1&&petStage<4){if(secondsInCurrentStage>=T3){petStage++;secondsInCurrentStage=0;if(!sim){setActionMessage(i18n[currentLang].evoMsg);playHappyEndSound();}}}
 else if(petStage===4){if(secondsInCurrentStage>=T3){triggerNaturalDeath(sim);return;}}
 if(petStage>0){if(totalGameSeconds%DECAY.hunger===0)hunger=Math.max(0,hunger-20);if(totalGameSeconds%DECAY.cleanliness===0)cleanliness=Math.max(0,cleanliness-20);if(!isSleeping&&totalGameSeconds%DECAY.happiness===0)happiness=Math.max(0,happiness-20);if(!isSleeping&&totalGameSeconds%DECAY.energy===0)energy=Math.max(0,energy-20);if(totalGameSeconds%DECAY.fitness===0)fitness=Math.max(0,fitness-20);if(totalGameSeconds%DECAY.intelligence===0)intelligence=Math.max(0,intelligence-20);if(!isSick&&!isSleeping&&di!==illnessRolledDay&&Math.random()<ILLNESS_CHANCE_PER_SEC){isSick=true;illnessRolledDay=di;}if(isSick&&totalGameSeconds%3600===0)health=Math.max(0,health-20);}
@@ -682,20 +831,20 @@ if(health<=0){isDead=true;petStage=5;if(!sim){turnOffSleepingState();document.ge
 
 function catchUpRealTime(){const ns=Math.floor(Date.now()/1000);if(!lastRealTimestamp){lastRealTimestamp=ns;return;}let el=ns-lastRealTimestamp;if(el<=0)return;const MX=SECONDS_PER_DAY*30;if(el>MX)el=MX;for(let i=0;i<el;i++){lastRealTimestamp++;stepOneSecond(true);if(isDead)break;}lastRealTimestamp=ns;checkStatsWarning();}
 
-function gameLoop(){if(inRunnerMode||inRpsMode||raceActive)return;if(isDead)return;poopSmokeFrame++;const ns=Math.floor(Date.now()/1000);let steps=ns-lastRealTimestamp;if(steps<1)steps=1;if(steps>SECONDS_PER_DAY*30)steps=SECONDS_PER_DAY*30;for(let i=0;i<steps;i++){lastRealTimestamp++;stepOneSecond(i===steps-1?false:true);if(isDead)break;}lastRealTimestamp=ns;checkStatsWarning();applySickAnimClass();if(inExploreMode)renderExplore();else updateDisplay();maybeShowRacePrompt();saveGameState();}
+function gameLoop(){if(inRunnerMode||inRpsMode||raceActive)return;if(isDead)return;poopSmokeFrame++;const ns=Math.floor(Date.now()/1000);let steps=ns-lastRealTimestamp;if(steps<1)steps=1;if(steps>SECONDS_PER_DAY*30)steps=SECONDS_PER_DAY*30;for(let i=0;i<steps;i++){lastRealTimestamp++;stepOneSecond(i===steps-1?false:true);if(isDead)break;}lastRealTimestamp=ns;checkStatsWarning();applySickAnimClass();if(currentBgStyle==='real'&&!inExploreMode)drawBackground();if(inExploreMode)renderExplore();else updateDisplay();maybeShowRacePrompt();saveGameState();}
 
 function triggerNaturalDeath(sim){isDead=true;petStage=5;if(sim){if(!gameTimer)return;}turnOffSleepingState();if(gameTimer)clearInterval(gameTimer);updateDisplay();const t=i18n[currentLang];document.getElementById('action-msg').innerText=t.deathRebirthMsg;
 setTimeout(()=>{const ni=Math.floor(Math.random()*5);const dn=["SPIKE","NIBBLE","BUBBLE","PUFF","DINO"];const pn=dn[ni];
 const acc=window.confirm(t.rebirthPrompt(pn));if(!acc){setActionMessage(t.rebirthDeclined);generateLeaderboard();myRacePoints=0;lastRaceDay=raceDayIndex();saveGameState();return;}
 let cn=window.prompt(t.rebirthNamePrompt,pn);if(!cn||!cn.trim())cn=pn;cn=cn.trim().toUpperCase().slice(0,10);
-generation++;currentPetIndex=ni;petCustomName=cn;petStage=0;ageInDays=0;secondsInCurrentStage=0;totalGameSeconds=0;lastRealTimestamp=Math.floor(Date.now()/1000);hunger=40;happiness=40;health=40;energy=40;fitness=40;intelligence=40;cleanliness=40;isDirty=false;isSick=false;isDead=false;isSleeping=false;alarmPlayedThisWarning=false;illnessRolledDay=cestDayIndex(Date.now());
+generation++;if(generation>=2)unlockAchievement('gen2');currentPetIndex=ni;petCustomName=cn;petStage=0;ageInDays=0;secondsInCurrentStage=0;totalGameSeconds=0;lastRealTimestamp=Math.floor(Date.now()/1000);hunger=40;happiness=40;health=40;energy=40;fitness=40;intelligence=40;cleanliness=40;isDirty=false;isSick=false;isDead=false;isSleeping=false;alarmPlayedThisWarning=false;illnessRolledDay=cestDayIndex(Date.now());
 generatePoopSchedule();poopScheduleDay=cestDayIndex(Date.now());resetLeaderboardForNewPet();exploreInitMap();
 const mc=document.getElementById('game-canvas');mc.style.display='block';mc.classList.add('egg-wobble');mc.classList.remove('pet-idle-bounce');mc.classList.remove('pet-sick-anim');
 updateBadgeProfile();setActionMessage(t.rebirthDone(cn));updateDisplay();saveGameState();
 if(gameTimer)clearInterval(gameTimer);gameTimer=setInterval(gameLoop,1000);},300);}
 
 function awardRivalRacePoints(){if(!leaderboard||leaderboard.length===0)return;leaderboard.forEach(r=>{const x=Math.random();if(x<0.45)r.points+=2;else if(x<0.55)r.points+=1;});}
-function maybeShowRacePrompt(){if(isDead||petStage===0||petStage===5||isSleeping)return;if(raceActive||inRunnerMode||inRpsMode||inExploreMode)return;const rd=raceDayIndex();if(rd>lastRaceDay){lastRaceDay=rd;awardRivalRacePoints();currentRival=RIVAL_NAMES[Math.floor(Math.random()*RIVAL_NAMES.length)];document.getElementById('race-prompt-text').innerText=i18n[currentLang].racePrompt(currentRival);document.getElementById('race-prompt').style.display='flex';playSyncopatedEggBeep();saveGameState();}}
+function maybeShowRacePrompt(){if(isDead||petStage===0||petStage===5||isSleeping)return;if(raceActive||inRunnerMode||inRpsMode||inExploreMode||inMemoryMode)return;const rd=raceDayIndex();if(rd>lastRaceDay){lastRaceDay=rd;awardRivalRacePoints();currentRival=RIVAL_NAMES[Math.floor(Math.random()*RIVAL_NAMES.length)];document.getElementById('race-prompt-text').innerText=i18n[currentLang].racePrompt(currentRival);document.getElementById('race-prompt').style.display='flex';playSyncopatedEggBeep();saveGameState();}}
 function answerRace(a){document.getElementById('race-prompt').style.display='none';if(!a){fitness=Math.max(0,fitness-20);myRacePoints=Math.max(0,myRacePoints-1);playSadSound();setActionMessage(i18n[currentLang].raceDeclined,2500);updateDisplay();saveGameState();return;}startRaceAnimation();}
 
 function startRaceAnimation(){raceActive=true;document.getElementById('game-canvas').style.display='none';document.getElementById('race-container').style.display='block';
@@ -710,26 +859,38 @@ if(el<dur)requestAnimationFrame(draw);else finishRace(outcome);}
 draw();playSyncopatedEggBeep();}
 function drawMiniRacer(ctx,x,y,pal){ctx.fillStyle=pal.outline;ctx.fillRect(x-1,y-1,14,14);ctx.fillStyle=pal.body;ctx.fillRect(x,y,12,12);ctx.fillStyle=pal.light;ctx.fillRect(x+2,y+2,4,3);ctx.fillStyle=EYE_COLOR;ctx.fillRect(x+8,y+4,2,2);}
 function finishRace(o){raceActive=false;document.getElementById('race-container').style.display='none';if(!isDead)document.getElementById('game-canvas').style.display='block';const t=i18n[currentLang];
-if(o==='win'){happiness=Math.min(100,happiness+40);myRacePoints+=2;playHappyEndSound();setActionMessage(t.raceWin(currentRival),3000);}
+if(o==='win'){happiness=Math.min(100,happiness+40);myRacePoints+=2;totalRacesWon++;gems+=5;if(totalRacesWon>=5)unlockAchievement('race5');playHappyEndSound();setActionMessage(t.raceWin(currentRival),3000);}
 else if(o==='lose'){happiness=Math.max(0,happiness-40);playSadSound();setActionMessage(t.raceLose(currentRival),3000);}
 else{myRacePoints+=1;setActionMessage(t.raceDraw(currentRival),3000);}
 lastRealTimestamp=Math.floor(Date.now()/1000);applySickAnimClass();updateDisplay();saveGameState();}
 
 function renderLeaderboard(){const tb=document.getElementById('rank-tbody');if(!tb)return;const all=leaderboard.map(r=>({name:r.name,points:r.points,self:false}));all.push({name:petCustomName,points:myRacePoints,self:true});all.sort((a,b)=>b.points-a.points);tb.innerHTML="";all.forEach((row,i)=>{const tr=document.createElement('tr');if(row.self)tr.className='rank-row-self';tr.innerHTML=`<td>${i+1}</td><td>${row.name}</td><td>${row.points}</td>`;tb.appendChild(tr);});}
+function renderAchievements(){const g=document.getElementById('ach-grid');if(!g)return;g.innerHTML="";ACHIEVEMENTS.forEach(a=>{const unlocked=!!achievements[a.id];const name=currentLang==='it'?a.it:a.en;const d=document.createElement('div');d.className='ach-badge'+(unlocked?'':' locked');d.innerHTML=`<span class="ach-icon">${a.icon}</span><span class="ach-name">${name}</span>`;g.appendChild(d);});}
+function showShop(){if(isDead||petStage===0){setActionMessage(i18n[currentLang].waitEggMsg);return;}renderShop();document.getElementById('gameplay-screen').style.display='none';document.getElementById('shop-screen').style.display='flex';}
+function hideShop(){document.getElementById('shop-screen').style.display='none';document.getElementById('gameplay-screen').style.display='flex';updateDisplay();}
+function renderShop(){const lang=currentLang;document.getElementById('shop-gems').innerText='\uD83D\uDC8E '+gems;
+const fg=document.getElementById('shop-food-grid');fg.innerHTML="";SHOP_FOOD.forEach(f=>{const d=document.createElement('div');const can=gems>=f.cost;d.className='shop-item'+(can?'':' cant');d.innerHTML=`<span class="si-icon">${f.icon}</span><span class="si-name">${lang==='it'?f.it:f.en}</span><span class="si-cost">\uD83D\uDC8E ${f.cost}</span>`;d.onclick=()=>buyFood(f.id);fg.appendChild(d);});
+const ag=document.getElementById('shop-acc-grid');ag.innerHTML="";SHOP_ACCESSORIES.forEach(a=>{const owned=ownedAccessories.indexOf(a.id)>=0;const equipped=equippedAccessory===a.id;const can=owned||gems>=a.cost;const d=document.createElement('div');d.className='shop-item'+(equipped?' equipped':(owned?' owned':(can?'':' cant')));const t=i18n[lang];const label=owned?(equipped?t.shopEquipped:t.shopEquip):('\uD83D\uDC8E '+a.cost);d.innerHTML=`<span class="si-icon">${a.icon}</span><span class="si-name">${lang==='it'?a.it:a.en}</span><span class="si-cost">${label}</span>`;d.onclick=()=>buyOrToggleAccessory(a.id);ag.appendChild(d);});}
+function buyFood(id){const f=SHOP_FOOD.find(x=>x.id===id);if(!f)return;if(gems<f.cost){setActionMessage(i18n[currentLang].shopNoGems,2000);playSadSound();return;}gems-=f.cost;if(f.eff.hunger)hunger=Math.min(100,hunger+f.eff.hunger);if(f.eff.happiness)happiness=Math.min(100,happiness+f.eff.happiness);if(f.eff.health)health=Math.min(100,health+f.eff.health);if(f.eff.energy)energy=Math.min(100,energy+f.eff.energy);unlockAchievement('firstBuy');playHappyEndSound();setActionMessage(i18n[currentLang].shopBought((currentLang==='it'?f.it:f.en)),2500);renderShop();saveGameState();}
+function buyOrToggleAccessory(id){const a=SHOP_ACCESSORIES.find(x=>x.id===id);if(!a)return;const owned=ownedAccessories.indexOf(id)>=0;
+if(!owned){if(gems<a.cost){setActionMessage(i18n[currentLang].shopNoGems,2000);playSadSound();return;}gems-=a.cost;ownedAccessories.push(id);equippedAccessory=id;unlockAchievement('firstBuy');playHappyEndSound();setActionMessage(i18n[currentLang].shopBought((currentLang==='it'?a.it:a.en)),2500);}
+else{equippedAccessory=(equippedAccessory===id)?null:id;playBeep(560,'square',0.05);}
+renderShop();saveGameState();}
 
-function closeAllSubMenus(ex){['kitchen-sub-menu','fun-sub-menu','gym-sub-menu'].forEach(id=>{if(id!==ex)document.getElementById(id).style.display='none';});}
-function toggleKitchenMenu(){if(isDead||petStage===0||inRunnerMode||inRpsMode||raceActive||inExploreMode)return;const m=document.getElementById('kitchen-sub-menu');const w=m.style.display==='none';closeAllSubMenus('kitchen-sub-menu');m.style.display=w?'flex':'none';}
-function toggleFunMenu(){if(isDead||petStage===0||inRunnerMode||inRpsMode||raceActive||inExploreMode)return;const m=document.getElementById('fun-sub-menu');const w=m.style.display==='none';closeAllSubMenus('fun-sub-menu');m.style.display=w?'flex':'none';}
-function toggleGymMenu(){if(isDead||petStage===0||inRunnerMode||inRpsMode||raceActive||inExploreMode)return;const m=document.getElementById('gym-sub-menu');const w=m.style.display==='none';closeAllSubMenus('gym-sub-menu');m.style.display=w?'flex':'none';}
+function closeAllSubMenus(ex){['kitchen-sub-menu','fun-sub-menu','gym-sub-menu','study-sub-menu'].forEach(id=>{if(id!==ex)document.getElementById(id).style.display='none';});}
+function toggleKitchenMenu(){if(isDead||petStage===0||inRunnerMode||inRpsMode||raceActive||inExploreMode||inMemoryMode)return;const m=document.getElementById('kitchen-sub-menu');const w=m.style.display==='none';closeAllSubMenus('kitchen-sub-menu');m.style.display=w?'flex':'none';}
+function toggleFunMenu(){if(isDead||petStage===0||inRunnerMode||inRpsMode||raceActive||inExploreMode||inMemoryMode)return;const m=document.getElementById('fun-sub-menu');const w=m.style.display==='none';closeAllSubMenus('fun-sub-menu');m.style.display=w?'flex':'none';}
+function toggleGymMenu(){if(isDead||petStage===0||inRunnerMode||inRpsMode||raceActive||inExploreMode||inMemoryMode)return;const m=document.getElementById('gym-sub-menu');const w=m.style.display==='none';closeAllSubMenus('gym-sub-menu');m.style.display=w?'flex':'none';}
+function toggleStudyMenu(){if(isDead||petStage===0||inRunnerMode||inRpsMode||raceActive||inExploreMode||inMemoryMode)return;const m=document.getElementById('study-sub-menu');const w=m.style.display==='none';closeAllSubMenus('study-sub-menu');m.style.display=w?'flex':'none';}
 function showGymRecord(){if(isDead||petStage===0)return;setActionMessage(i18n[currentLang].gymRecordMsg(runnerHighScore),3000);playHappyEndSound();}
 
-function feedPet(type){if(isEatingAnimation||isCustomAnimation||isDead||petStage===0||inRunnerMode||inRpsMode||raceActive||inExploreMode)return;isEatingAnimation=true;if(isSleeping)turnOffSleepingState();let step=0;const c=document.getElementById('game-canvas');let m="";
+function feedPet(type){if(isEatingAnimation||isCustomAnimation||isDead||petStage===0||inRunnerMode||inRpsMode||raceActive||inExploreMode||inMemoryMode)return;isEatingAnimation=true;if(isSleeping)turnOffSleepingState();let step=0;const c=document.getElementById('game-canvas');let m="";
 if(type==='pasto'){hunger=Math.min(100,hunger+40);m=i18n[currentLang].mealMsg;}else{happiness=Math.min(100,happiness+20);hunger=Math.min(100,hunger+20);fitness=Math.max(0,fitness-20);m=i18n[currentLang].snackMsg;}
 const iv=setInterval(()=>{step++;const mo=(step%2!==0),pr=Math.floor(step/2);playBeep(350+(step*50),'square',0.05);drawPixelSprite(c,currentPetIndex,petStage,mo,type,pr,isSick);if(step>=6){clearInterval(iv);isEatingAnimation=false;playHappyEndSound();setActionMessage(m);updateDisplay();saveGameState();}},400);}
 
 function turnOffSleepingState(){isSleeping=false;if(sleepTimer)clearTimeout(sleepTimer);document.getElementById('pet-display-box').classList.remove('lights-off');document.getElementById('zzz-layer').style.display='none';if(!isDead&&!inExploreMode)document.getElementById('game-canvas').style.display='block';}
 
-function interactArea(area){if(isDead||isEatingAnimation||isCustomAnimation||raceActive||inExploreMode)return;if(petStage===0){setActionMessage(i18n[currentLang].waitEggMsg);return;}closeAllSubMenus();if(inRunnerMode&&area!=='Palestra')stopRunner();if(inRpsMode)stopRpsGame();if(area!=='Luce'&&isSleeping)turnOffSleepingState();const c=document.getElementById('game-canvas');
+function interactArea(area){if(isDead||isEatingAnimation||isCustomAnimation||raceActive||inExploreMode||inMemoryMode)return;if(petStage===0){setActionMessage(i18n[currentLang].waitEggMsg);return;}closeAllSubMenus();if(inRunnerMode&&area!=='Palestra')stopRunner();if(inRpsMode)stopRpsGame();if(area!=='Luce'&&isSleeping)turnOffSleepingState();const c=document.getElementById('game-canvas');
 switch(area){
 case 'Parco':happiness=Math.min(100,happiness+20);energy=Math.max(0,energy-20);cleanliness=Math.max(0,cleanliness-20);isCustomAnimation=true;let ps=0;drawParkScene(0);const pi=setInterval(()=>{playBeep(400+(ps%2*150),'square',0.06);drawParkScene(ps);drawPixelSprite(c,currentPetIndex,petStage,false,'parco',ps,isSick);ps++;if(ps>8){clearInterval(pi);isCustomAnimation=false;drawBackground();playHappyEndSound();setActionMessage(i18n[currentLang].parkMsg);updateDisplay();saveGameState();}},250);break;
 case 'Coccole':happiness=Math.min(100,happiness+20);isCustomAnimation=true;let cs=0;const ct=16;const cci=setInterval(()=>{if(cs%2===0)playBeep(520+(cs%4*40),'sine',0.05);drawPixelSprite(c,currentPetIndex,petStage,false,'coccole',cs,isSick);cs++;if(cs>=ct){clearInterval(cci);isCustomAnimation=false;playHappyEndSound();setActionMessage(i18n[currentLang].cuddleMsg);updateDisplay();saveGameState();}},250);break;
@@ -753,7 +914,7 @@ if(o.x<36&&o.x+o.width>20&&py+16>70-o.height){playBeep(150,'sawtooth',0.2);if(ru
 runnerObstacles=runnerObstacles.filter(o=>o.x>-10);runnerScore++;if(runnerScore>runnerHighScore){runnerHighScore=runnerScore;localStorage.setItem('dinomio_runner_highscore',runnerHighScore);}
 ctx.fillStyle="#3a4653";ctx.font='8px "Courier New"';ctx.fillText(`SCORE: ${runnerScore} HI: ${runnerHighScore}`,90,12);runnerAnimId=requestAnimationFrame(runnerLoop);}
 
-function startRpsGame(){if(isDead||petStage===0||inRunnerMode||raceActive||inExploreMode)return;closeAllSubMenus();if(isSleeping)turnOffSleepingState();inRpsMode=true;rpsRound=0;rpsPetScore=0;rpsCpuScore=0;rpsBusy=false;document.getElementById('game-canvas').style.display='none';document.getElementById('rps-container').style.display='flex';drawRpsHand('rps-hand-pet','rock',false);drawRpsHand('rps-hand-cpu','rock',true);drawRpsHand('rps-btn-rock','rock',false);drawRpsHand('rps-btn-paper','paper',false);drawRpsHand('rps-btn-scissors','scissors',false);document.getElementById('rps-result').innerText='';document.getElementById('rps-info').innerText=i18n[currentLang].rpsRound(1,0,0);setActionMessage(i18n[currentLang].rpsMsg,2500);}
+function startRpsGame(){if(isDead||petStage===0||inRunnerMode||raceActive||inExploreMode||inMemoryMode)return;closeAllSubMenus();if(isSleeping)turnOffSleepingState();inRpsMode=true;rpsRound=0;rpsPetScore=0;rpsCpuScore=0;rpsBusy=false;document.getElementById('game-canvas').style.display='none';document.getElementById('rps-container').style.display='flex';drawRpsHand('rps-hand-pet','rock',false);drawRpsHand('rps-hand-cpu','rock',true);drawRpsHand('rps-btn-rock','rock',false);drawRpsHand('rps-btn-paper','paper',false);drawRpsHand('rps-btn-scissors','scissors',false);document.getElementById('rps-result').innerText='';document.getElementById('rps-info').innerText=i18n[currentLang].rpsRound(1,0,0);setActionMessage(i18n[currentLang].rpsMsg,2500);}
 function stopRpsGame(){if(!inRpsMode){document.getElementById('rps-container').style.display='none';return;}inRpsMode=false;document.getElementById('rps-container').style.display='none';if(!isSleeping&&!isDead)document.getElementById('game-canvas').style.display='block';lastRealTimestamp=Math.floor(Date.now()/1000);saveGameState();}
 function playRps(pc){if(!inRpsMode||rpsBusy)return;if(rpsRound>=RPS_TOTAL_ROUNDS)return;rpsBusy=true;const ch=['rock','paper','scissors'];const cc=ch[Math.floor(Math.random()*3)];drawRpsHand('rps-hand-pet',pc,false);drawRpsHand('rps-hand-cpu',cc,true);
 let rr;if(pc===cc)rr='draw';else if((pc==='rock'&&cc==='scissors')||(pc==='scissors'&&cc==='paper')||(pc==='paper'&&cc==='rock'))rr='win';else rr='lose';
@@ -761,15 +922,28 @@ const t=i18n[currentLang],re=document.getElementById('rps-result');if(rr==='win'
 rpsRound++;document.getElementById('rps-info').innerText=t.rpsRound(Math.min(rpsRound+1,RPS_TOTAL_ROUNDS),rpsPetScore,rpsCpuScore);
 if(rpsRound>=RPS_TOTAL_ROUNDS)setTimeout(finishRps,900);else setTimeout(()=>{rpsBusy=false;},700);}
 function finishRps(){const t=i18n[currentLang];let m;if(rpsPetScore>rpsCpuScore){happiness=Math.min(100,happiness+40);m=t.rpsWin;}else if(rpsPetScore<rpsCpuScore){happiness=Math.min(100,happiness+20);m=t.rpsLose;}else{happiness=Math.min(100,happiness+20);m=t.rpsDraw;}playRpsMatchEndSound();stopRpsGame();setActionMessage(m,3500);updateDisplay();saveGameState();}
+function startMemoryGame(){if(isDead||petStage===0||inRunnerMode||inRpsMode||raceActive||inExploreMode)return;closeAllSubMenus();if(isSleeping)turnOffSleepingState();inMemoryMode=true;memFirst=-1;memSecond=-1;memBusy=false;memMatched=0;memMoves=0;
+const deck=[];for(let i=0;i<MEMORY_SYMBOLS.length;i++){deck.push(i);deck.push(i);}for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];}
+memCards=deck.map(sym=>({sym,revealed:false,matched:false}));
+document.getElementById('game-canvas').style.display='none';document.getElementById('memory-container').style.display='flex';renderMemory();setActionMessage(i18n[currentLang].memoryMsg,2500);}
+function renderMemory(){const g=document.getElementById('memory-grid');if(!g)return;g.innerHTML="";memCards.forEach((card,idx)=>{const d=document.createElement('div');d.className='mem-card'+(card.matched?' matched':(card.revealed?' revealed':''));d.innerHTML=(card.revealed||card.matched)?`<span class="mem-face">${MEMORY_SYMBOLS[card.sym]}</span>`:'';d.onclick=(e)=>{e.stopPropagation();memoryFlip(idx);};g.appendChild(d);});
+const info=document.getElementById('memory-info');info.innerText=i18n[currentLang].memoryProgress(memMatched,MEMORY_SYMBOLS.length,memMoves);}
+function memoryFlip(idx){if(!inMemoryMode||memBusy)return;const card=memCards[idx];if(card.revealed||card.matched)return;card.revealed=true;playBeep(520,'square',0.05);
+if(memFirst<0){memFirst=idx;renderMemory();return;}
+memSecond=idx;memMoves++;renderMemory();memBusy=true;
+if(memCards[memFirst].sym===memCards[memSecond].sym){setTimeout(()=>{memCards[memFirst].matched=true;memCards[memSecond].matched=true;memMatched++;memFirst=-1;memSecond=-1;memBusy=false;playBeep(760,'square',0.07);renderMemory();if(memMatched>=MEMORY_SYMBOLS.length)finishMemory();},450);}
+else{setTimeout(()=>{memCards[memFirst].revealed=false;memCards[memSecond].revealed=false;memFirst=-1;memSecond=-1;memBusy=false;playBeep(200,'square',0.08);renderMemory();},700);}}
+function finishMemory(){intelligence=Math.min(100,intelligence+20);happiness=Math.min(100,happiness+20);memoryCompletions++;if(memoryCompletions>=10)unlockAchievement('memory10');playRpsMatchEndSound();setTimeout(()=>{stopMemoryGame();setActionMessage(i18n[currentLang].memoryWin,3500);updateDisplay();saveGameState();},600);}
+function stopMemoryGame(){if(!inMemoryMode){document.getElementById('memory-container').style.display='none';return;}inMemoryMode=false;document.getElementById('memory-container').style.display='none';if(!isSleeping&&!isDead)document.getElementById('game-canvas').style.display='block';lastRealTimestamp=Math.floor(Date.now()/1000);updateDisplay();saveGameState();}
 
 function updateDisplay(){const pc=document.getElementById('poop-canvas');if(isDirty){pc.style.display='block';drawPoopSprite(poopSmokeFrame);}else pc.style.display='none';
-document.getElementById('sick-tag').style.display=isSick?'block':'none';
-if(!isEatingAnimation&&!isCustomAnimation&&!inRunnerMode&&!inRpsMode&&!raceActive&&!inExploreMode)drawPixelSprite(document.getElementById('game-canvas'),currentPetIndex,petStage,false,null,0,isSick);
+document.getElementById('sick-tag').style.display=isSick?'block':'none';checkTired();
+if(!isEatingAnimation&&!isCustomAnimation&&!inRunnerMode&&!inRpsMode&&!raceActive&&!inExploreMode&&!inMemoryMode)drawPixelSprite(document.getElementById('game-canvas'),currentPetIndex,petStage,false,null,0,isSick);
 document.getElementById('mini-hunger').innerText=getDots(hunger);document.getElementById('mini-cleanliness').innerText=getDots(cleanliness);document.getElementById('mini-happy').innerText=getDots(happiness);document.getElementById('mini-health').innerText=getDots(health);document.getElementById('mini-energy').innerText=getDots(energy);document.getElementById('mini-fitness').innerText=getDots(fitness);document.getElementById('mini-intelligence').innerText=getDots(intelligence);}
 function getDots(v){v=Math.round(v);if(v>=80)return '\u25CF\u25CF\u25CF\u25CF\u25CF';if(v>=60)return '\u25CF\u25CF\u25CF\u25CF\u25CB';if(v>=40)return '\u25CF\u25CF\u25CF\u25CB\u25CB';if(v>=20)return '\u25CF\u25CF\u25CB\u25CB\u25CB';if(v>0)return '\u25CF\u25CB\u25CB\u25CB\u25CB';return '\u25CB\u25CB\u25CB\u25CB\u25CB';}
 
 function exploreCountCells(){if(!exploreMap)return 0;let n=0;for(let y=0;y<EXPLORE_GRID;y++)for(let x=0;x<EXPLORE_GRID;x++)if(exploreMap[y][x]!==null)n++;return n;}
-function showInfo(){const t=i18n[currentLang];document.getElementById('info-name').innerText=petCustomName;document.getElementById('info-gender').innerText=petGender==='M'?t.genderM:t.genderF;document.getElementById('info-gen').innerText=generation;document.getElementById('info-age').innerText=ageInDays;document.getElementById('info-stage').innerText=stageNames[petStage];document.getElementById('info-hunger').innerText=getDots(hunger);document.getElementById('info-cleanliness').innerText=getDots(cleanliness);document.getElementById('info-happy').innerText=getDots(happiness);document.getElementById('info-health').innerText=getDots(health);document.getElementById('info-energy').innerText=getDots(energy);document.getElementById('info-fitness').innerText=getDots(fitness);document.getElementById('info-intelligence').innerText=getDots(intelligence);renderLeaderboard();document.getElementById('info-explore-stats').innerText=t.exploreStatsTxt(exploreCountCells(),exploreTreasures,exploreFlowers,exploreFruits);document.getElementById('gameplay-screen').style.display='none';document.getElementById('info-screen').style.display='flex';}
+function showInfo(){const t=i18n[currentLang];document.getElementById('info-name').innerText=petCustomName;document.getElementById('info-gender').innerText=petGender==='M'?t.genderM:t.genderF;document.getElementById('info-gen').innerText=generation;document.getElementById('info-age').innerText=ageInDays;document.getElementById('info-stage').innerText=stageNames[petStage];document.getElementById('info-hunger').innerText=getDots(hunger);document.getElementById('info-cleanliness').innerText=getDots(cleanliness);document.getElementById('info-happy').innerText=getDots(happiness);document.getElementById('info-health').innerText=getDots(health);document.getElementById('info-energy').innerText=getDots(energy);document.getElementById('info-fitness').innerText=getDots(fitness);document.getElementById('info-intelligence').innerText=getDots(intelligence);renderLeaderboard();document.getElementById('info-explore-stats').innerText=t.exploreStatsTxt(exploreCountCells(),exploreTreasures,exploreFlowers,exploreFruits);renderAchievements();document.getElementById('gameplay-screen').style.display='none';document.getElementById('info-screen').style.display='flex';}
 function hideInfo(){document.getElementById('info-screen').style.display='none';document.getElementById('gameplay-screen').style.display='flex';}
 function showSettings(){document.getElementById('gameplay-screen').style.display='none';document.getElementById('settings-screen').style.display='flex';}
 function hideSettings(){document.getElementById('settings-screen').style.display='none';document.getElementById('gameplay-screen').style.display='flex';}
@@ -778,7 +952,7 @@ function hideRules(){document.getElementById('rules-screen').style.display='none
 function showChooseArea(){document.getElementById('selection-screen').style.display='none';document.getElementById('choose-area-screen').style.display='flex';}
 function hideChooseArea(){document.getElementById('choose-area-screen').style.display='none';document.getElementById('selection-screen').style.display='block';}
 function navigateToLocation(l){playHappyEndSound();alert(i18n[currentLang].travelMsg+l);}
-function resetGame(){if(!window.confirm(i18n[currentLang].resetConfirm))return;stopRunner();if(inRpsMode)stopRpsGame();if(inExploreMode)closeExploreView();if(gameTimer)clearInterval(gameTimer);turnOffSleepingState();document.getElementById('race-prompt').style.display='none';raceActive=false;document.getElementById('race-container').style.display='none';clearGameState();generation=1;isDead=false;alarmPlayedThisWarning=false;leaderboard=[];myRacePoints=0;lastRaceDay=-1;exploreMap=null;exploreHoursLeft=0;exploreSecCounter=0;exploreTreasures=0;exploreFlowers=0;exploreFruits=0;currentBgStyle='none';setBackgroundStyle('none');const mc=document.getElementById('game-canvas');mc.classList.remove('egg-wobble');mc.classList.remove('pet-idle-bounce');mc.classList.remove('pet-sick-anim');mc.style.display='block';document.getElementById('gameplay-screen').style.display='none';document.getElementById('info-screen').style.display='none';document.getElementById('settings-screen').style.display='none';document.getElementById('rules-screen').style.display='none';document.getElementById('choose-area-screen').style.display='none';document.getElementById('selection-screen').style.display='block';}
+function resetGame(){if(!window.confirm(i18n[currentLang].resetConfirm))return;stopRunner();if(inRpsMode)stopRpsGame();if(inMemoryMode)stopMemoryGame();if(inExploreMode)closeExploreView();if(gameTimer)clearInterval(gameTimer);turnOffSleepingState();document.getElementById('race-prompt').style.display='none';raceActive=false;document.getElementById('race-container').style.display='none';clearGameState();generation=1;isDead=false;alarmPlayedThisWarning=false;achievements={};totalRacesWon=0;memoryCompletions=0;gems=0;ownedAccessories=[];equippedAccessory=null;leaderboard=[];myRacePoints=0;lastRaceDay=-1;exploreMap=null;exploreHoursLeft=0;exploreSecCounter=0;exploreTreasures=0;exploreFlowers=0;exploreFruits=0;currentBgStyle='basic';setBackgroundStyle('basic');const mc=document.getElementById('game-canvas');mc.classList.remove('egg-wobble');mc.classList.remove('pet-idle-bounce');mc.classList.remove('pet-sick-anim');mc.style.display='block';document.getElementById('gameplay-screen').style.display='none';document.getElementById('info-screen').style.display='none';document.getElementById('settings-screen').style.display='none';document.getElementById('rules-screen').style.display='none';document.getElementById('choose-area-screen').style.display='none';document.getElementById('shop-screen').style.display='none';document.getElementById('selection-screen').style.display='block';}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!isDead&&petStage!==undefined){const gp=document.getElementById('gameplay-screen');if(gp&&gp.style.display!=='none'&&!inRunnerMode&&!inRpsMode&&!raceActive){catchUpRealTime();applySickAnimClass();if(inExploreMode)renderExplore();else updateDisplay();maybeShowRacePrompt();saveGameState();}}});
 window.onload=initPreviews;
 </script>
