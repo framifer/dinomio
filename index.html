@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -916,7 +915,7 @@ const iv=setInterval(()=>{step++;const mo=(step%2!==0),pr=Math.floor(step/2);pla
 
 function turnOffSleepingState(){isSleeping=false;if(sleepTimer)clearTimeout(sleepTimer);document.getElementById('pet-display-box').classList.remove('lights-off');document.getElementById('zzz-layer').style.display='none';if(!isDead&&!inExploreMode)document.getElementById('game-canvas').style.display='block';}
 
-function interactArea(area){if(isDead||isEatingAnimation||isCustomAnimation||raceActive||inExploreMode||inMemoryMode)return;if(petStage===0){setActionMessage(i18n[currentLang].waitEggMsg);return;}closeAllSubMenus();if(inRunnerMode&&area!=='Palestra')stopRunner();if(inRpsMode)stopRpsGame();if(area!=='Luce'&&isSleeping)turnOffSleepingState();const c=document.getElementById('game-canvas');
+function interactArea(area){if(area!=='Luce'&&(isDead||isEatingAnimation||isCustomAnimation||raceActive||inExploreMode||inMemoryMode))return;if(area==='Luce'&&isDead)return;if(petStage===0){setActionMessage(i18n[currentLang].waitEggMsg);return;}closeAllSubMenus();if(inRunnerMode&&area!=='Palestra')stopRunner();if(inRpsMode)stopRpsGame();if(area!=='Luce'&&isSleeping)turnOffSleepingState();const c=document.getElementById('game-canvas');
 switch(area){
 case 'Parco':happiness=Math.min(100,happiness+20);energy=Math.max(0,energy-20);cleanliness=Math.max(0,cleanliness-20);isCustomAnimation=true;let ps=0;drawParkScene(0);const pi=setInterval(()=>{playBeep(400+(ps%2*150),'square',0.06);drawParkScene(ps);drawPixelSprite(c,currentPetIndex,petStage,false,'parco',ps,isSick);ps++;if(ps>8){clearInterval(pi);isCustomAnimation=false;drawBackground();playHappyEndSound();setActionMessage(i18n[currentLang].parkMsg);updateDisplay();saveGameState();}},250);break;
 case 'Coccole':happiness=Math.min(100,happiness+20);isCustomAnimation=true;let cs=0;const ct=16;const cci=setInterval(()=>{if(cs%2===0)playBeep(520+(cs%4*40),'sine',0.05);drawPixelSprite(c,currentPetIndex,petStage,false,'coccole',cs,isSick);cs++;if(cs>=ct){clearInterval(cci);isCustomAnimation=false;playHappyEndSound();setActionMessage(i18n[currentLang].cuddleMsg);updateDisplay();saveGameState();}},250);break;
