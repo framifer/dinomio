@@ -973,7 +973,7 @@ classic=classicDefault();classic.birthMonth=mo;classic.birthDay=da;classic.birth
 const cn=document.getElementById('cs-name').value.trim();if(cn)classic.name=cn.toUpperCase().slice(0,8);
 const cg=document.querySelector('input[name="cs-gender"]:checked');classic.gender=cg?cg.value:'M';
 document.getElementById('classic-setup-screen').style.display='none';document.getElementById('classic-screen').style.display='flex';saveClassic();classicRun();}
-function loadClassic(){const sd=localStorage.getItem('dinomio_classic_save');if(!sd)return false;try{const s=JSON.parse(sd);if(!s.gameActive)return false;if(gameTimer)clearInterval(gameTimer);classic=Object.assign(classicDefault(),s);classic.sel=-1;classic.view='main';classic._foodMenu=false;classic._eat=null;classic._med=null;classic._gameMenu=false;classic._bath=null;classic._scold=null;classicCatchUp();hideAllScreens();document.getElementById('classic-screen').style.display='flex';classicRun();return true;}catch(e){return false;}}
+function loadClassic(){const sd=localStorage.getItem('dinomio_classic_save');if(!sd)return false;try{const s=JSON.parse(sd);if(!s.gameActive)return false;if(gameTimer)clearInterval(gameTimer);classic=Object.assign(classicDefault(),s);classic.sel=-1;classic.view='main';classic._foodMenu=false;classic._eat=null;classic._med=null;classic._gameMenu=false;classic._bath=null;classic._scold=null;classic._refuse=null;classicCatchUp();hideAllScreens();document.getElementById('classic-screen').style.display='flex';classicRun();return true;}catch(e){return false;}}
 function saveClassic(){if(!classic||classic._preview)return;localStorage.setItem('dinomio_classic_save',JSON.stringify(classic));}
 function clearClassicSave(){localStorage.removeItem('dinomio_classic_save');}
 
@@ -1054,8 +1054,13 @@ const eating=!!classic._eat;
 const medicating=!!classic._med;
 const washing=!!classic._bath;
 const scolding=!!classic._scold;
+const refusing=!!classic._refuse;
 const lift=(classic.stage===2?4:(classic.stage===3?6:(classic.stage===4?10:0)));
-if(eating){
+if(refusing){
+// scuote la testa a destra/sinistra (no scritte, no stat)
+const sh=(classic._refuse.step%2===0)?-3:3;
+drawClassicPet(p,classic.stage,0,classic.isSick,classic.gender,pe,true,40+sh,64-lift);
+}else if(eating){
 // pet FERMO (still) che muove SOLO la bocca, senza deformazioni
 drawClassicPet(p,classic.stage,0,classic.isSick,classic.gender,pe,true);
 const st=classic.stage;const rad=(st===4?9:(st===3?7:(st===2?6:4))); // mezza larghezza corpo per stadio
@@ -1414,8 +1419,8 @@ if(classic.stage===0){return;} // uovo: aspetta la schiusa
 if(classic.view==='dir'){if(btn==='A')dirMoveSel(-1);else if(btn==='C')dirMoveSel(1);else if(btn==='B')dirConfirm();return;}
 if(classic.view==='jump'){if(btn==='B')jumpDo();else if(btn==='C')classicCloseView();return;}
 if(classic.view==='info'){if(btn==='C'||btn==='B')classicCloseView();return;}
-if(classic._eat||classic._med||classic._bath||classic._scold){return;} // durante le animazioni i tasti sono ignorati
-if(classic._foodMenu){if(btn==='A'){classic.foodSel=(classic.foodSel+1)%2;classicBeepSel();classicRender();}else if(btn==='C'){classic._foodMenu=false;classicRender();}else if(btn==='B'){classic._foodMenu=false;startEating(classic.foodSel===0?'meal':'snack');}return;}
+if(classic._eat||classic._med||classic._bath||classic._scold||classic._refuse){return;} // durante le animazioni i tasti sono ignorati
+if(classic._foodMenu){if(btn==='A'){classic.foodSel=(classic.foodSel+1)%2;classicBeepSel();classicRender();}else if(btn==='C'){classic._foodMenu=false;classicRender();}else if(btn==='B'){classic._foodMenu=false;const chosen=(classic.foodSel===0?'meal':'snack');if(chosen==='meal'&&classic.hunger>=4){startRefuse();}else{startEating(chosen);}}return;}
 if(classic._gameMenu){if(btn==='A'){classic.gameSel=(classic.gameSel+1)%2;classicBeepSel();classicRender();}else if(btn==='C'){classic._gameMenu=false;classicRender();}else if(btn==='B'){classic._gameMenu=false;if(classic.gameSel===0)startJumpGame();else startTris();}return;}
 if(classic.view==='tris'){if(btn==='A')trisMove();else if(btn==='B')trisConfirm();else if(btn==='C'){classic.view='main';classicRender();}return;}
 // schermata principale a icone
@@ -1456,6 +1461,12 @@ ctx.textAlign='start';ctx.textBaseline='alphabetic';
 }
 function classicCloseView(){classic.view='main';classicRender();}
 let _eatTimer=null;
+let _refuseTimer=null;
+function startRefuse(){if(!classic||classic._refuse)return;classic._refuse={step:0};playBeep(300,'square',0.06);
+if(_refuseTimer)clearInterval(_refuseTimer);
+_refuseTimer=setInterval(()=>{classic._refuse.step++;classicRender();
+if(classic._refuse.step>=8){clearInterval(_refuseTimer);_refuseTimer=null;classic._refuse=null;classicRender();}
+},180);}
 function startEating(type){if(!classic||classic._eat)return;classic._eat={type:type,step:0};
 if(_eatTimer)clearInterval(_eatTimer);
 _eatTimer=setInterval(()=>{classic._eat.step++;playBeep(classic._eat.step%2===0?360:300,'square',0.04);classicRender();
@@ -1521,7 +1532,7 @@ function startJumpGame(){classic.view='jump';jumpY=0;jumpVY=0;jumpObs=80;jumpSco
 function startJumpGame(){classic.view='jump';jumpY=0;jumpVY=0;jumpObs=80;jumpScore=0;jumpSpeed=4;if(jumpTimer)clearInterval(jumpTimer);jumpTimer=setInterval(jumpLoop,120);classicMsg(i18n[currentLang].classicJump);}
 function jumpDo(){if(jumpY===0){jumpVY=-5;playBeep(500,'square',0.05);}}
 function jumpLoop(){if(classic.view!=='jump'){if(jumpTimer)clearInterval(jumpTimer);return;}jumpY+=jumpVY;jumpVY+=1;if(jumpY>0){jumpY=0;jumpVY=0;}
-jumpSpeed=4+Math.floor(jumpScore/3); // piu veloce ogni 3 punti
+jumpSpeed=4+Math.floor(jumpScore/2)*0.6; // un pochettino piu veloce ogni 2 salti
 jumpObs-=jumpSpeed;
 if(jumpObs<-2){jumpObs=82;jumpScore++;classic.happy=Math.min(4,classic.happy+(jumpScore%3===0?1:0));playBeep(760,'square',0.03);}
 // collisione (ostacolo vicino al pet a cx=24 e pet non abbastanza in alto)
