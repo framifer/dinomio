@@ -1505,7 +1505,7 @@ else if(icon==='bath'){startBath();}
 else if(icon==='discipline'){startScold();}
 else if(icon==='game'){classic._gameMenu=true;classic.gameSel=0;playBeep(600,'square',0.04);}
 else if(icon==='info'){classic.view='info';}
-else if(icon==='reset'){if(window.confirm(i18n[currentLang].classicResetConfirm)){clearClassicSave();if(classicTimer)clearInterval(classicTimer);classic=classicDefault();saveClassic();classicRun();classicMsg(i18n[currentLang].classicResetDone);}}
+else if(icon==='reset'){if(window.confirm(i18n[currentLang].classicResetConfirm)){clearClassicSave();if(classicTimer)clearInterval(classicTimer);classic=null;const nm=document.getElementById('cs-name');if(nm)nm.value='';const mo=document.getElementById('cs-month');if(mo)mo.value='';const da=document.getElementById('cs-day');if(da)da.value='';const ho=document.getElementById('cs-hour');if(ho)ho.value='';const mrad=document.querySelector('input[name="cs-gender"][value="M"]');if(mrad)mrad.checked=true;startClassic();return;}}
 saveClassic();classicRender();}
 
 /* --- Mini-gioco 1: indovina la direzione (sx/dx) --- */
