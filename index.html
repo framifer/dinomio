@@ -1059,13 +1059,14 @@ if(eating){
 // pet FERMO (still) che muove SOLO la bocca, senza deformazioni
 drawClassicPet(p,classic.stage,0,classic.isSick,classic.gender,pe,true);
 const st=classic.stage;const rad=(st===4?9:(st===3?7:(st===2?6:4))); // mezza larghezza corpo per stadio
-const openF=(classic._eat.step%2===1);const my=64-lift+1; // bocca sulla faccia
-const mw=(st>=3?3:2); // bocca piu larga sugli stadi grandi
-// bocca aperta nei frame dispari, senza toccare il bordo inferiore
-if(openF){pe(40-Math.floor(mw/2),my,mw,1);}
-// cibo che si consuma appena a destra del corpo (scala con lo stadio)
+const openF=(classic._eat.step%2===1);const my=64-lift+1; // riga bocca
+const mw=(st>=3?3:2);
+// anima la bocca: pulisce l'area e disegna aperta (foro chiaro) o chiusa (lineetta scura)
+pe(40-Math.floor(mw/2),my,mw,2);
+if(openF){pe(40-Math.floor(mw/2),my,mw,2);}else{p(40-Math.floor(mw/2),my,mw,1);}
+// cibo che si consuma a destra del pet e leggermente piu in alto
 const rem=Math.max(0,4-Math.floor(classic._eat.step/2));
-if(rem>0)classicDrawFoodItem(p,pe,classic._eat.type,40+rad+3,64-lift+1,rem,st>=3);
+if(rem>0)classicDrawFoodItem(p,pe,classic._eat.type,40+rad+5,64-lift-3,rem,st>=3);
 }else if(medicating){
 // pet FERMO (malato: occhi a X gestiti dallo sprite) con siringa che punge a destra
 drawClassicPet(p,classic.stage,0,true,classic.gender,pe,true);
