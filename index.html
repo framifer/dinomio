@@ -100,7 +100,6 @@ h1, h2 { font-size: 0.9rem; text-align: center; color: #3a4653; text-transform: 
 .explore-setup-actions .go-btn { background: linear-gradient(180deg,#4f6d86,#3c566c); box-shadow: 0 3px 0 #2c4152; }
 .explore-setup-actions .cancel-btn { background: linear-gradient(180deg,#c47a7a,#a85a5a); box-shadow:0 3px 0 #8c4646; }
 .explore-setup-actions button:active { transform: translateY(3px); box-shadow: none; }
-/* Sottomenu SVAGO: X piccola, Esplorazione piu larga, testo che non fuoriesce */
 #fun-sub-menu .kitchen-btn { min-width: 0; font-size: 0.55rem; padding: 6px 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 #fun-sub-menu #btn-explore-play { flex: 1.6; }
 #fun-sub-menu #btn-close-fun { flex: 0 0 26px; min-width: 26px; padding: 6px 0; }
@@ -165,7 +164,6 @@ h1, h2 { font-size: 0.9rem; text-align: center; color: #3a4653; text-transform: 
 .zzz-text:nth-child(2) { left: 50%; animation-delay: 0.6s; }
 .zzz-text:nth-child(3) { left: 70%; animation-delay: 1.2s; }
 @keyframes floatZ { 0% { top: 70%; opacity: 0; transform: scale(0.6); } 50% { opacity: 1; } 100% { top: 10%; opacity: 0; transform: scale(1.3); } }
-/* ===== Ottimizzazione mobile ===== */
 @media (max-width: 480px) {
   .tamagotchi-container { border-radius: 22px; padding: 10px; border-width: 4px; }
   .lcd-screen { padding: 6px; border-width: 3px; }
@@ -526,7 +524,7 @@ let currentLang='en',currentShellColor='default',currentBgStyle='basic',actionMs
 let petCustomName="SPIKE",petGender="M";
 let gameMode='dinomio';
 let petTrait="atletico",adultForm="standard",careStats={gym:0,study:0,food:0};
-let gameStartOffsetSec=(0*30+0)*86400+8*3600; // default: mese1 giorno1 ore08
+let gameStartOffsetSec=(0*30+0)*86400+8*3600;
 const TRAITS=[
 {id:'goloso',icon:'\uD83C\uDF57',it:'Goloso',en:'Greedy'},
 {id:'pigro',icon:'\uD83D\uDE34',it:'Pigro',en:'Lazy'},
@@ -535,9 +533,7 @@ const TRAITS=[
 function traitInfo(id){return TRAITS.find(t=>t.id===id)||TRAITS[2];}
 const FORMS={standard:{icon:'\u2B50',it:'Standard',en:'Standard'},atletico:{icon:'\uD83D\uDCAA',it:'Atletico',en:'Athletic'},saggio:{icon:'\uD83E\uDDE0',it:'Saggio',en:'Wise'},paffuto:{icon:'\uD83D\uDC68\u200D\uD83C\uDF73',it:'Paffuto (Cuoco)',en:'Chubby (Chef)'}};
 function computeAdultForm(){const g=careStats.gym||0,s=careStats.study||0,f=careStats.food||0;const max=Math.max(g,s,f);if(max<=0){adultForm='standard';return;}
-// serve una chiara dominanza (almeno il 40% del totale e strettamente maggiore degli altri)
 if(g===max&&g>s&&g>f)adultForm='atletico';else if(s===max&&s>g&&s>f)adultForm='saggio';else if(f===max&&f>g&&f>s)adultForm='paffuto';else adultForm='standard';}
-// moltiplicatore di velocita di decadimento per una data stat, in base al tratto (1 = normale, >1 piu veloce, <1 piu lento)
 function decayMult(stat){
 if(petTrait==='goloso'&&stat==='hunger')return 1.25;
 if(petTrait==='pigro'&&stat==='energy')return 0.6;
@@ -609,20 +605,15 @@ function toggleLanguage(){currentLang=currentLang==='it'?'en':'it';updateTexts()
 function setShellColor(c){currentShellColor=c;const s=document.getElementById('shell-container');s.className='tamagotchi-container';if(c!=='default')s.classList.add('shell-'+c);saveGameState();}
 function setBackgroundStyle(st){if(st!=='basic'&&st!=='real')st='basic';currentBgStyle=st;document.querySelectorAll('.bg-picker-grid .glossy-btn').forEach(b=>b.classList.remove('active-bg'));const a=document.getElementById('bg-btn-'+st);if(a)a.classList.add('active-bg');drawBackground();saveGameState();}
 
-// Ritorna {hour, month} secondo l'ora reale di Roma (Europe/Rome, gestisce ora legale)
-// Orologio di gioco: parte da gameStartOffsetSec e avanza con totalGameSeconds. Mese=30 giorni.
 function gameClock(){const tot=gameStartOffsetSec+ (typeof totalGameSeconds==='number'?totalGameSeconds:0);const secOfDay=((tot%86400)+86400)%86400;const hour=secOfDay/3600;const dayIndex=Math.floor(tot/86400);const month=(Math.floor(dayIndex/30)%12)+1;return {hour,month};}
 function romeNow(){try{const p=new Intl.DateTimeFormat('en-US',{timeZone:'Europe/Rome',hour:'numeric',hour12:false,minute:'numeric',month:'numeric'}).formatToParts(new Date());let h=0,mn=0,mo=1;p.forEach(o=>{if(o.type==='hour')h=parseInt(o.value)%24;else if(o.type==='minute')mn=parseInt(o.value);else if(o.type==='month')mo=parseInt(o.value);});return{hour:h+mn/60,month:mo};}catch(e){const d=new Date();return{hour:d.getHours()+d.getMinutes()/60,month:d.getMonth()+1};}}
-// Stagione: 0=inverno,1=primavera,2=estate,3=autunno
 function romeSeason(month){if(month===12||month===1||month===2)return 0;if(month>=3&&month<=5)return 1;if(month>=6&&month<=8)return 2;return 3;}
 
 function drawBackground(){const c=document.getElementById('bg-canvas');if(!c)return;const x=c.getContext('2d');x.setTransform(1,0,0,1,0,0);x.imageSmoothingEnabled=false;x.clearRect(0,0,256,256);x.setTransform(2,0,0,2,0,0);
-if(isSleeping)return; // luce spenta: schermo nero, nessuno sfondo
-if(currentBgStyle!=='real')return; // 'basic' = sfondo neutro (vuoto)
+if(isSleeping)return;
+if(currentBgStyle!=='real')return;
 const t=gameClock(),h=t.hour,season=romeSeason(t.month);
-// Fase del giorno: alba 6-8, giorno 8-18, tramonto 18-20, notte 20-6
 let phase;if(h>=6&&h<8)phase='dawn';else if(h>=8&&h<18)phase='day';else if(h>=18&&h<20)phase='dusk';else phase='night';
-// Palette cielo per fase, con tinte stagionali
 const skies={
 dawn:{top:"#ffb27a",bot:"#ffd9a8"},
 day:{top:"#7ec8f0",bot:"#bfe6f7"},
@@ -630,75 +621,56 @@ dusk:{top:"#ff8a5c",bot:"#a86ab0"},
 night:{top:"#10203f",bot:"#243a63"}
 };
 let sky=skies[phase];
-if(season===2&&phase==='day'){sky={top:"#4db8f0",bot:"#a8e6ff"};} // estate: azzurri piu accesi
-if(season===2&&phase==='dusk'){sky={top:"#ff7a3c",bot:"#ffcf5c"};} // estate: tramonto piu giallo
-if(season===0){ // inverno: cielo piu freddo/pallido
+if(season===2&&phase==='day'){sky={top:"#4db8f0",bot:"#a8e6ff"};}
+if(season===2&&phase==='dusk'){sky={top:"#ff7a3c",bot:"#ffcf5c"};}
+if(season===0){
 if(phase==='day')sky={top:"#a8c4d8",bot:"#dbe8f0"};
 else if(phase==='dawn')sky={top:"#d6b8c4",bot:"#e8dbe0"};
 else if(phase==='dusk')sky={top:"#b89ac4",bot:"#8a7aa0"};
 }
-// gradiente cielo (a bande, stile 8-bit)
 for(let i=0;i<8;i++){const yy=i*16;x.fillStyle=lerpColor(sky.top,sky.bot,i/7);x.fillRect(0,yy,128,16);}
-// Astri
 if(phase==='night'){
-// stelle
 x.fillStyle="#e8ecf0";const stars=[[12,14],[30,22],[52,10],[70,26],[92,16],[112,30],[22,40],[64,44],[100,48],[40,54]];stars.forEach((s,i)=>{if(i%3===0){x.fillRect(s[0],s[1]-1,1,3);x.fillRect(s[0]-1,s[1],3,1);}else x.fillRect(s[0],s[1],1,1);});
-// luna
 x.fillStyle="#e6e6c4";x.fillRect(96,12,16,16);x.fillStyle=sky.top;x.fillRect(100,10,12,12);
 }else if(phase==='day'){
-// sole
 const sc=(season===2)?"#ffdf30":"#ffe14d";x.fillStyle=sc;x.fillRect(100,10,16,16);x.fillStyle="#ffd000";x.fillRect(104,14,8,8);
-// nuvole
 x.fillStyle="#ffffff";x.fillRect(14,18,20,5);x.fillRect(10,22,28,5);x.fillRect(58,30,18,5);x.fillRect(54,34,26,5);
 }else{
-// alba/tramonto: sole basso
 x.fillStyle=(phase==='dawn')?"#ffe0a0":"#ff9a4a";x.fillRect(90,40,16,16);x.fillStyle=(phase==='dawn')?"#ffd070":"#ff7a2a";x.fillRect(94,44,8,8);
 }
-// Terreno stagionale: linea di terra calcolata per allineare i piedi del pet
 const box=document.getElementById('pet-display-box');const H=(box&&box.clientHeight)?box.clientHeight:260;const feetBoxY=(H-128)/2+120;let groundY=Math.round((feetBoxY/H)*128);if(groundY<40)groundY=40;if(groundY>120)groundY=120;
 let g1,g2;
-if(season===0){g1="#e8eef2";g2="#cdd8e0";} // inverno: neve
-else if(season===2){g1="#7ac24f";g2="#5fa838";} // estate: verde acceso
-else if(season===3){g1="#b58a4f";g2="#96703a";} // autunno: toni caldi
-else {g1="#6aae4f";g2="#5a9a42";} // primavera
+if(season===0){g1="#e8eef2";g2="#cdd8e0";}
+else if(season===2){g1="#7ac24f";g2="#5fa838";}
+else if(season===3){g1="#b58a4f";g2="#96703a";}
+else {g1="#6aae4f";g2="#5a9a42";}
 x.fillStyle=g1;x.fillRect(0,groundY,128,128-groundY);x.fillStyle=g2;x.fillRect(0,groundY,128,3);
-// Dettagli stagionali sul terreno
-if(season===0){ // cumuli di neve
+if(season===0){
 x.fillStyle="#ffffff";x.fillRect(14,groundY-3,20,4);x.fillRect(70,groundY-4,26,5);x.fillRect(48,groundY-2,14,3);
-}else if(season===1){ // primavera: fiori
+}else if(season===1){
 [[18,"#ff6ec7"],[40,"#ffe14d"],[66,"#ff6ec7"],[92,"#ffffff"],[112,"#ffe14d"]].forEach(f=>{x.fillStyle="#3f7a42";x.fillRect(f[0],groundY+6,1,4);x.fillStyle=f[1];x.fillRect(f[0]-1,groundY+4,3,3);});
-}else if(season===2){ // estate: ciuffi d'erba
+}else if(season===2){
 x.fillStyle=g2;for(let gx=6;gx<128;gx+=16){x.fillRect(gx,groundY+6,2,5);x.fillRect(gx+4,groundY+8,2,4);}
-}else{ // autunno: foglie cadute
+}else{
 [[16,"#c46a2a"],[38,"#d99a3a"],[62,"#a8542a"],[88,"#c46a2a"],[110,"#d99a3a"]].forEach(f=>{x.fillStyle=f[1];x.fillRect(f[0],groundY+7,3,2);x.fillRect(f[0]+1,groundY+6,1,1);});
 }
-// Neve che cade in inverno di notte/alba per atmosfera
 if(season===0){x.fillStyle="rgba(255,255,255,0.8)";const flakes=[[20,20],[50,40],[80,15],[104,55],[36,70],[70,80],[110,88],[14,50]];flakes.forEach(fl=>x.fillRect(fl[0],fl[1],2,2));}
-// Griglia pixel/LCD visibile: quadratini che si intravedono (molto tenue)
 const CELL=8;x.fillStyle="rgba(20,30,26,0.06)";
 for(let gx=CELL;gx<128;gx+=CELL)x.fillRect(gx,0,1,128);
 for(let gy=CELL;gy<128;gy+=CELL)x.fillRect(0,gy,128,1);
 }
-// interpolazione colori esadecimali per il gradiente cielo
 function lerpColor(a,b,t){const ai=parseInt(a.slice(1),16),bi=parseInt(b.slice(1),16);const ar=(ai>>16)&255,ag=(ai>>8)&255,ab=ai&255,br=(bi>>16)&255,bg=(bi>>8)&255,bb=bi&255;const r=Math.round(ar+(br-ar)*t),gg=Math.round(ag+(bg-ag)*t),bl=Math.round(ab+(bb-ab)*t);return "rgb("+r+","+gg+","+bl+")";}
 
-/* ===== NUOVA: scena Parco a piena dimensione (128x128) sul bg-canvas ===== */
 function drawParkScene(animFrame){
 const c=document.getElementById('bg-canvas');if(!c)return;
 const x=c.getContext('2d');x.imageSmoothingEnabled=false;x.clearRect(0,0,128,128);
-// cielo
 x.fillStyle="#bfe3f0";x.fillRect(0,0,128,128);
-// sole
 x.fillStyle="#ffe14d";x.fillRect(104,10,16,16);x.fillStyle="#ffd000";x.fillRect(108,14,8,8);
-// nuvole
 x.fillStyle="#ffffff";x.fillRect(14,16,20,5);x.fillRect(10,20,28,5);x.fillRect(60,28,18,5);x.fillRect(56,32,26,5);
-// prato che riempie tutto il fondo
 const groundY=94;
 x.fillStyle="#6aae4f";x.fillRect(0,groundY,128,128-groundY);
 x.fillStyle="#5a9a42";x.fillRect(0,groundY,128,3);
-// ciuffi d'erba
 x.fillStyle="#5a9a42";for(let gx=4;gx<128;gx+=14){const off=(animFrame%2===0)?0:1;x.fillRect(gx+off,groundY+6,2,4);x.fillRect(gx+4,groundY+9,2,3);}
-// albero grande
 function bigTree(cx,trunkBottom,scale){
 const trunkW=Math.round(10*scale),trunkH=Math.round(36*scale);
 const cw=Math.round(48*scale),ch=Math.round(48*scale);
@@ -712,7 +684,6 @@ x.fillStyle="#3f7a42";x.fillRect(chX,chY,cw,ch);
 x.fillStyle="#5a9a5a";x.fillRect(chX+Math.round(cw*0.14),chY+Math.round(ch*0.14),Math.round(cw*0.36),Math.round(ch*0.3));
 x.fillStyle="#2f5f32";x.fillRect(chX+Math.round(cw*0.55),chY+Math.round(ch*0.5),Math.round(cw*0.3),Math.round(ch*0.3));
 }
-// cespuglio grande
 function bigBush(cx,groundBottom,scale){
 const w=Math.round(42*scale),h=Math.round(26*scale);
 const bx=Math.round(cx-w/2),by=groundBottom-h;
@@ -721,10 +692,8 @@ x.fillStyle="#3f7a42";x.fillRect(bx,by,w,h);
 x.fillStyle="#5a9a5a";x.fillRect(bx+Math.round(w*0.15),by+Math.round(h*0.2),Math.round(w*0.32),Math.round(h*0.42));
 x.fillStyle="#ffe14d";if(animFrame%2===0)x.fillRect(bx+Math.round(w*0.62),by+Math.round(h*0.5),2,2);
 }
-// alberi grandi ai lati, a tutta altezza del riquadro
 bigTree(20,groundY+2,1.2);
 bigTree(108,groundY+2,1.05);
-// cespugli grandi lungo il prato
 bigBush(58,128,1.05);
 bigBush(92,128,0.85);
 bigBush(12,128,0.7);
@@ -753,14 +722,12 @@ let isTired=false;
 function checkTired(){isTired=(hunger<40||cleanliness<40||happiness<40||health<40||energy<40);}
 let achievements={},totalRacesWon=0,memoryCompletions=0;
 let gems=0,ownedAccessories=[],equippedAccessory=null;
-// Catalogo cibo speciale (consumo immediato)
 const SHOP_FOOD=[
 {id:'torta',cost:15,icon:'\uD83C\uDF70',it:'Torta',en:'Cake',eff:{hunger:60,happiness:20}},
 {id:'gelato',cost:10,icon:'\uD83C\uDF66',it:'Gelato',en:'Ice cream',eff:{happiness:40,hunger:20}},
 {id:'pozione',cost:20,icon:'\uD83E\uDDEA',it:'Pozione',en:'Potion',eff:{health:60,energy:40}},
 {id:'energetico',cost:12,icon:'\u26A1',it:'Energetico',en:'Energy drink',eff:{energy:60}}
 ];
-// Catalogo accessori (equipaggiabili, disegnati sullo sprite)
 const SHOP_ACCESSORIES=[
 {id:'hat',cost:25,icon:'\uD83C\uDFA9',it:'Cappellino',en:'Hat'},
 {id:'glasses',cost:20,icon:'\uD83D\uDD76\uFE0F',it:'Occhiali',en:'Glasses'},
@@ -840,7 +807,6 @@ function generatePoopSchedule(){poopSchedule=[];const mn=7*3600,mx=22*3600;for(l
 function generateLeaderboard(){const n=[...RIVAL_NAMES].sort(()=>Math.random()-0.5).slice(0,9);leaderboard=n.map(x=>({name:x,points:0}));}
 function raceDayIndex(){return Math.floor(totalGameSeconds/(SECONDS_PER_DAY*2));}
 function resetLeaderboardForNewPet(){generateLeaderboard();myRacePoints=0;lastRaceDay=raceDayIndex();}
-
 function saveGameState(){const g={currentPetIndex,petCustomName,petGender,petStage,hunger,happiness,health,energy,fitness,intelligence,cleanliness,generation,ageInDays,secondsInCurrentStage,totalGameSeconds,lastRealTimestamp,isDirty,isSick,isDead,isSleeping,poopSchedule,poopDoneToday,poopScheduleDay,illnessRolledDay,currentLang,currentShellColor,currentBgStyle,alarmPlayedThisWarning,leaderboard,myRacePoints,lastRaceDay,exploreMap,explorePetX,explorePetY,exploreHoursLeft,exploreSecCounter,exploreTreasures,exploreFlowers,exploreFruits,achievements,totalRacesWon,memoryCompletions,gems,ownedAccessories,equippedAccessory,petTrait,adultForm,careStats,memoryLevel,gameStartOffsetSec,gameActive:true};localStorage.setItem('dinomio_save',JSON.stringify(g));}
 
 function loadGameState(){const sd=localStorage.getItem('dinomio_save');if(!sd)return false;try{const s=JSON.parse(sd);if(!s.gameActive)return false;
@@ -901,7 +867,6 @@ if(tired){const ew=Math.max(3,Math.round(r*0.34)),lidY=Math.round(eY-eS*0.2);px(
 px(cx-eDX-eS/2,eY-eS/2,eS,eS,EYE_COLOR);px(cx+eDX-eS/2,eY-eS/2,eS,eS,EYE_COLOR);px(cx-eDX-eS/2,eY-eS/2,1,1,"#e8ecf0");px(cx+eDX-eS/2,eY-eS/2,1,1,"#e8ecf0");
 if(mO)px(cx-2,cy+r*0.32,4,3,EYE_COLOR);else px(cx-2,cy+r*0.34,4,1,EYE_COLOR);}
 function drawBackRidges(cx,cy,r,n){for(let i=0;i<n;i++){const t=(i/(n-1))-0.5,rx=Math.round(cx+t*r*1.2),ry=Math.round(cy-r*0.95);px(rx-1,ry-2,3,4,pal.outline);px(rx,ry-1,1,3,pal.shade);}}
-function drawParkTree(cx,groundY,th){const trunkW=Math.max(2,Math.round(th*0.22)),trunkH=Math.max(4,Math.round(th*0.42)),cw=Math.max(6,Math.round(th*0.75)),chH=Math.max(6,Math.round(th*0.7));const tx=Math.round(cx-trunkW/2),ty=Math.round(groundY-trunkH);px(tx-1,ty-1,trunkW+2,trunkH+2,"#3a2a18");px(tx,ty,trunkW,trunkH,"#6a4f30");const chY=ty-chH+2,chX=Math.round(cx-cw/2);px(chX-1,chY-1,cw+2,chH+2,"#2f5f32");px(chX,chY,cw,chH,"#3f7a42");px(chX+2,chY+2,Math.max(2,Math.round(cw*0.35)),Math.max(2,Math.round(chH*0.3)),"#5a9a5a");px(chX+Math.round(cw*0.3),chY-Math.max(2,Math.round(chH*0.25)),Math.round(cw*0.4),Math.max(2,Math.round(chH*0.3)),"#3f7a42");}
 if(overlayItem==='parco'){const gy=28;px(0,gy,32,32-gy,"#6aae4f");px(0,gy,32,1,"#5a9a42");}
 if(stage===5){px(11,10,10,10,"#4a4f56");px(12,11,8,8,"#c4c8ce");px(13,13,2,2,EYE_COLOR);px(17,13,2,2,EYE_COLOR);px(14,17,4,1,"#4a4f56");px(13,20,2,2,"#c4c8ce");px(17,20,2,2,"#c4c8ce");return;}
 if(stage===0){const egg=EGG_COLORS[type]||EGG_COLORS[0];px(10,8,12,18,egg.out);px(11,9,10,16,egg.sh);px(12,10,8,14,egg.hi);px(13,13,2,2,pal.spot);px(18,17,2,2,pal.spot);px(14,20,2,2,pal.spot);px(12,10,2,3,"#ffffff");return;}
@@ -948,23 +913,22 @@ ctx.restore();}
 function hideAllScreens(){['mode-screen','selection-screen','choose-area-screen','rules-screen','info-screen','settings-screen','shop-screen','gameplay-screen','classic-setup-screen'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none';});const cl=document.getElementById('classic-screen');if(cl)cl.style.display='none';}
 /* ===================== MODALITA CLASSIC ===================== */
 let classic=null,classicTimer=null,classicAnimFrame=0;
-const CLASSIC_PX="#20301a"; // pixel "neri" su LCD verde
-const CLASSIC_DECAY={hunger:1800,happy:2700}; // fame -1 ogni 30min, felicita -1 ogni 45min
-const CLASSIC_T_EGG=7, CLASSIC_T_STAGE=86400*2; // uovo 7s, evoluzione ogni 2 giorni
-const CLASSIC_POOP_INT=7200; // una cacca ogni ~2h
-const CLASSIC_DIRTY_SICK=7200; // cacca non pulita per 2h -> malattia
-const CLASSIC_HUNGER_DEATH=72000; // fame a 0 per 20h -> morte
-const CLASSIC_WAKE_HOUR=7; // sveglia alle 7:00
-// ora corrente di gioco (0-24) = ora di nascita + tempo trascorso
+const CLASSIC_PX="#20301a";
+const CLASSIC_DECAY={hunger:1800,happy:2700};
+const CLASSIC_T_EGG=7, CLASSIC_T_STAGE=86400*2;
+const CLASSIC_POOP_INT=7200;
+const CLASSIC_DIRTY_SICK=7200;
+const CLASSIC_HUNGER_DEATH=72000;
+const CLASSIC_WAKE_HOUR=7;
 function classicHour(){if(!classic)return 8;const base=(classic.birthOffsetSec||0)+classic.totalSec;return ((base/3600)%24+24)%24;}
-function classicBedtime(stage){if(stage<=1)return 20;if(stage===2||stage===3)return 22;return 23;} // baby 20, child/teen 22, adult 23
-// la disciplina determina l'adulto: alta -> varianti "belle" (0,1); bassa -> "trascurate" (3,4); media -> 2
+function classicBedtime(stage){if(stage<=1)return 20;if(stage===2||stage===3)return 22;return 23;}
 function classicPickAdult(){const d=classic?classic.discipline:0;if(d>=3)return Math.random()<0.5?0:1;if(d<=1)return Math.random()<0.5?3:4;return 2;}
 const CLASSIC_ICONS=['food','light','game','medicine','bath','discipline','info','reset'];
 const CLASSIC_TOP=['food','light','game','medicine'];
 const CLASSIC_BOT=['bath','discipline','info','reset'];
 
-function classicDefault(){return {stage:0,hunger:2,happy:2,discipline:0,health:4,weight:5,training:0,ageDays:0,generation:1,gender:(Math.random()<0.5?'M':'F'),name:'',isDirty:false,isSick:false,isDead:false,isSleeping:false,totalSec:0,secStage:0,lastTs:Math.floor(Date.now()/1000),poopDone:[false,false,false],poopDay:-1,illDay:-1,sel:-1,view:'main',teenVariant:0,adultVariant:0,jumpBest:0,birthMonth:1,birthDay:1,birthHour:8,birthOffsetSec:8*3600,poopCount:0,dirtySince:0,hungerZeroSec:0,sickLevel:0,snackRisk:0,lastPoopSec:0,bedtimeDay:-1,gameActive:true};}
+/* MODIFICA 1: aggiunto manualLightOff:false */
+function classicDefault(){return {stage:0,hunger:2,happy:2,discipline:0,health:4,weight:5,training:0,ageDays:0,generation:1,gender:(Math.random()<0.5?'M':'F'),name:'',isDirty:false,isSick:false,isDead:false,isSleeping:false,manualLightOff:false,totalSec:0,secStage:0,lastTs:Math.floor(Date.now()/1000),poopDone:[false,false,false],poopDay:-1,illDay:-1,sel:-1,view:'main',teenVariant:0,adultVariant:0,jumpBest:0,birthMonth:1,birthDay:1,birthHour:8,birthOffsetSec:8*3600,poopCount:0,dirtySince:0,hungerZeroSec:0,sickLevel:0,snackRisk:0,lastPoopSec:0,bedtimeDay:-1,gameActive:true};}
 
 function startClassic(){hideAllScreens();if(gameTimer)clearInterval(gameTimer);if(classicTimer)clearInterval(classicTimer);updateTexts();const sc=document.getElementById('classic-setup-screen');const d=document.getElementById('classic-setup-desc');if(d)d.innerText=i18n[currentLang].classicSetupDesc;sc.style.display='flex';}
 function confirmClassicSetup(){const rMo=document.getElementById('cs-month').value.trim(),rDa=document.getElementById('cs-day').value.trim(),rHo=document.getElementById('cs-hour').value.trim();let mo=parseInt(rMo),da=parseInt(rDa),ho=parseInt(rHo);
@@ -979,44 +943,33 @@ function clearClassicSave(){localStorage.removeItem('dinomio_classic_save');}
 
 function classicRun(){if(classicTimer)clearInterval(classicTimer);classicTimer=setInterval(()=>{classicAnimFrame++;classicTick();classicRender();},600);classicRender();}
 
+/* MODIFICA 1: logica sonno con override manuale luce */
 function classicStep(sim){if(!classic||classic.isDead)return;if(classic._preview)return;classic.totalSec++;classic.secStage++;classic.ageDays=Math.floor(classic.totalSec/86400);
 if(classic.stage===0){classic._hatching=(classic.secStage>=CLASSIC_T_EGG-3);if(classic.secStage>=CLASSIC_T_EGG){classic.stage=1;classic.secStage=0;classic._hatching=false;if(!sim){classicBeep();setTimeout(()=>classicBeep(),200);}}return;}
-// ==== SONNO a orari fissi (orologio di gioco) ====
 const hr=classicHour();const bed=classicBedtime(classic.stage);
-// va a dormire all'ora di nanna; si sveglia alle 7:00
-const shouldSleep=(hr>=bed||hr<CLASSIC_WAKE_HOUR);
+const autoSleep=(hr>=bed||hr<CLASSIC_WAKE_HOUR);
+const shouldSleep=classic.manualLightOff||autoSleep;
 if(shouldSleep&&!classic.isSleeping){classic.isSleeping=true;classic._bedStart=classic.totalSec;if(!sim){classicBeep();document.getElementById('pet-display-box');}}
 if(!shouldSleep&&classic.isSleeping){classic.isSleeping=false;classic._bedStart=0;}
-// penalita educazione: se all'ora di nanna la luce non e spenta entro 15 min -> disciplina -1 (una volta a notte)
-// (nel Classic "luce spenta" = schermo scuro; qui il sonno e automatico, quindi penalizziamo se il pet e "sveglio forzato" - non applicabile con auto-sleep)
 if(classic.isSleeping){
-// durante il sonno: niente decadimento, niente cacca, energia si ripristina
 classic.health=Math.min(4,classic.health);
 }else{
-// ==== DECADIMENTO fame/felicita ====
 if(classic.totalSec%CLASSIC_DECAY.hunger===0)classic.hunger=Math.max(0,classic.hunger-1);
 if(classic.totalSec%CLASSIC_DECAY.happy===0)classic.happy=Math.max(0,classic.happy-1);
-// ==== CACCA ogni ~2h, accumulo fino a 4 ====
 if(classic.totalSec-(classic.lastPoopSec||0)>=CLASSIC_POOP_INT){classic.lastPoopSec=classic.totalSec;if(classic.poopCount<4){classic.poopCount++;classic.isDirty=true;if(classic.dirtySince===0)classic.dirtySince=classic.totalSec;if(!sim){classicBeep();}}}
-// ==== MORTE PER FAME: fame a 0 per 20h ====
 if(classic.hunger===0){classic.hungerZeroSec=(classic.hungerZeroSec||0)+1;if(classic.hungerZeroSec>=CLASSIC_HUNGER_DEATH){classicDie(sim);return;}}else classic.hungerZeroSec=0;
-// ==== MALATTIA ====
 const dayIdx=Math.floor(classic.totalSec/86400);
-if(classic.snackRisk>0&&classic.totalSec%600===0)classic.snackRisk=Math.max(0,classic.snackRisk-1); // il rischio snack decade lentamente
+if(classic.snackRisk>0&&classic.totalSec%600===0)classic.snackRisk=Math.max(0,classic.snackRisk-1);
 if(classic.sickLevel<=0&&dayIdx!==classic.illDay){
 let getsSick=false;
-// cacca non pulita da >2h
 if(classic.isDirty&&classic.dirtySince>0&&(classic.totalSec-classic.dirtySince)>=CLASSIC_DIRTY_SICK&&Math.random()<(3/86400))getsSick=true;
-// 4 cacche = quasi certa (ma non istantanea: alta prob. su base oraria)
 if(classic.poopCount>=4&&Math.random()<(6/86400))getsSick=true;
-// stat vuote / rischio snack
 if((classic.hunger===0||classic.happy===0)&&Math.random()<(1/86400))getsSick=true;
 if(classic.snackRisk>0&&Math.random()<(classic.snackRisk/86400))getsSick=true;
 if(getsSick){classic.sickLevel=1+Math.floor(Math.random()*3);classic.isSick=true;classic.illDay=dayIdx;}
 }
 if(classic.isSick&&classic.totalSec%3600===0)classic.health=Math.max(0,classic.health-1);
 }
-// evoluzione
 if(classic.stage>=1&&classic.stage<4&&classic.secStage>=CLASSIC_T_STAGE){classic.stage++;classic.secStage=0;if(classic.stage===3)classic.teenVariant=(Math.random()<0.5?0:1);if(classic.stage===4)classic.adultVariant=classicPickAdult();if(!sim)classicBeep();}
 else if(classic.stage===4&&classic.secStage>=CLASSIC_T_STAGE*2){classicDie(sim);return;}
 if(classic.health<=0){classicDie(sim);return;}}
@@ -1024,7 +977,6 @@ if(classic.health<=0){classicDie(sim);return;}}
 function classicCatchUp(){const ns=Math.floor(Date.now()/1000);let el=ns-(classic.lastTs||ns);if(el<=0){classic.lastTs=ns;return;}if(el>86400*30)el=86400*30;for(let i=0;i<el;i++){classic.lastTs++;classicStep(true);if(classic.isDead)break;}classic.lastTs=ns;}
 
 function classicTick(){if(!classic||classic.isDead)return;const ns=Math.floor(Date.now()/1000);let steps=ns-classic.lastTs;if(steps<1)steps=1;if(steps>86400*30)steps=86400*30;for(let i=0;i<steps;i++){classic.lastTs++;classicStep(i===steps-1?false:true);if(classic.isDead)break;}classic.lastTs=ns;
-// richiamo: se ha bisogni e sveglio, "pia" ogni ~18s
 if(!classic.isSleeping&&classic.stage>0&&classic.stage<5&&(classic.hunger<=1||classic.happy<=1||classic.isDirty||classic.isSick)){if(!classic._lastCall||Date.now()-classic._lastCall>18000){classic._lastCall=Date.now();playBeep(990,'square',0.05);setTimeout(()=>playBeep(990,'square',0.05),140);}}
 saveClassic();}
 
@@ -1032,15 +984,11 @@ function classicDie(sim){classic.isDead=true;classic.stage=5;if(classicTimer)cle
 
 function classicBeep(){playBeep(880,'square',0.06);setTimeout(()=>playBeep(660,'square',0.05),80);}
 
-/* ---- disegno pet monocromatico stile Gen 1 ---- */
 function classicRender(){const cv=document.getElementById('classic-canvas');if(!cv||!classic)return;const ctx=cv.getContext('2d');ctx.imageSmoothingEnabled=false;const W=cv.width,H=cv.height;
 ctx.clearRect(0,0,W,H);
-// sfondo LCD
 ctx.fillStyle="#8ca03a";ctx.fillRect(0,0,W,H);
 if(classic.isSleeping){ctx.fillStyle="#7a8f30";ctx.fillRect(0,0,W,H);}
-// griglia dot-matrix
 const G=80,cell=W/G;ctx.fillStyle="rgba(30,40,20,0.06)";for(let i=1;i<G;i++){ctx.fillRect(Math.round(i*cell),0,1,H);ctx.fillRect(0,Math.round(i*cell),W,1);}
-// helper pixel su griglia 32x32
 function p(x,y,w,h){ctx.fillStyle=CLASSIC_PX;ctx.fillRect(Math.round(x*cell),Math.round(y*cell),Math.round((w||1)*cell),Math.round((h||1)*cell));}
 const LCD_BG=classic.isSleeping?"#7a8f30":"#8ca03a";function pe(x,y,w,h){ctx.fillStyle=LCD_BG;ctx.fillRect(Math.round(x*cell),Math.round(y*cell),Math.round((w||1)*cell),Math.round((h||1)*cell));}
 if(classic._previewSheet){classicRenderPreviewSheet(ctx,W,H,cell,p,pe);return;}
@@ -1057,39 +1005,32 @@ const scolding=!!classic._scold;
 const refusing=!!classic._refuse;
 const lift=(classic.stage===2?4:(classic.stage===3?6:(classic.stage===4?10:0)));
 if(refusing){
-// scuote la testa a destra/sinistra (no scritte, no stat)
 const sh=(classic._refuse.step%2===0)?-3:3;
 drawClassicPet(p,classic.stage,0,classic.isSick,classic.gender,pe,true,40+sh,64-lift);
 }else if(eating){
-// pet FERMO (still) che muove SOLO la bocca, senza deformazioni
 drawClassicPet(p,classic.stage,0,classic.isSick,classic.gender,pe,true);
-const st=classic.stage;const rad=(st===4?9:(st===3?7:(st===2?6:4))); // mezza larghezza corpo per stadio
-const openF=(classic._eat.step%2===1);const my=64-lift+1; // riga bocca
+const st=classic.stage;const rad=(st===4?9:(st===3?7:(st===2?6:4)));
+const openF=(classic._eat.step%2===1);const my=64-lift+1;
 const mw=(st>=3?3:2);
-// anima la bocca: pulisce l'area e disegna aperta (foro chiaro) o chiusa (lineetta scura)
 pe(40-Math.floor(mw/2),my,mw,2);
 if(openF){pe(40-Math.floor(mw/2),my,mw,2);}else{p(40-Math.floor(mw/2),my,mw,1);}
-// cibo che si consuma a destra del pet e leggermente piu in alto
 const rem=Math.max(0,4-Math.floor(classic._eat.step/2));
 if(rem>0)classicDrawFoodItem(p,pe,classic._eat.type,40+rad+5,64-lift-3,rem,st>=3);
 }else if(medicating){
-// pet FERMO (malato: occhi a X gestiti dallo sprite) con siringa che punge a destra
 drawClassicPet(p,classic.stage,0,true,classic.gender,pe,true);
 const pressed=(classic._med.step%2===1);
 classicDrawSyringe(p,pe,50,64-lift,pressed);
 }else if(washing){
-// pet fermo felice sotto la doccia: gocce che cadono dall'alto
 drawClassicPet(p,classic.stage,0,classic.isSick,classic.gender,pe,true);
 classicDrawShower(p,classic._bath.step);
 }else if(scolding){
-// pet fermo con faccia shock + punti esclamativi che lampeggiano
 drawClassicPet(p,classic.stage,0,classic.isSick,classic.gender,pe,true);
 classicDrawShock(p,pe,classic._scold.step,lift);
 }else{
 drawClassicPet(p,classic.stage,f,classic.isSick,classic.gender,pe);
 }
 if(classic.isDirty)drawClassicPoop(p,f);
-if(classic.isSick){p(30,56,1,1);p(32,56,1,1);p(31,57,1,1);} // segnetto malattia (teschietto)
+if(classic.isSick){p(30,56,1,1);p(32,56,1,1);p(31,57,1,1);}
 gridOverlay(ctx,cell,G,W,H);
 classicDrawIcons(ctx,cell,G);
 if(classic._foodMenu)classicDrawFoodMenuBox(ctx,W,H,cell,p,pe);
@@ -1098,50 +1039,46 @@ if(classic._gameMenu)classicDrawGameMenuBox(ctx,W,H,cell,p,pe);
 function gridOverlay(ctx,cell,G,W,H){ctx.fillStyle="rgba(30,40,20,0.14)";for(let i=1;i<G;i++){ctx.fillRect(Math.round(i*cell),0,1,H);ctx.fillRect(0,Math.round(i*cell),W,1);}}
 
 function drawClassicSleep(p){const cx=40,cy=64;p(cx-3,cy-2,6,4);p(cx-2,cy-3,4,1);p(cx-2,cy+2,4,1);p(cx-2,cy-1,1,1);p(cx,cy-1,1,1);
-// Z che fluttua verso l'alto (ciclo di 4 frame)
 const ph=classicAnimFrame%4;const zx=cx+4+ph;const zy=cy-4-ph*2;
 p(zx,zy,3,1);p(zx+2,zy+1,1,1);p(zx,zy+2,3,1);}
 
 function drawClassicPetDummy(){}
 
 function drawClassicPet(p,stage,f,sick,gender,pe,still,ovX,ovY){
-const bob=still?0:((f===0)?0:1); // su/giu
-const swayCycle=[-3,-1,1,3,1,-1]; const sway=still?0:swayCycle[classicAnimFrame%swayCycle.length]; // dondolio ampio dx/sx
-const blink=still?false:(classicAnimFrame%6===0); // ammicca ogni tanto
-const squash=still?false:(f===1); // quando tocca terra (in basso) si schiaccia
-const lift=(stage===2?4:(stage===3?6:(stage===4?10:0))); // stadi piu grandi piu in alto
+const bob=still?0:((f===0)?0:1);
+const swayCycle=[-3,-1,1,3,1,-1]; const sway=still?0:swayCycle[classicAnimFrame%swayCycle.length];
+const blink=still?false:(classicAnimFrame%6===0);
+const squash=still?false:(f===1);
+const lift=(stage===2?4:(stage===3?6:(stage===4?10:0)));
 const cx=(typeof ovX==='number'?ovX:40+sway),cy=(typeof ovY==='number'?ovY:64+bob-lift);
-function eyes(ex1,ex2,ey){if(blink){pe(ex1,ey,1,1);pe(ex2,ey,1,1);/* palpebra: lineetta */p(ex1,ey,1,1);p(ex2,ey,1,1);}else{pe(ex1,ey-1,1,2);pe(ex2,ey-1,1,2);p(ex1,ey,1,1);p(ex2,ey,1,1);}}
+function eyes(ex1,ex2,ey){if(blink){pe(ex1,ey,1,1);pe(ex2,ey,1,1);p(ex1,ey,1,1);p(ex2,ey,1,1);}else{pe(ex1,ey-1,1,2);pe(ex2,ey-1,1,2);p(ex1,ey,1,1);p(ex2,ey,1,1);}}
 function mouth(mx,my){pe(mx,my,2,1);p(mx,my+1,2,1);}
-if(stage===0){ // uovo grande con pattern classico + animazione schiusa
+if(stage===0){
 const hatching=(classic&&classic._hatching);
-const wob=hatching?((classicAnimFrame%2===0)?-2:2):(f===0?0:1); // trema forte in schiusa
+const wob=hatching?((classicAnimFrame%2===0)?-2:2):(f===0?0:1);
 const ex=40+wob,ey=64;
-// guscio tondeggiante (contorno pieno)
 p(ex-2,ey-6,5,1);p(ex-3,ey-5,7,1);
 p(ex-4,ey-4,9,8);
 p(ex-3,ey+4,7,1);p(ex-2,ey+5,5,1);
-// meta superiore: pois chiari
 pe(ex-2,ey-4,1,1);pe(ex+1,ey-4,1,1);pe(ex-3,ey-2,1,1);pe(ex,ey-3,1,1);pe(ex+2,ey-2,1,1);
-// fascia zig-zag chiara al centro
 pe(ex-4,ey,2,1);pe(ex-2,ey+1,2,1);pe(ex,ey,2,1);pe(ex+2,ey+1,2,1);pe(ex+3,ey,2,1);
-if(hatching){ // crepe visibili (a zig-zag)
+if(hatching){
 pe(ex,ey-4,1,1);pe(ex+1,ey-3,1,1);pe(ex,ey-2,1,1);pe(ex-1,ey-1,1,1);pe(ex+1,ey+2,1,1);
 }
 return;}
-if(stage===5){ // volato via: angioletto con aureola
+if(stage===5){
 p(cx-1,cy-5,3,1);p(cx-2,cy-3,4,1);p(cx-3,cy-2,6,4);p(cx-4,cy-2,1,1);p(cx+3,cy-2,1,1);pe(cx-1,cy-1,1,1);pe(cx+1,cy-1,1,1);return;}
-if(stage===1){ // baby: blob nero tondeggiante con occhi e bocca; si schiaccia a terra
-if(squash){ // schiacciato: piu largo e basso
+if(stage===1){
+if(squash){
 p(cx-2,cy-2,4,1);
 p(cx-4,cy-1,8,1);
 p(cx-5,cy,10,1);
 p(cx-5,cy+1,10,1);
 p(cx-4,cy+2,9,1);
 p(cx-3,cy+3,7,1);
-pe(cx-2,cy,1,1);pe(cx+1,cy,1,1); // occhi
-pe(cx-1,cy+2,2,1); // bocca
-}else{ // normale/allungato
+pe(cx-2,cy,1,1);pe(cx+1,cy,1,1);
+pe(cx-1,cy+2,2,1);
+}else{
 p(cx-2,cy-3,4,1);
 p(cx-3,cy-2,6,1);
 p(cx-4,cy-1,8,1);
@@ -1149,65 +1086,55 @@ p(cx-4,cy,8,1);
 p(cx-4,cy+1,8,1);
 p(cx-3,cy+2,7,1);
 p(cx-2,cy+3,5,1);
-pe(cx-2,cy-1,1,2);pe(cx+1,cy-1,1,2); // occhi
-pe(cx-1,cy+1,2,1);p(cx,cy+2,1,1); // bocca
+pe(cx-2,cy-1,1,2);pe(cx+1,cy-1,1,2);
+pe(cx-1,cy+1,2,1);p(cx,cy+2,1,1);
 }
 return;}
-if(stage===2){ // child: ottagono contornato; SCHIACCIATA vera (piu basso) camminando
-const sq=squash?2:0; // compressione verticale: la base resta ferma, il resto si abbassa
-const wq=squash?1:0; // leggermente piu largo quando schiacciato
-// parte alta: SCENDE di sq (il corpo si comprime)
+if(stage===2){
+const sq=squash?2:0;
+const wq=squash?1:0;
 p(cx-2-wq,cy-6+sq,5+wq*2,1);p(cx-3-wq,cy-5+sq,1,1);p(cx+3+wq,cy-5+sq,1,1);p(cx-4-wq,cy-4+sq,1,1);p(cx+4+wq,cy-4+sq,1,1);
-// lati: piu corti quando schiacciato (altezza ridotta di sq)
 p(cx-5-wq,cy-3+sq,1,6-sq);p(cx+5+wq,cy-3+sq,1,6-sq);
-// base FISSA
 p(cx-4,cy+3,1,1);p(cx+4,cy+3,1,1);p(cx-3,cy+4,1,1);p(cx+3,cy+4,1,1);p(cx-2,cy+5,5,1);
-// interno chiaro (dentro il bordo, compresso)
 pe(cx-3-wq,cy-5+sq,7+wq*2,10-sq);pe(cx-4-wq,cy-3+sq,9+wq*2,6-sq);
-// faccia: scende con la compressione
-p(cx-2,cy-1+sq,1,1);p(cx+2,cy-1+sq,1,1); // occhi
-p(cx-1,cy+2,3,1);p(cx-1,cy+3,3,1);pe(cx,cy+2,1,1); // bocca aperta
+p(cx-2,cy-1+sq,1,1);p(cx+2,cy-1+sq,1,1);
+p(cx-1,cy+2,3,1);p(cx-1,cy+3,3,1);pe(cx,cy+2,1,1);
 return;}
-if(stage===3){ // teen: due varianti 50/50, piu grandi, squash quasi impercettibile
-const td=squash?1:0; // schiacciamento minimo (solo 1px giu)
+if(stage===3){
+const td=squash?1:0;
 if((classic&&classic.teenVariant)===1){
-// VARIANTE B: uccellino grande e ROTONDO con becco (guarda a destra)
 p(cx-2,cy-6,5,1);p(cx-3,cy-5,1,1);p(cx+3,cy-5,1,1);p(cx-4,cy-4,1,1);p(cx+4,cy-4,1,1);
 p(cx-5,cy-3,1,6);p(cx+5,cy-3,1,6);
 p(cx-4,cy+3,1,1);p(cx+4,cy+3,1,1);p(cx-2,cy+4,5,1);
-p(cx+6,cy-1,3,1);p(cx+6,cy,2,1); // becco a destra
-p(cx-3,cy+4,2,2);p(cx+1,cy+4,2,2); // zampette
-pe(cx-3,cy-5,7,9);pe(cx-4,cy-3,9,6); // interno chiaro (dentro il bordo)
-p(cx-2,cy-1,1,1);p(cx+2,cy-1,1,1); // occhi
-p(cx-1,cy+1,3,1); // bocca
+p(cx+6,cy-1,3,1);p(cx+6,cy,2,1);
+p(cx-3,cy+4,2,2);p(cx+1,cy+4,2,2);
+pe(cx-3,cy-5,7,9);pe(cx-4,cy-3,9,6);
+p(cx-2,cy-1,1,1);p(cx+2,cy-1,1,1);
+p(cx-1,cy+1,3,1);
 return;}
-// VARIANTE A: blob grande contornato con due punte in cima
-p(cx-3,cy-8,1,2);p(cx+2,cy-8,1,2); // punte
-p(cx-4,cy-6,9,1);p(cx-6,cy-5,1,9);p(cx+6,cy-5,1,9);p(cx-4,cy+4,9,1); // corpo grande
+p(cx-3,cy-8,1,2);p(cx+2,cy-8,1,2);
+p(cx-4,cy-6,9,1);p(cx-6,cy-5,1,9);p(cx+6,cy-5,1,9);p(cx-4,cy+4,9,1);
 p(cx-6,cy-5,2,1);p(cx+5,cy-5,2,1);
-pe(cx-5,cy-5,11,9); // interno chiaro
-p(cx-3,cy-1,1,1);p(cx+2,cy-1,1,1); // occhi
-p(cx-1,cy+1,3,1); // bocca
+pe(cx-5,cy-5,11,9);
+p(cx-3,cy-1,1,1);p(cx+2,cy-1,1,1);
+p(cx-1,cy+1,3,1);
 return;}
-// adult: 5 varianti (20% ciascuna), contornate, con squash a terra
 {const v=(classic&&classic.adultVariant)||0;
-// corpo base contornato ~8x7, con squash
-// niente squash per l'adult: corpo grande e tondeggiante (~15x14)
 function bodyBase(){p(cx-4,cy-7,9,1);p(cx-5,cy-6,1,1);p(cx+5,cy-6,1,1);p(cx-6,cy-5,1,1);p(cx+6,cy-5,1,1);p(cx-7,cy-4,1,9);p(cx+7,cy-4,1,9);p(cx-6,cy+5,1,1);p(cx+6,cy+5,1,1);p(cx-5,cy+6,1,1);p(cx+5,cy+6,1,1);p(cx-4,cy+7,9,1);pe(cx-5,cy-6,11,13);pe(cx-6,cy-4,13,9);}
 function faceN(){p(cx-4,cy-1,1,1);p(cx+3,cy-1,1,1);p(cx-1,cy+2,3,1);}
-if(v===0){ // orecchie a punta (gatto/diavoletto)
+if(v===0){
 p(cx-5,cy-10,1,3);p(cx-4,cy-8,1,1);p(cx+5,cy-10,1,3);p(cx+4,cy-8,1,1);
 bodyBase();faceN();p(cx-5,cy+8,4,1);p(cx+2,cy+8,4,1);}
-else if(v===1){ // corna/antenne curve ai lati + bocca aperta
+else if(v===1){
 p(cx-9,cy-7,1,1);p(cx-8,cy-6,1,1);p(cx+9,cy-7,1,1);p(cx+8,cy-6,1,1);
 bodyBase();p(cx-4,cy-1,1,1);p(cx+3,cy-1,1,1);p(cx-1,cy+1,3,2);pe(cx,cy+1,1,1);}
-else if(v===2){ // grandi orecchie/ali laterali + piedini larghi
+else if(v===2){
 p(cx-10,cy-4,2,8);p(cx+9,cy-4,2,8);
 bodyBase();faceN();p(cx-6,cy+8,5,1);p(cx+2,cy+8,5,1);}
-else if(v===3){ // a goccia con becco/punta e cresta
+else if(v===3){
 p(cx,cy-10,1,3);p(cx+8,cy-1,3,1);
 bodyBase();faceN();}
-else{ // robottino: antenne in alto + faccia a griglia
+else{
 p(cx-4,cy-10,1,3);p(cx+4,cy-10,1,3);p(cx-4,cy-10,1,1);p(cx+4,cy-10,1,1);
 bodyBase();p(cx-4,cy-1,1,1);p(cx+3,cy-1,1,1);p(cx-4,cy+2,8,1);pe(cx-2,cy+2,1,1);pe(cx+1,cy+2,1,1);}
 if(gender==='F'){p(cx-1,cy-8,1,1);}
@@ -1218,42 +1145,41 @@ function drawClassicPoop(p,f){const n=Math.max(1,Math.min(4,classic.poopCount||1
 
 function classicDrawStats(ctx,W,cell,p){}
 
-// icona 8-bit entro 5x5 (coordinate 0..4)
 function classicIcon(p,id,ox,oy){
 switch(id){
-case 'food': // posate: forchetta + coltello
-p(ox,oy,1,1);p(ox+2,oy,1,1);p(ox,oy+1,1,1);p(ox+2,oy+1,1,1);p(ox+1,oy+2,1,1);p(ox+1,oy+2,1,4); // forchetta
-p(ox+5,oy,1,4);p(ox+4,oy,1,1);p(ox+5,oy+4,1,2); // coltello
+case 'food':
+p(ox,oy,1,1);p(ox+2,oy,1,1);p(ox,oy+1,1,1);p(ox+2,oy+1,1,1);p(ox+1,oy+2,1,1);p(ox+1,oy+2,1,4);
+p(ox+5,oy,1,4);p(ox+4,oy,1,1);p(ox+5,oy+4,1,2);
 break;
-case 'light': // lampadina con raggi
-p(ox+2,oy+1,3,3);p(ox+3,oy+4,1,1);p(ox+3,oy+5,1,1); // bulbo+base
-p(ox+3,oy-1,1,1);p(ox,oy+2,1,1);p(ox+6,oy+2,1,1);p(ox+1,oy,1,1);p(ox+5,oy,1,1); // raggi
+case 'light':
+p(ox+2,oy+1,3,3);p(ox+3,oy+4,1,1);p(ox+3,oy+5,1,1);
+p(ox+3,oy-1,1,1);p(ox,oy+2,1,1);p(ox+6,oy+2,1,1);p(ox+1,oy,1,1);p(ox+5,oy,1,1);
 break;
-case 'game': // joystick: base + asta + pomello
-p(ox+1,oy+5,4,1);p(ox+2,oy+4,2,1); // base
-p(ox+2,oy+1,1,3); // asta
-p(ox+1,oy,3,1);p(ox+1,oy+1,1,1);p(ox+3,oy+1,1,1); // pomello
+case 'game':
+p(ox+1,oy+5,4,1);p(ox+2,oy+4,2,1);
+p(ox+2,oy+1,1,3);
+p(ox+1,oy,3,1);p(ox+1,oy+1,1,1);p(ox+3,oy+1,1,1);
 break;
-case 'medicine': // segno +
+case 'medicine':
 p(ox+2,oy,2,6);p(ox,oy+2,6,2);break;
-case 'bath': // doccia con gocce
-p(ox+1,oy,5,1);p(ox+2,oy+1,3,1); // soffione
-p(ox+2,oy+3,1,1);p(ox+4,oy+3,1,1);p(ox+3,oy+4,1,1);p(ox+2,oy+5,1,1);p(ox+4,oy+5,1,1); // gocce
+case 'bath':
+p(ox+1,oy,5,1);p(ox+2,oy+1,3,1);
+p(ox+2,oy+3,1,1);p(ox+4,oy+3,1,1);p(ox+3,oy+4,1,1);p(ox+2,oy+5,1,1);p(ox+4,oy+5,1,1);
 break;
-case 'discipline': // punto esclamativo
+case 'discipline':
 p(ox+3,oy,1,4);p(ox+3,oy+5,1,1);break;
-case 'info': // contachilometri (tachimetro)
-p(ox+1,oy,4,1);p(ox,oy+1,1,3);p(ox+5,oy+1,1,3);p(ox+1,oy+4,4,1); // quadrante tondo
-p(ox+3,oy+1,1,2); // lancetta
-p(ox+1,oy+2,1,1);p(ox+4,oy+2,1,1); // tacche
+case 'info':
+p(ox+1,oy,4,1);p(ox,oy+1,1,3);p(ox+5,oy+1,1,3);p(ox+1,oy+4,4,1);
+p(ox+3,oy+1,1,2);
+p(ox+1,oy+2,1,1);p(ox+4,oy+2,1,1);
 break;
-case 'reset': // X
+case 'reset':
 p(ox+1,oy+1,1,1);p(ox+2,oy+2,1,1);p(ox+3,oy+3,1,1);p(ox+4,oy+4,1,1);p(ox+4,oy+1,1,1);p(ox+3,oy+2,1,1);p(ox+2,oy+3,1,1);p(ox+1,oy+4,1,1);break;
 }}
 
 function classicDrawIcons(ctx,cell,G){if(!classic||classic.stage===0||classic.stage===5||classic.view!=='main')return;
-const per=4,cellW=G/per,IS=7; // icona ~7x7
-const GREY="rgba(30,40,20,0.32)"; // icona non selezionata (sbiadita)
+const per=4,cellW=G/per,IS=7;
+const GREY="rgba(30,40,20,0.32)";
 function mkPainter(col){return (x,y,w,h)=>{ctx.fillStyle=col;ctx.fillRect(Math.round(x*cell),Math.round(y*cell),Math.round((w||1)*cell),Math.round((h||1)*cell));};}
 function bar(list,rowY,baseIdx){for(let i=0;i<per;i++){const ox=Math.round(i*cellW+(cellW-IS)/2);const idx=baseIdx+i;const sel=(classic.sel===idx);const painter=mkPainter(sel?CLASSIC_PX:GREY);classicIcon(painter,list[i],ox,rowY);}}
 bar(CLASSIC_TOP,2,0);
@@ -1273,70 +1199,58 @@ line((currentLang==='it'?'[C] INDIETRO':'[C] BACK'));
 ctx.textBaseline='alphabetic';}
 function dots4(v){v=Math.max(0,Math.min(4,Math.round(v)));return '\u25CF'.repeat(v)+'\u25CB'.repeat(4-v);}
 function classicRenderDir(ctx,W,H,cell,p){const t=i18n[currentLang];ctx.fillStyle=CLASSIC_PX;ctx.font=Math.round(W*0.07)+'px "Courier New",monospace';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(t.classicGuess,W/2,H*0.18);
-// pet al centro che guarda sx o dx in base a dirSel
 const pe2=(x,y,w,h)=>{ctx.fillStyle="#8ca03a";ctx.fillRect(Math.round(x*cell),Math.round(y*cell),Math.round((w||1)*cell),Math.round((h||1)*cell));};
 drawClassicPet(p,Math.max(1,classic.stage),classicAnimFrame%2,false,classic.gender,pe2);
-// frecce
 ctx.font=Math.round(W*0.16)+'px serif';ctx.fillStyle=(dirSel===0)?CLASSIC_PX:'rgba(30,40,20,0.3)';ctx.fillText('\u25C0',W*0.2,H*0.5);ctx.fillStyle=(dirSel===1)?CLASSIC_PX:'rgba(30,40,20,0.3)';ctx.fillText('\u25B6',W*0.8,H*0.5);
 ctx.fillStyle=CLASSIC_PX;ctx.font=Math.round(W*0.05)+'px "Courier New",monospace';ctx.fillText(t.classicDirHint,W/2,H*0.85);
 ctx.textAlign='start';ctx.textBaseline='alphabetic';}
 function classicRenderJump(ctx,W,H,cell,p){ctx.fillStyle=CLASSIC_PX;const groundY=60;p(0,groundY,80,1);
-// pet che salta: mini blob stile baby con occhi e bocca
 const pe=(x,y,w,h)=>{ctx.fillStyle="#8ca03a";ctx.fillRect(Math.round(x*cell),Math.round(y*cell),Math.round((w||1)*cell),Math.round((h||1)*cell));};
 const inAir=(jumpY<0);
-const run=(!inAir&&classicAnimFrame%2===0)?1:0; // corsa: leggero schiacciamento a terra
+const run=(!inAir&&classicAnimFrame%2===0)?1:0;
 const py=57+Math.round(jumpY)+run;const cx=24,cy=py;
-// corpo tondeggiante (piu basso e, correndo, leggermente schiacciato)
 if(run){p(cx-2,cy-2,5,1);p(cx-3,cy-1,7,3);p(cx-2,cy+2,5,1);}
 else{p(cx-2,cy-3,5,1);p(cx-3,cy-2,7,3);p(cx-2,cy+1,5,1);}
-// occhi (fori chiari)
 const ey=run?cy-1:cy-2;pe(cx-2,ey,1,1);pe(cx+1,ey,1,1);
-// bocca: aperta in salto, chiusa a terra
 const my=run?cy+1:cy;
 if(inAir){pe(cx,cy,2,1);}else{ctx.fillStyle=CLASSIC_PX;ctx.fillRect(Math.round(cx*cell),Math.round(my*cell),Math.round(2*cell),Math.round(1*cell));}
 ctx.fillStyle=CLASSIC_PX;
-// ostacolo
 ctx.fillStyle=CLASSIC_PX;p(jumpObs,groundY-3,2,3);
 ctx.font=Math.round(W*0.05)+'px "Courier New",monospace';ctx.textAlign='center';ctx.fillText('B='+i18n[currentLang].classicJumpBtn+'  '+jumpScore+'  REC '+(classic.jumpBest||0),W/2,H*0.1);ctx.textAlign='start';}
 
-// cibo accanto al pet: meal=coscia di pollo, snack=caramella; sz 4..1 (si consuma)
 function classicDrawFoodItem(p,pe,type,ox,oy,sz,big){
-if(type==='meal'){ // coscia di pollo (carne tonda + osso in basso)
-if(big&&sz>=4){p(ox-2,oy-4,5,1);p(ox-3,oy-3,7,1);p(ox-4,oy-2,9,4);p(ox-3,oy+2,7,1);pe(ox-1,oy-2,3,2); // carne grande
-p(ox+2,oy+3,1,3);p(ox+3,oy+3,1,2);p(ox+1,oy+6,2,1);return;} // osso
-if(sz>=4){p(ox-2,oy-3,4,1);p(ox-3,oy-2,6,3);p(ox-2,oy+1,4,1);pe(ox-1,oy-1,2,1); // carne
-p(ox+1,oy+2,1,2);p(ox+2,oy+2,1,1);p(ox,oy+4,2,1);} // osso
+if(type==='meal'){
+if(big&&sz>=4){p(ox-2,oy-4,5,1);p(ox-3,oy-3,7,1);p(ox-4,oy-2,9,4);p(ox-3,oy+2,7,1);pe(ox-1,oy-2,3,2);
+p(ox+2,oy+3,1,3);p(ox+3,oy+3,1,2);p(ox+1,oy+6,2,1);return;}
+if(sz>=4){p(ox-2,oy-3,4,1);p(ox-3,oy-2,6,3);p(ox-2,oy+1,4,1);pe(ox-1,oy-1,2,1);
+p(ox+1,oy+2,1,2);p(ox+2,oy+2,1,1);p(ox,oy+4,2,1);}
 else if(sz===3){p(ox-2,oy-2,5,3);p(ox-1,oy+1,3,1);p(ox+1,oy+2,1,2);p(ox,oy+4,2,1);}
 else if(sz===2){p(ox-1,oy-1,3,2);p(ox,oy+1,1,2);p(ox-1,oy+3,2,1);}
 else{p(ox,oy,2,1);p(ox,oy+1,1,1);}
-}else{ // caramella (corpo centrale + due incarti a triangolo)
-if(big&&sz>=4){p(ox-1,oy-2,6,6);pe(ox,oy-1,3,3); // corpo grande + brillio
-p(ox-3,oy-2,1,1);p(ox-3,oy+3,1,1);p(ox-4,oy-1,1,4); // incarto sx
-p(ox+7,oy-2,1,1);p(ox+7,oy+3,1,1);p(ox+8,oy-1,1,4);return;} // incarto dx
-if(sz>=4){p(ox,oy-1,4,4);pe(ox+1,oy,2,2); // corpo con brillio
-p(ox-2,oy-1,1,1);p(ox-2,oy+2,1,1);p(ox-3,oy,1,2); // incarto sx
-p(ox+5,oy-1,1,1);p(ox+5,oy+2,1,1);p(ox+6,oy,1,2);} // incarto dx
+}else{
+if(big&&sz>=4){p(ox-1,oy-2,6,6);pe(ox,oy-1,3,3);
+p(ox-3,oy-2,1,1);p(ox-3,oy+3,1,1);p(ox-4,oy-1,1,4);
+p(ox+7,oy-2,1,1);p(ox+7,oy+3,1,1);p(ox+8,oy-1,1,4);return;}
+if(sz>=4){p(ox,oy-1,4,4);pe(ox+1,oy,2,2);
+p(ox-2,oy-1,1,1);p(ox-2,oy+2,1,1);p(ox-3,oy,1,2);
+p(ox+5,oy-1,1,1);p(ox+5,oy+2,1,1);p(ox+6,oy,1,2);}
 else if(sz===3){p(ox,oy,4,3);p(ox-2,oy+1,1,1);p(ox+5,oy+1,1,1);}
 else if(sz===2){p(ox,oy,3,2);}
 else{p(ox,oy+1,1,1);}
 }}
-// box menu 8-bit accanto all'icona CIBO (in alto a sinistra), con due voci TESTUALI
 function classicDrawFoodMenuBox(ctx,W,H,cell,p,pe){
-const bx=3,by=10,bw=26,bh=20; // in celle
-// riquadro (contorno + interno chiaro)
+const bx=3,by=10,bw=26,bh=20;
 p(bx,by,bw,1);p(bx,by+bh,bw,1);p(bx,by,1,bh);p(bx+bw,by,1,bh+1);
 pe(bx+1,by+1,bw-1,bh-1);
 const sel=classic.foodSel||0;
-// cursori
 if(sel===0)p(bx+3,by+5,1,3);else p(bx+3,by+13,1,3);
-// testo
 ctx.textAlign='left';ctx.textBaseline='middle';ctx.font=Math.round(cell*4.4)+'px "Courier New",monospace';
 ctx.fillStyle=(sel===0)?CLASSIC_PX:"rgba(30,40,20,0.45)";ctx.fillText(i18n[currentLang].classicMeal,(bx+6)*cell,(by+6.5)*cell);
 ctx.fillStyle=(sel===1)?CLASSIC_PX:"rgba(30,40,20,0.45)";ctx.fillText(i18n[currentLang].classicSnack,(bx+6)*cell,(by+14.5)*cell);
 ctx.fillStyle=CLASSIC_PX;ctx.textAlign='start';ctx.textBaseline='alphabetic';
 }
 function classicDrawGameMenuBox(ctx,W,H,cell,p,pe){
-const bx=28,by=10,bw=26,bh=20; // vicino all'icona gioco (3a in alto)
+const bx=28,by=10,bw=26,bh=20;
 p(bx,by,bw,1);p(bx,by+bh,bw,1);p(bx,by,1,bh);p(bx+bw,by,1,bh+1);
 pe(bx+1,by+1,bw-1,bh-1);
 const sel=classic.gameSel||0;
@@ -1347,65 +1261,47 @@ ctx.fillStyle=(sel===1)?CLASSIC_PX:"rgba(30,40,20,0.45)";ctx.fillText('TRIS',(bx
 ctx.fillStyle=CLASSIC_PX;ctx.textAlign='start';ctx.textBaseline='alphabetic';
 }
 function classicRenderTris(ctx,W,H,cell,p,pe){
-// griglia 3x3 centrata
-const gx=25,gy=18,step=10; // in celle
-// linee della griglia
+const gx=25,gy=18,step=10;
 for(let k=1;k<3;k++){p(gx+k*step,gy,1,step*3);p(gx,gy+k*step,step*3,1);}
-// simboli
 for(let i=0;i<9;i++){const r=Math.floor(i/3),c=i%3;const ox=gx+c*step+2,oy=gy+r*step+2;
-if(trisBoard[i]===1){ // X
+if(trisBoard[i]===1){
 p(ox,oy,1,1);p(ox+5,oy,1,1);p(ox+1,oy+1,1,1);p(ox+4,oy+1,1,1);p(ox+2,oy+2,2,2);p(ox+1,oy+4,1,1);p(ox+4,oy+4,1,1);p(ox,oy+5,1,1);p(ox+5,oy+5,1,1);}
-else if(trisBoard[i]===2){ // O
+else if(trisBoard[i]===2){
 p(ox+1,oy,4,1);p(ox+1,oy+5,4,1);p(ox,oy+1,1,4);p(ox+5,oy+1,1,4);}
 }
-// cursore (riquadro sulla cella selezionata) se il gioco non e finito
 if(!trisOver){const r=Math.floor(trisCur/3),c=trisCur%3;const ox=gx+c*step,oy=gy+r*step;p(ox+1,oy+1,step-2,1);p(ox+1,oy+step-2,step-2,1);p(ox+1,oy+1,1,step-2);p(ox+step-2,oy+1,1,step-2);}
 ctx.fillStyle=CLASSIC_PX;ctx.textAlign='center';ctx.font=Math.round(cell*4)+'px "Courier New",monospace';ctx.fillText(i18n[currentLang].classicTrisHint,W/2,(gy+step*3+6)*cell);ctx.textAlign='start';
 }
-// disciplina: faccia shock (occhi spalancati + bocca aperta) e punti esclamativi lampeggianti
 function classicDrawShock(p,pe,step,lift){
 const cx=40,cy=64-lift;const on=(step%2===1);
-// raggio del corpo per stadio: piu grande = "!" piu lontani/alti
 const st=classic?classic.stage:1;const rad=(st===4?9:(st===3?7:(st===2?6:4)));
-// occhi spalancati (fori chiari piu grandi con puntino)
 pe(cx-3,cy-2,2,2);pe(cx+1,cy-2,2,2);p(cx-2,cy-1,1,1);p(cx+2,cy-1,1,1);
-// bocca aperta (foro)
 pe(cx-1,cy+1,2,1);
-// punti esclamativi che lampeggiano, posizionati in base al raggio del pet
 const lx=cx-rad-3,rx=cx+rad+2,ty=cy-rad-3;
 if(on){
-p(lx,cy-3,1,3);p(lx,cy+1,1,1); // "!" sinistra
-p(rx,cy-3,1,3);p(rx,cy+1,1,1); // "!" destra
-p(cx,ty,1,3);p(cx,ty+4,1,1); // "!" sopra
+p(lx,cy-3,1,3);p(lx,cy+1,1,1);
+p(rx,cy-3,1,3);p(rx,cy+1,1,1);
+p(cx,ty,1,3);p(cx,ty+4,1,1);
 }else{
 p(lx-2,cy-1,1,3);p(lx-2,cy+3,1,1);
 p(rx+2,cy-1,1,3);p(rx+2,cy+3,1,1);
 }
 }
-// doccia: soffione in alto + gocce che cadono (animate da step)
 function classicDrawShower(p,step){
-// soffione (abbassato di 10)
 p(30,18,20,2);p(33,20,1,1);p(38,20,1,1);p(43,20,1,1);p(47,20,1,1);
-// gocce che cadono su piu colonne, a fasi diverse
 const cols=[32,37,42,47];
 cols.forEach((cxp,i)=>{const yy=24+((step*6+i*5)%32);p(cxp,yy,1,2);p(cxp,yy+3,1,1);});
-// spruzzi ai lati del pet quando l'acqua arriva
 if(step%2===0){p(30,58,1,1);p(50,58,1,1);}
 }
-// siringa 8-bit rivolta a sinistra (verso il pet); pressed = stantuffo premuto
 function classicDrawSyringe(p,pe,ox,oy,pressed){
-// ago (punta a sinistra)
 p(ox-3,oy+1,3,1);
-// serbatoio (corpo)
 p(ox,oy-1,7,1);p(ox,oy+3,7,1);p(ox,oy-1,1,5);p(ox+7,oy-1,1,5);pe(ox+1,oy,6,3);
-// tacche
 p(ox+2,oy,1,1);p(ox+4,oy,1,1);
-// stantuffo (da destra); premuto = piu dentro
-const pl=pressed?2:5; // lunghezza asta visibile
+const pl=pressed?2:5;
 p(ox+8,oy,pl,3);
-p(ox+8+pl,oy-1,1,5); // impugnatura a T
+p(ox+8+pl,oy-1,1,5);
 }
-function classicMsg(m){/* messaggi disabilitati: nessun testo sotto lo schermo */const e=document.getElementById('classic-msg');if(e)e.innerText='';}
+function classicMsg(m){const e=document.getElementById('classic-msg');if(e)e.innerText='';}
 
 let _bSwallow=false;
 function classicBPointerDown(e){if(classic&&classic.view==='jump'){if(e&&e.preventDefault)e.preventDefault();jumpDo();_bSwallow=true;}}
@@ -1414,40 +1310,36 @@ function classicPress(btn){if(!classic)return;
 if(classic._previewSheet){classicPreviewClose();return;}
 if(classic._preview){classic._preview=false;if(!loadClassic())startClassic();return;}
 if(classic.isDead)return;
-if(classic.stage===0){return;} // uovo: aspetta la schiusa
-// mini-giochi attivi
+if(classic.stage===0){return;}
 if(classic.view==='dir'){if(btn==='A')dirMoveSel(-1);else if(btn==='C')dirMoveSel(1);else if(btn==='B')dirConfirm();return;}
 if(classic.view==='jump'){if(btn==='B')jumpDo();else if(btn==='C')classicCloseView();return;}
 if(classic.view==='info'){if(btn==='C'||btn==='B')classicCloseView();return;}
-if(classic._eat||classic._med||classic._bath||classic._scold||classic._refuse){return;} // durante le animazioni i tasti sono ignorati
+if(classic._eat||classic._med||classic._bath||classic._scold||classic._refuse){return;}
 if(classic._foodMenu){if(btn==='A'){classic.foodSel=(classic.foodSel+1)%2;classicBeepSel();classicRender();}else if(btn==='C'){classic._foodMenu=false;classicRender();}else if(btn==='B'){classic._foodMenu=false;const chosen=(classic.foodSel===0?'meal':'snack');if(chosen==='meal'&&classic.hunger>=4){startRefuse();}else{startEating(chosen);}}return;}
 if(classic._gameMenu){if(btn==='A'){classic.gameSel=(classic.gameSel+1)%2;classicBeepSel();classicRender();}else if(btn==='C'){classic._gameMenu=false;classicRender();}else if(btn==='B'){classic._gameMenu=false;if(classic.gameSel===0)startJumpGame();else startTris();}return;}
 if(classic.view==='tris'){if(btn==='A')trisMove();else if(btn==='B')trisConfirm();else if(btn==='C'){classic.view='main';classicRender();}return;}
-// schermata principale a icone
 if(btn==='A'){classic.sel=(classic.sel<0)?0:(classic.sel+1)%CLASSIC_ICONS.length;classicBeepSel();classicRender();return;}
 if(btn==='C'){if(classic.sel>=0){classic.sel=-1;playBeep(300,'square',0.05);classicMsg('');}classicCloseView();return;}
 if(btn==='B'){if(classic.sel<0){classic.sel=0;}classicDoIcon(CLASSIC_ICONS[classic.sel]);return;}}
 
 function classicBeepSel(){playBeep(700,'square',0.03);}
 let _previewSeq=[[0,0,0],[0,0,0],[1,0,0],[2,0,0],[3,0,0],[3,1,0],[4,0,0],[4,0,1],[4,0,2],[4,0,3],[4,0,4]];let _previewIdx=-1;
-function classicPreviewCycle(){/* deprecato: usa la scheda unica */ classicPreviewOpen();}
+function classicPreviewCycle(){ classicPreviewOpen();}
 function classicPreviewOpen(){if(!classic)return;classic._previewSheet=true;classic._preview=true;classicMsg(i18n[currentLang].classicPreviewTitle);classicRender();}
 function classicPreviewClose(){if(!classic)return;classic._previewSheet=false;classic._preview=false;classicMsg('');if(!loadClassic())startClassic();}
 function classicRenderPreviewSheet(ctx,W,H,cell,p,pe){
-// 4 righe, una per stadio; sprite piccoli tramite painter scalati
 const rows=[
 [[1,0,0,'BABY']],
 [[2,0,0,'CHILD']],
 [[3,0,0,'TEEN A'],[3,1,0,'TEEN B']],
 [[4,0,0,'AD1'],[4,0,1,'AD2'],[4,0,2,'AD3'],[4,0,3,'AD4'],[4,0,4,'AD5']]
 ];
-const scale=0.55; // sprite piu piccoli
+const scale=0.55;
 const saveStage=classic.stage,saveTeen=classic.teenVariant,saveAdult=classic.adultVariant,saveSick=classic.isSick;
 classic.isSick=false;
 ctx.fillStyle=CLASSIC_PX;ctx.textAlign='center';ctx.textBaseline='top';
-// painter scalati attorno a un centro (ox,oy)
 function mk(ox,oy,col){return (x,y,w,h)=>{ctx.fillStyle=col;ctx.fillRect(Math.round((ox+(x-ox)*scale)*cell),Math.round((oy+(y-oy)*scale)*cell),Math.max(1,Math.round((w||1)*scale*cell)),Math.max(1,Math.round((h||1)*scale*cell)));};}
-rows.forEach((row,r)=>{const oy=8+r*18; // y centro riga (celle)
+rows.forEach((row,r)=>{const oy=8+r*18;
 const n=row.length;const stepx=Math.floor(80/(n+1));
 row.forEach((it,i)=>{const ox=stepx*(i+1);
 classic.stage=it[0];classic.teenVariant=it[1];classic.adultVariant=it[2];
@@ -1472,17 +1364,16 @@ if(_eatTimer)clearInterval(_eatTimer);
 _eatTimer=setInterval(()=>{classic._eat.step++;playBeep(classic._eat.step%2===0?360:300,'square',0.04);classicRender();
 if(classic._eat.step>=8){clearInterval(_eatTimer);_eatTimer=null;
 if(type==='meal'){classic.hunger=Math.min(4,classic.hunger+1);classic.weight=Math.min(99,classic.weight+1);}
-else{classic.hunger=Math.min(4,classic.hunger+0.5);classic.happy=Math.min(4,classic.happy+1);classic.weight=Math.min(99,classic.weight+2);classic.snackRisk=(classic.snackRisk||0)+3;} // snack: +2 grammi, aumenta drasticamente il rischio malattia
+else{classic.hunger=Math.min(4,classic.hunger+0.5);classic.happy=Math.min(4,classic.happy+1);classic.weight=Math.min(99,classic.weight+2);classic.snackRisk=(classic.snackRisk||0)+3;}
 classic.hungerZeroSec=0;
 classic._eat=null;classicHappyBeep();classicMsg(type==='meal'?i18n[currentLang].classicFed:i18n[currentLang].classicSnacked);saveClassic();classicRender();}
 },350);}
 function classicHappyBeep(){playBeep(660,'square',0.08);setTimeout(()=>playBeep(880,'square',0.08),110);setTimeout(()=>playBeep(1046,'square',0.1),220);}
 let _medTimer=null;
-function medSquealSound(){/* stridio: nota che scende veloce */playBeep(1200,'sawtooth',0.06);setTimeout(()=>playBeep(700,'sawtooth',0.06),60);setTimeout(()=>playBeep(400,'sawtooth',0.07),120);}
+function medSquealSound(){playBeep(1200,'sawtooth',0.06);setTimeout(()=>playBeep(700,'sawtooth',0.06),60);setTimeout(()=>playBeep(400,'sawtooth',0.07),120);}
 function startMedicine(){if(!classic||classic._med)return;classic._med={step:0};
 if(_medTimer)clearInterval(_medTimer);
 _medTimer=setInterval(()=>{classic._med.step++;
-// la siringa viene "premuta" su step dispari -> stridio (3 volte totali)
 if(classic._med.step%2===1)medSquealSound();
 classicRender();
 if(classic._med.step>=6){clearInterval(_medTimer);_medTimer=null;classic._med=null;
@@ -1495,7 +1386,7 @@ let _bathTimer=null;
 function startBath(){if(!classic||classic._bath)return;classic._bath={step:0};
 if(_bathTimer)clearInterval(_bathTimer);
 _bathTimer=setInterval(()=>{classic._bath.step++;
-if(classic._bath.step%2===1)playBeep(760,'square',0.06); // beep contento (3 volte)
+if(classic._bath.step%2===1)playBeep(760,'square',0.06);
 classicRender();
 if(classic._bath.step>=6){clearInterval(_bathTimer);_bathTimer=null;classic.isDirty=false;classic.poopCount=0;classic.dirtySince=0;classic._bath=null;classicHappyBeep();classicMsg(i18n[currentLang].classicClean);saveClassic();classicRender();}
 },350);}
@@ -1503,15 +1394,26 @@ let _scoldTimer=null;
 function startScold(){if(!classic||classic._scold)return;classic._scold={step:0};
 if(_scoldTimer)clearInterval(_scoldTimer);
 _scoldTimer=setInterval(()=>{classic._scold.step++;
-if(classic._scold.step%2===1)medSquealSound(); // stridio (3 volte)
+if(classic._scold.step%2===1)medSquealSound();
 classicRender();
 if(classic._scold.step>=6){clearInterval(_scoldTimer);_scoldTimer=null;classic.discipline=Math.min(4,classic.discipline+1);classic.happy=Math.max(0,classic.happy-1);classic._scold=null;classicMsg(i18n[currentLang].classicScold);saveClassic();classicRender();}
 },350);}
 
+/* MODIFICA 1 (luce override manuale) + MODIFICA 2 (medicina su pet sano = rifiuto) */
 function classicDoIcon(icon){const t=i18n[currentLang];
 if(icon==='food'){classic._foodMenu=true;classic.foodSel=0;playBeep(600,'square',0.04);}
-else if(icon==='light'){classic.isSleeping=!classic.isSleeping;playBeep(classic.isSleeping?300:600,'square',0.06);classicMsg(classic.isSleeping?t.classicLightOff:t.classicLightOn);}
-else if(icon==='medicine'){if(classic.isSick){startMedicine();}else classicMsg(t.classicNoSick);}
+else if(icon==='light'){
+if(classic.isSleeping){
+classic.manualLightOff=false;classic.isSleeping=false;classic._bedStart=0;
+playBeep(600,'square',0.06);classicMsg(t.classicLightOn);
+}else{
+classic.manualLightOff=true;classic.isSleeping=true;classic._bedStart=classic.totalSec;
+playBeep(300,'square',0.06);classicMsg(t.classicLightOff);
+}
+}
+else if(icon==='medicine'){
+if(classic.isSick){startMedicine();}else{startRefuse();}
+}
 else if(icon==='bath'){startBath();}
 else if(icon==='discipline'){startScold();}
 else if(icon==='game'){classic._gameMenu=true;classic.gameSel=0;playBeep(600,'square',0.04);}
@@ -1519,41 +1421,32 @@ else if(icon==='info'){classic.view='info';}
 else if(icon==='reset'){if(window.confirm(i18n[currentLang].classicResetConfirm)){clearClassicSave();if(classicTimer)clearInterval(classicTimer);classic=null;const nm=document.getElementById('cs-name');if(nm)nm.value='';const mo=document.getElementById('cs-month');if(mo)mo.value='';const da=document.getElementById('cs-day');if(da)da.value='';const ho=document.getElementById('cs-hour');if(ho)ho.value='';const mrad=document.querySelector('input[name="cs-gender"][value="M"]');if(mrad)mrad.checked=true;startClassic();return;}}
 saveClassic();classicRender();}
 
-/* --- Mini-gioco 1: indovina la direzione (sx/dx) --- */
 let dirSel=0,dirCpu=0;
 function startDirGame(){if(classic.stage===0||classic.stage===5)return;classic.view='dir';dirSel=0;dirCpu=Math.random()<0.5?0:1;classicMsg(i18n[currentLang].classicGuess);}
-function dirMoveSel(d){dirSel=(dirSel+ (d<0?0:1))%2; // A=sx, C=dx
+function dirMoveSel(d){dirSel=(dirSel+ (d<0?0:1))%2;
 dirSel=(d<0)?0:1;classicBeepSel();classicRender();}
 function dirConfirm(){const win=(dirSel===dirCpu);if(win){classic.happy=Math.min(4,classic.happy+1);classic.weight=Math.max(1,classic.weight-1);playBeep(880,'square',0.08);classicMsg(i18n[currentLang].classicWin);}else{playBeep(200,'square',0.1);classicMsg(i18n[currentLang].classicLose);}saveClassic();setTimeout(()=>{classic.view='main';classicRender();},900);classicRender();}
 
-/* --- Mini-gioco 2: Jump --- */
 let jumpY=0,jumpVY=0,jumpObs=0,jumpScore=0,jumpSpeed=4,jumpTimer=null;
-function startJumpGame(){classic.view='jump';jumpY=0;jumpVY=0;jumpObs=80;jumpScore=0;if(jumpTimer)clearInterval(jumpTimer);jumpTimer=setInterval(jumpLoop,120);classicMsg(i18n[currentLang].classicJump);}
 function startJumpGame(){classic.view='jump';jumpY=0;jumpVY=0;jumpObs=80;jumpScore=0;jumpSpeed=4;if(jumpTimer)clearInterval(jumpTimer);jumpTimer=setInterval(jumpLoop,120);classicMsg(i18n[currentLang].classicJump);}
 function jumpDo(){if(jumpY===0){jumpVY=-5;playBeep(500,'square',0.05);}}
 function jumpLoop(){if(classic.view!=='jump'){if(jumpTimer)clearInterval(jumpTimer);return;}jumpY+=jumpVY;jumpVY+=1;if(jumpY>0){jumpY=0;jumpVY=0;}
-jumpSpeed=4+Math.floor(jumpScore/2)*0.6; // un pochettino piu veloce ogni 2 salti
+jumpSpeed=4+Math.floor(jumpScore/2)*0.6;
 jumpObs-=jumpSpeed;
 if(jumpObs<-2){jumpObs=82;jumpScore++;classic.happy=Math.min(4,classic.happy+(jumpScore%3===0?1:0));playBeep(760,'square',0.03);}
-// collisione (ostacolo vicino al pet a cx=24 e pet non abbastanza in alto)
 if(jumpObs<28&&jumpObs>21&&jumpY>-4){playBeep(180,'square',0.12);
-if(jumpScore>(classic.jumpBest||0))classic.jumpBest=jumpScore; // best score
+if(jumpScore>(classic.jumpBest||0))classic.jumpBest=jumpScore;
 classic.happy=Math.min(4,classic.happy+1);classic.health=Math.min(4,classic.health+1);classic.weight=Math.max(1,classic.weight-2);
 classicMsg(i18n[currentLang].classicJumpEnd(jumpScore)+' | REC '+(classic.jumpBest||0));if(jumpTimer)clearInterval(jumpTimer);saveClassic();setTimeout(()=>{classic.view='main';classicRender();},900);}
 classicRender();}
 
-/* --- Mini-gioco Tris (tic-tac-toe): pet=X, cpu=O --- */
 let trisBoard=[],trisCur=0,trisBusy=false,trisOver=false;
 function startTris(){classic.view='tris';trisBoard=[0,0,0,0,0,0,0,0,0];trisCur=0;trisBusy=false;trisOver=false;classicMsg(i18n[currentLang].classicTrisMsg);classicRender();}
-function trisMove(){if(trisBusy||trisOver)return;// sposta il cursore alla prossima cella vuota
-for(let k=1;k<=9;k++){const i=(trisCur+k)%9;if(trisBoard[i]===0){trisCur=i;break;}}classicBeepSel();classicRender();}
+function trisMove(){if(trisBusy||trisOver)return;for(let k=1;k<=9;k++){const i=(trisCur+k)%9;if(trisBoard[i]===0){trisCur=i;break;}}classicBeepSel();classicRender();}
 function trisWinner(b){const L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];for(const l of L){const[a,c,d]=l;if(b[a]&&b[a]===b[c]&&b[a]===b[d])return b[a];}return b.every(v=>v!==0)?3:0;}
 function trisCpuPick(){const empt=[];for(let i=0;i<9;i++)if(trisBoard[i]===0)empt.push(i);
-// prova a vincere
 for(const i of empt){const t=trisBoard.slice();t[i]=2;if(trisWinner(t)===2)return i;}
-// blocca il giocatore
 for(const i of empt){const t=trisBoard.slice();t[i]=1;if(trisWinner(t)===1)return i;}
-// centro, poi angoli, poi resto
 if(trisBoard[4]===0)return 4;const corners=[0,2,6,8].filter(i=>trisBoard[i]===0);if(corners.length)return corners[Math.floor(Math.random()*corners.length)];
 return empt[Math.floor(Math.random()*empt.length)];}
 function trisEnd(){trisOver=true;const t=i18n[currentLang];const w=trisWinner(trisBoard);let msg=w===1?t.classicTrisWin:(w===2?t.classicTrisLose:t.classicTrisDraw);
@@ -1562,14 +1455,12 @@ function trisConfirm(){if(trisBusy||trisOver)return;if(trisBoard[trisCur]!==0){t
 trisBoard[trisCur]=1;playBeep(700,'square',0.05);classicRender();
 if(trisWinner(trisBoard)){trisEnd();return;}
 trisBusy=true;setTimeout(()=>{const ci=trisCpuPick();if(ci!==undefined&&trisBoard[ci]===0){trisBoard[ci]=2;playBeep(400,'square',0.05);}
-if(trisWinner(trisBoard)){classicRender();trisEnd();}else{// sposta cursore alla prossima vuota
-for(let k=1;k<=9;k++){const i=(trisCur+k)%9;if(trisBoard[i]===0){trisCur=i;break;}}trisBusy=false;classicRender();}},500);}
+if(trisWinner(trisBoard)){classicRender();trisEnd();}else{for(let k=1;k<=9;k++){const i=(trisCur+k)%9;if(trisBoard[i]===0){trisCur=i;break;}}trisBusy=false;classicRender();}},500);}
 
 function showModeScreen(){hideAllScreens();if(classicTimer)clearInterval(classicTimer);if(gameTimer)clearInterval(gameTimer);updateTexts();document.getElementById('mode-screen').style.display='flex';document.getElementById('mode-desc').innerText=i18n[currentLang].modeDesc;}
 function chooseMode(m){gameMode=m;localStorage.setItem('dinomio_mode',m);if(m==='classic'){document.getElementById('mode-screen').style.display='none';if(!loadClassic())startClassic();}else{document.getElementById('mode-screen').style.display='none';if(!loadGameState()){for(let p=0;p<5;p++)drawPixelSprite('p'+(p+1)+'_baby',p,1);document.getElementById('selection-screen').style.display='block';}}}
 function initPreviews(){for(let p=0;p<5;p++)drawPixelSprite('p'+(p+1)+'_baby',p,1);updateTexts();
 gameMode=localStorage.getItem('dinomio_mode')||'';
-// all'apertura mostra SEMPRE la scelta modalita
 document.getElementById('selection-screen').style.display='none';
 showModeScreen();}
 
