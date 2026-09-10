@@ -1187,33 +1187,33 @@ ad5:[
 " ###  ###"]
 };
 /* Renderer unico: centra la matrice su (cx,cy).
-   squash = schiacciamento MARCATO: il corpo si comprime in verticale (~25% piu basso)
-   restando ancorato a terra (la base non si muove) e si allarga di 2px per lato,
-   cosi il pet "si accovaccia e si rialza" camminando, come lo stadio BABY. */
+   squash = schiacciamento "a blocco": comprime di 1px in verticale (salta 1 riga
+   verso il basso) e allarga di 1px per lato, cosi il pet sembra appiattito a terra. */
 function drawClassicMatrix(p,pe,mat,cx,cy,squash){
 const h=mat.length,w=mat[0].length;
 if(!squash){
 const x0=Math.round(cx-w/2),y0=Math.round(cy-h/2);
 for(let r=0;r<h;r++){const row=mat[r];for(let c=0;c<row.length;c++){const ch=row[c];if(ch==='#')p(x0+c,y0+r,1,1);else if(ch==='.')pe(x0+c,y0+r,1,1);}}
 return;}
-// --- SQUASH ---
-const bottom=Math.round(cy+h/2);        // la base resta ancorata dov'era (piedi a terra)
-const nh=Math.max(3,Math.round(h*0.72)); // altezza compressa (~28% piu basso)
-const y0=bottom-nh;                       // parte piu in basso: si accovaccia
-const ew=2;                               // allargamento per lato (piu largo)
-const x0=Math.round(cx-(w+ew*2)/2);
+// SQUASH: altezza ridotta di 1 (comprime la penultima riga), largo +1 per lato, spostato in basso
+const nh=h-1;
+const x0=Math.round(cx-(w+2)/2),y0=Math.round(cy-nh/2)+1;
 for(let r=0;r<nh;r++){
-// campiona la riga sorgente comprimendo l'altezza
-const sr=Math.min(h-1,Math.round(r*(h-1)/(nh-1)));
-const row=mat[sr];
-// trova prima/ultima cella piena per estendere i lati
-let first=-1,last=-1;for(let c=0;c<row.length;c++){if(row[c]!==' '){if(first<0)first=c;last=c;}}
-for(let c=0;c<row.length;c++){const ch=row[c];if(ch===' ')continue;
-const drawX=x0+ew+c;
-if(ch==='#')p(drawX,y0+r,1,1);else if(ch==='.')pe(drawX,y0+r,1,1);}
-// estende i bordi laterali (allargamento a blocco)
-if(first>=0){for(let e=1;e<=ew;e++)p(x0+ew+first-e,y0+r,1,1);}
-if(last>=0){for(let e=1;e<=ew;e++)p(x0+ew+last+e,y0+r,1,1);}
+// mappa la riga compressa: le prime nh-1 righe uguali, l'ultima fonde le ultime 2 righe originali
+const srcRow=(r<nh-1)?mat[r]:mat[h-1];
+for(let c=0;c<srcRow.length;c++){const ch=srcRow[c];if(ch===' ')continue;
+// allarga: la prima e l'ultima colonna piena vengono duplicate ai lati (+1px per lato)
+const drawX=x0+1+c;
+if(ch==='#')p(drawX,y0+r,1,1);else if(ch==='.')pe(drawX,y0+r,1,1);
+}
+}
+// bordi laterali estesi (allargamento): copia colonna estrema sx/dx sulle righe centrali
+for(let r=1;r<nh-1;r++){const row=mat[r<nh-1?r:h-2];
+// trova prima e ultima cella non-spazio della riga originale corrispondente
+const orig=(r<nh-1)?mat[r]:mat[h-2];let first=-1,last=-1;
+for(let c=0;c<orig.length;c++){if(orig[c]!==' '){if(first<0)first=c;last=c;}}
+if(first>=0){const ch1=orig[first];if(ch1==='#')p(x0+first,y0+r,1,1);}
+if(last>=0){const ch2=orig[last];if(ch2==='#')p(x0+2+last,y0+r,1,1);}
 }
 }
 function drawClassicPet(p,stage,f,sick,gender,pe,still,ovX,ovY){
@@ -1281,6 +1281,7 @@ function drawClassicPoop(p,f){const n=Math.max(1,Math.min(4,classic.poopCount||1
 
 function classicDrawStats(ctx,W,cell,p){}
 
+// icona 8-bit entro 5x5 (coordinate 0..4)
 function classicIcon(p,id,ox,oy){
 switch(id){
 case 'food':
