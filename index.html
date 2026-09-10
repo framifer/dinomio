@@ -1204,17 +1204,26 @@ const x0=Math.round(cx-w/2),y0=Math.round(cy-nh/2)+1;
 for(let r=0;r<nh;r++){
 // riga sorgente: le prime nh-1 uguali; l'ultima fonde le ultime 2 righe originali
 const srcRow=(r<nh-1)?mat[r]:mergeRows(mat[h-2],mat[h-1]);
-// disegna il corpo (nessuna traslazione: centrato su x0 come il non-squash)
+// trova bordo sx (primo pieno) e bordo dx (ultimo pieno) della riga
 let first=-1,last=-1;
-for(let c=0;c<srcRow.length;c++){const ch=srcRow[c];if(ch===' ')continue;
-if(first<0)first=c;last=c;
-if(ch==='#')p(x0+c,y0+r,1,1);else if(ch==='.')pe(x0+c,y0+r,1,1);
+for(let c=0;c<srcRow.length;c++){if(srcRow[c]!==' '){if(first<0)first=c;last=c;}}
+if(first<0)continue; // riga vuota
+// Allargamento "corretto": il BORDO esterno si SPOSTA di 1px verso l'esterno
+// (non si duplica) e il gap creato viene riempito con INTERNO chiaro ('.').
+// Cosi il contorno resta spesso 1px e ad allargarsi e' lo spazio interno.
+const dy=y0+r;
+for(let c=first;c<=last;c++){
+const ch=srcRow[c];if(ch===' ')continue;
+if(c===first){
+// bordo sinistro spostato di 1px a sx; la cella originale diventa interno
+p(x0+first-1,dy,1,1); pe(x0+first,dy,1,1);
+}else if(c===last){
+// bordo destro spostato di 1px a dx; la cella originale diventa interno
+p(x0+last+1,dy,1,1); pe(x0+last,dy,1,1);
+}else{
+// celle interne: disegnate al loro posto (occhi/bocca '#', vuoto '.')
+if(ch==='#')p(x0+c,dy,1,1);else pe(x0+c,dy,1,1);
 }
-// allarga di 1px per lato: una sola colonna extra a sx della prima cella piena
-// e una a dx dell'ultima. Solo sulle righe che hanno del corpo pieno.
-if(first>=0){
-if(srcRow[first]==='#')p(x0+first-1,y0+r,1,1);
-if(srcRow[last]==='#')p(x0+last+1,y0+r,1,1);
 }
 }
 }
