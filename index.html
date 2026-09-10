@@ -168,7 +168,18 @@ h1, h2 { font-size: 0.9rem; text-align: center; color: #3a4653; text-transform: 
 @keyframes floatZ { 0% { top: 70%; opacity: 0; transform: scale(0.6); } 50% { opacity: 1; } 100% { top: 10%; opacity: 0; transform: scale(1.3); } }
 /* ===== Ottimizzazione mobile ===== */
 @media (max-width: 480px) {
-  .tamagotchi-container { max-width: 100%; width: 100%; height: 100vh; height: 100dvh; max-height: none; border-radius: 0; padding: 10px; border-width: 0; }
+  body { align-items: flex-start; }
+  .tamagotchi-container {
+    max-width: 100%; width: 100%;
+    /* Lascia spazio in fondo per il banner Appsgeyser + la barra di sistema Android,
+       cosi i tasti (SETTINGS/SHOP/INFO/LIGHT) non finiscono sotto il banner. */
+    --banner-buffer: 64px;
+    height: calc(100vh - var(--banner-buffer) - env(safe-area-inset-bottom, 0px));
+    height: calc(100dvh - var(--banner-buffer) - env(safe-area-inset-bottom, 0px));
+    max-height: none;
+    margin-bottom: calc(var(--banner-buffer) + env(safe-area-inset-bottom, 0px));
+    border-radius: 0; padding: 10px; border-width: 0;
+  }
   .lcd-screen { padding: 6px; border-width: 3px; }
   h1, h2 { font-size: 0.8rem; }
   .area-btn { padding: 8px 3px; font-size: 0.6rem; }
