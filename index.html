@@ -249,9 +249,10 @@ h1, h2 { font-size: 0.9rem; text-align: center; color: #3a4653; text-transform: 
 </div>
 
 <div id="classic-screen" style="width:100%;height:100%;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;">
-<div id="classic-lcd-wrap" style="display:flex;flex-direction:column;align-items:center;">
+<div id="classic-lcd-wrap" style="display:flex;flex-direction:column;align-items:center;position:relative;">
 <div id="classic-title" aria-label="Crudo-gotchi"><span class="ct-c" style="color:#ffcf2e;transform:skewX(-10deg) rotate(-3deg);">C</span><span class="ct-c" style="color:#ffcf2e;transform:skewX(-10deg) rotate(2deg);">R</span><span class="ct-c" style="color:#ff9b1e;transform:skewX(-10deg) rotate(-2deg);">U</span><span class="ct-c" style="color:#ffcf2e;transform:skewX(-10deg) rotate(2deg);">D</span><span class="ct-o" style="transform:skewX(-10deg) rotate(-2deg);"><span class="ct-eye"></span><span class="ct-eye"></span><span class="ct-mouth"></span></span><span class="ct-c" style="color:#ff9b1e;transform:skewX(-10deg);">-</span><span class="ct-c" style="color:#ffcf2e;transform:skewX(-10deg) rotate(-3deg);">G</span><span class="ct-c" style="color:#ff9b1e;transform:skewX(-10deg) rotate(2deg);">O</span><span class="ct-c" style="color:#ffcf2e;transform:skewX(-10deg) rotate(-2deg);">T</span><span class="ct-c" style="color:#ff9b1e;transform:skewX(-10deg) rotate(2deg);">C</span><span class="ct-c" style="color:#ffcf2e;transform:skewX(-10deg) rotate(-2deg);">H</span><span class="ct-c" style="color:#ff9b1e;transform:skewX(-10deg) rotate(3deg);">I</span></div>
 <canvas id="classic-canvas" width="320" height="320" style="width:100%;max-width:820px;aspect-ratio:1/1;image-rendering:pixelated;background:#8ca03a;border:6px solid #3a4a1a;border-radius:10px;"></canvas>
+<button id="classic-game-exit" onclick="classicGameExit()" title="Esci dal gioco" style="display:none;position:absolute;top:6px;right:6px;width:26px;height:26px;padding:0;border:2px solid #3a4a1a;border-radius:6px;background:#8ca03a;color:#3a4a1a;font-family:'Courier New',monospace;font-weight:bold;font-size:0.9rem;line-height:1;cursor:pointer;z-index:5;box-shadow:0 2px 0 #3a4a1a;">✕</button>
 <div id="classic-msg" style="font-size:0.6rem;font-weight:bold;color:#3a4a1a;min-height:14px;margin-top:6px;text-align:center;"></div>
 </div>
 <div id="classic-buttons" style="display:flex;gap:24px;margin-top:8px;">
@@ -575,12 +576,12 @@ const RIVAL_NAMES=["ZORBO","TILLY","GROK","MIMSY","FANGO","LULU","BONK","PIXO","
 function setActionMessage(msg,delay=2000){const e=document.getElementById('action-msg');e.innerText=msg;if(actionMsgTimer)clearTimeout(actionMsgTimer);if(petStage>0&&msg){actionMsgTimer=setTimeout(()=>{e.innerText="";},delay);}}
 
 const i18n={
-it:{titleMode:"SCEGLI MODALITA",modeDesc:"DINOMIO: il gioco completo a colori. CLASSIC: stile Tamagotchi retro in bianco e nero.",classicRebirth:"Il tuo pet e volato via... Vuoi un nuovo uovo?",classicSetupDesc:"Inserisci data e ora di nascita dell'animaletto:",classicPreviewTitle:"ANTEPRIMA STADI",classicPreviewBack:"[A/B/C] TORNA",classicSetupTitle:"NASCITA",csGo:"SCHIUDI L'UOVO",classicFed:"Gnam! Buono!",classicSnacked:"Che dolce!",classicFoodTitle:"CIBO",classicMeal:"Pasto",classicSnack:"Snack",classicFoodHint:"[A] scegli  [B] ok  [C] annulla",classicLightOff:"Luce spenta. Buonanotte.",classicLightOn:"Luce accesa!",classicDose:(n)=>`Serve ancora medicina! (${n})`,classicCured:"Guarito!",classicNoSick:"Sta bene.",classicClean:"Pulito!",classicAlreadyClean:"Gia pulito.",classicScold:"Sgridato! Disciplina +1",classicGuess:"SINISTRA o DESTRA?",classicDirHint:"[A]<  [C]>  [B]OK",classicWin:"Evviva! Hai vinto!",classicLose:"Uff, perso!",classicJump:"Salta! [B]",classicTrisMsg:"TRIS! Tu X, CPU O",classicTrisHint:"[A] sposta  [B] segna  [C] esci",classicTrisWin:"Hai vinto il tris!",classicTrisLose:"Hai perso, ma ti diverti!",classicTrisDraw:"Pareggio!",classicJumpBtn:"SALTA",classicJumpEnd:(s)=>`Fine! Punti: ${s}`,classicResetConfirm:"Sei sicuro di voler resettare l'animaletto? Tutti i progressi andranno persi.",classicResetDone:"Nuovo uovo!",titleSel:"DINOMIO - SELEZIONA PET",lblInputName:"NOME:",lblInputGender:"GENERE:",lblInputDatetime:"INIZIO GIOCO:",lblDtMonth:"MESE",lblDtDay:"GIORNO",lblDtHour:"ORA",dateTimeRequired:"Inserisci Mese (1-12), Giorno (1-30) e Ora (0-23) per iniziare!",manualBtn:"MANUALE / REGOLE",btnChooseAreaMenu:"SCEGLI AREA",titleChooseArea:"SCEGLI LA TUA AREA",areaBirth:"Nascita",areaForest:"Bosco",areaBeach:"Spiaggia",areaCity:"Citta",areaMountain:"Montagna",areaCastle:"Castello",areaIsland:"Isola",areaSpace:"Spazio",areaMagic:"Magia",btnBackArea:"INDIETRO",travelMsg:"Ti stai spostando in: ",rulesTitle:"REGOLE REALI",rulesBack:"TORNA ALLA SELEZIONE",
+it:{titleMode:"SCEGLI MODALITA",modeDesc:"DINOMIO: il gioco completo a colori. CLASSIC: stile Tamagotchi retro in bianco e nero.",classicRebirth:"Il tuo pet e volato via... Vuoi un nuovo uovo?",classicSetupDesc:"Inserisci data e ora di nascita dell'animaletto:",classicPreviewTitle:"ANTEPRIMA STADI",classicPreviewBack:"[A/B/C] TORNA",classicSetupTitle:"NASCITA",csGo:"SCHIUDI L'UOVO",classicFed:"Gnam! Buono!",classicSnacked:"Che dolce!",classicFoodTitle:"CIBO",classicMeal:"Pasto",classicSnack:"Snack",classicFoodHint:"[A] scegli  [B] ok  [C] annulla",classicLightOff:"Luce spenta. Buonanotte.",classicLightOn:"Luce accesa!",classicDose:(n)=>`Serve ancora medicina! (${n})`,classicCured:"Guarito!",classicNoSick:"Sta bene.",classicClean:"Pulito!",classicAlreadyClean:"Gia pulito.",classicScold:"Sgridato! Disciplina +1",classicGuess:"SINISTRA o DESTRA?",classicDirHint:"[A]<  [C]>  [B]OK",classicWin:"Evviva! Hai vinto!",classicLose:"Uff, perso!",classicJump:"Salta! [B]",classicSimonMsg:"DANCE: guarda il ballo...",classicSimonGo:"Ripeti! SX[A] SALTO[B] DX[C]",classicSimonOk:(s)=>`Bravo! Livello ${s}`,classicSimonEnd:(s)=>`Fine! Sequenza: ${s}`,classicWhackMsg:"COLPISCI! [A][B][C]",classicWhackScore:(s)=>`Colpi: ${s}`,classicWhackEnd:(s)=>`Fine! Colpi: ${s}`,classicJumpBtn:"SALTA",classicJumpEnd:(s)=>`Fine! Punti: ${s}`,classicResetConfirm:"Sei sicuro di voler resettare l'animaletto? Tutti i progressi andranno persi.",classicResetDone:"Nuovo uovo!",titleSel:"DINOMIO - SELEZIONA PET",lblInputName:"NOME:",lblInputGender:"GENERE:",lblInputDatetime:"INIZIO GIOCO:",lblDtMonth:"MESE",lblDtDay:"GIORNO",lblDtHour:"ORA",dateTimeRequired:"Inserisci Mese (1-12), Giorno (1-30) e Ora (0-23) per iniziare!",manualBtn:"MANUALE / REGOLE",btnChooseAreaMenu:"SCEGLI AREA",titleChooseArea:"SCEGLI LA TUA AREA",areaBirth:"Nascita",areaForest:"Bosco",areaBeach:"Spiaggia",areaCity:"Citta",areaMountain:"Montagna",areaCastle:"Castello",areaIsland:"Isola",areaSpace:"Spazio",areaMagic:"Magia",btnBackArea:"INDIETRO",travelMsg:"Ti stai spostando in: ",rulesTitle:"REGOLE REALI",rulesBack:"TORNA ALLA SELEZIONE",
 rulesContent:"<b>1. SCHIUSA:</b><p>L'uovo si schiude in 7 secondi! Il pet nasce con parametri al 40%.</p><br><b>2. TEMPO REALE:</b><p>Il tempo scorre anche ad app chiusa. Evoluzione ogni 3 giorni.</p><br><b>3. DECADIMENTO:</b><p>Fame -20%/1h, Pulizia -20%/1h30, Felicita -20%/2h, Energia -20%/3h, Forma -20%/4h, Intelligenza -20%/3h.</p><br><b>4. CACCA:</b><p>3 volte al giorno, -3 pallini Pulizia. La doccia rimette al 100%.</p><br><b>5. MALATTIA:</b><p>Max una volta al giorno. Da malato: occhi a X e -20% Salute/ora. Mai a luce spenta.</p><br><b>6. SVAGO:</b><p>Parco, Coccole, Carta-Forbice-Sasso o Esplorazione. [X] per uscire.</p><br><b>7. PALESTRA:</b><p>Gioca o vedi il record.</p><br><b>8. GARE:</b><p>Ogni 2 giorni una gara. Vinci se Forma 95-100%, altrimenti casuale. Classifica in INFO parte da 0 e si azzera a ogni nuovo pet.</p><br><b>9. NANNA:</b><p>Dormendo: Felicita non cala, niente malattie, Energia +20%/ora.</p><br><b>10. ESPLORAZIONE:</b><p>Il pet esplora un mondo 25x25. Si muove 1 cella ogni ora. Scegli quante ore (max 24) e puoi fermarti quando vuoi. La mappa si salva.</p>",
 infoTitle:"INFORMAZIONI PET",infoBack:"TORNA AL GIOCO",lblName:"NOME:",lblGender:"GENERE:",lblGen:"GENERAZIONE:",lblAge:"ETA:",lblDays:"giorni",lblStage:"STADIO:",lblTrait:"CARATTERE:",lblForm:"FORMA:",lblHun:"FAME (HUN):",lblCln:"PULIZIA (CLN):",lblHap:"FELICITA (HAP):",lblHlt:"SALUTE (HLT):",lblNrg:"ENERGIA (NRG):",lblFit:"FORMA FISICA (FIT):",lblInt:"INTELLIGENZA (INT):",settingsTitle:"IMPOSTAZIONI",lblLang:"LINGUA / LANGUAGE:",lblBgStyle:"SFONDO / SFONDO REALE:",bgBasic:"BASIC",bgReal:"REAL",lblShell:"COLORE GUSCIO:",lblReset:"RESET PET:",btnReset:"RESET PET",btnBackSettings:"TORNA AL GIOCO",btnKitchen:"Cucina",btnPark:"Svago",btnGym:"Palestra",btnClinic:"Infermeria",btnShower:"Doccia",btnStudy:"Studio",btnMeal:"Pasto",btnSnack:"Snack",btnCloseKitchen:"Esci",btnParkPlay:"Parco",btnCuddle:"Coccole",btnRpsPlay:"Gioco",btnExplorePlay:"Esplorazione",btnCloseFun:"X",btnGymPlay:"Gioca",btnGymRecord:"Record",btnCloseGym:"X",btnStudyPlay:"Studia",btnMemoryPlay:"Memory",btnCloseStudy:"X",memoryMsg:"MEMORY! Trova tutte le coppie.",memoryProgress:(m,tot,mv)=>`Coppie: ${m}/${tot} | Mosse: ${mv}`,memoryLevelTxt:(l)=>`Livello ${l}`,memoryWin:(l)=>`MEMORY COMPLETATO! Bonus salgono. Prossimo: Livello ${l}!`,titleShop:"NEGOZIO",lblGems:"GEMME:",lblShopFood:"CIBO SPECIALE:",lblShopAcc:"ACCESSORI:",shopEquip:"EQUIPAGGIA",shopEquipped:"INDOSSATO",shopNoGems:"Gemme insufficienti!",shopBought:(n)=>`Comprato: ${n}!`,btnShop:"NEGOZIO",btnBackShop:"TORNA AL GIOCO",btnLight:"LUCE",btnSettings:"IMPOSTAZIONI",btnInfo:"INFO",rankTitle:"CLASSIFICA GARE",rankName:"NOME",rankPoints:"PUNTI",exploreCollTitle:"SCOPERTE",achTitle:"TRAGUARDI",exploreStatsTxt:(cells,treasures,flowers,fruits)=>`Celle esplorate: ${cells}/625 | Tesori: ${treasures} | Fiori: ${flowers} | Frutti: ${fruits}`,exploreSetupTitle:"ORE DI ESPLORAZIONE",exploreUnit:"ore",exploreGo:"CONTINUA",exploreCancel:"ANNULLA",eggWarming:"L'uovo si sta scaldando...",sickTag:"[MALATO!]",poopMsg:"L'animaletto ha fatto la cacca!",hatchedMsg:"L'uovo si e schiuso!",evoMsg:"EVOLUZIONE COMPIUTA!",deathMsg:"IL TUO PET E MORTO!",deathRebirthMsg:"Il pet ci ha lasciati per vecchiaia...",rebirthPrompt:(n)=>`Il tuo pet e morto di vecchiaia.\n\nE disponibile un nuovo pet: ${n}.\nVuoi adottarlo? (OK = Si, Annulla = No)`,rebirthNamePrompt:"Dai un nome al nuovo pet:",rebirthDone:(n)=>`E nato un nuovo UOVO: ${n}!`,rebirthDeclined:"Nessun nuovo pet adottato.",waitEggMsg:"Aspetta la schiusa dell'uovo!",mealMsg:"Pasto consumato (Pollo)!",snackMsg:"Snack gustato (Caramella)!",parkMsg:"Parco! Felicita +1 Pallino",cuddleMsg:"Coccole! Felicita +1 Pallino",showerDirtyMsg:"Doccia fatta! Tutto pulito.",showerCleanMsg:"Pet lavato e profumato!",clinicSickMsg:"Cura somministrata! Pet guarito.",studyMsg:"Studio in corso! Intelligenza +1, Felicita -1",lightOffMsg:"Luce spenta. Addormentamento...",lightRestMsg:"Luce spenta. Riposo in corso...",lightOnMsg:"Luce riaccesa!",gymMsg:"PALESTRA! Salta i cactus [TAP/SPAZIO]",gymExitMsg:"Uscito dalla Palestra.",gymRecordMsg:(hi)=>`PUNTEGGIO RECORD: ${hi}`,racePrompt:(r)=>`C'e una gara contro ${r}! Vuoi partecipare?`,raceDeclined:"Gara rifiutata! Forma -20%, scendi in classifica.",raceWin:(r)=>`Hai battuto ${r}! Felicita +2, +2 punti!`,raceLose:(r)=>`${r} ti ha battuto! Felicita -2.`,raceDraw:(r)=>`Pareggio con ${r}! +1 punto.`,rpsMsg:"CARTA-FORBICE-SASSO! Al meglio di 5 round.",rpsRound:(r,ps,cs)=>`Round ${r}/5 - Tu ${ps} : ${cs} CPU`,rpsRoundWin:"Round vinto!",rpsRoundLose:"Round perso!",rpsRoundDraw:"Round pari!",rpsWin:"HAI VINTO LA PARTITA! Felicita +2 pallini!",rpsLose:"Hai perso la partita. Felicita +1 pallino.",rpsDraw:"Partita in pareggio. Felicita +1 pallino.",resetConfirm:"Sei sicuro di voler resettare il pet? Tutti i progressi andranno persi definitivamente.",
 exploreIdle:"In pausa. Riapri per impostare nuove ore.",exploreActive:(h)=>`Sta esplorando... ${h}h rimaste (1 cella/ora)`,exploreStopped:"Esplorazione fermata. Progressi salvati.",exploreDone:"Esplorazione completata!",exploreStarted:(h)=>`Esplorazione avviata: ${h}h!`,exploreFoundTreasure:"Ha trovato un TESORO! Felicita +2, Intelligenza +1",exploreFoundFlower:"Ha trovato un FIORE! Felicita +1",exploreFoundFruit:"Ha trovato un FRUTTO! Fame +1",exploreNewCell:"Nuova area scoperta!",
 genderM:"M MASCHIO",genderF:"F FEMMINA",bgNone:"VUOTO",bgSea:"MARE",bgForest:"BOSCO",bgCity:"CITTA",bgSky:"CIELO",bgSpace:"SPAZIO"},
-en:{titleMode:"CHOOSE MODE",modeDesc:"DINOMIO: the full color game. CLASSIC: retro black & white Tamagotchi style.",classicRebirth:"Your pet flew away... Do you want a new egg?",classicSetupDesc:"Enter the pet's birth date and time:",classicPreviewTitle:"STAGES PREVIEW",classicPreviewBack:"[A/B/C] BACK",classicSetupTitle:"BIRTH",csGo:"HATCH THE EGG",classicFed:"Yum! Tasty!",classicSnacked:"So sweet!",classicFoodTitle:"FOOD",classicMeal:"Meal",classicSnack:"Snack",classicFoodHint:"[A] choose  [B] ok  [C] cancel",classicLightOff:"Lights off. Good night.",classicLightOn:"Lights on!",classicDose:(n)=>`Still needs medicine! (${n})`,classicCured:"Healed!",classicNoSick:"It's fine.",classicClean:"Clean!",classicAlreadyClean:"Already clean.",classicScold:"Scolded! Discipline +1",classicGuess:"LEFT or RIGHT?",classicDirHint:"[A]<  [C]>  [B]OK",classicWin:"Yay! You won!",classicLose:"Aw, lost!",classicJump:"Jump! [B]",classicTrisMsg:"TIC-TAC-TOE! You X, CPU O",classicTrisHint:"[A] move  [B] mark  [C] exit",classicTrisWin:"You won tic-tac-toe!",classicTrisLose:"You lost, but had fun!",classicTrisDraw:"Draw!",classicJumpBtn:"JUMP",classicJumpEnd:(s)=>`Over! Score: ${s}`,classicResetConfirm:"Are you sure you want to reset the pet? All progress will be lost.",classicResetDone:"New egg!",titleSel:"DINOMIO - SELECT PET",lblInputName:"NAME:",lblInputGender:"GENDER:",lblInputDatetime:"GAME START:",lblDtMonth:"MONTH",lblDtDay:"DAY",lblDtHour:"HOUR",dateTimeRequired:"Enter Month (1-12), Day (1-30) and Hour (0-23) to start!",manualBtn:"MANUAL / RULES",btnChooseAreaMenu:"CHOOSE AREA",titleChooseArea:"CHOOSE YOUR AREA",areaBirth:"Birth",areaForest:"Forest",areaBeach:"Beach",areaCity:"City",areaMountain:"Mountain",areaCastle:"Castle",areaIsland:"Island",areaSpace:"Space",areaMagic:"Magic",btnBackArea:"BACK",travelMsg:"Traveling to: ",rulesTitle:"REAL RULES",rulesBack:"BACK TO SELECTION",
+en:{titleMode:"CHOOSE MODE",modeDesc:"DINOMIO: the full color game. CLASSIC: retro black & white Tamagotchi style.",classicRebirth:"Your pet flew away... Do you want a new egg?",classicSetupDesc:"Enter the pet's birth date and time:",classicPreviewTitle:"STAGES PREVIEW",classicPreviewBack:"[A/B/C] BACK",classicSetupTitle:"BIRTH",csGo:"HATCH THE EGG",classicFed:"Yum! Tasty!",classicSnacked:"So sweet!",classicFoodTitle:"FOOD",classicMeal:"Meal",classicSnack:"Snack",classicFoodHint:"[A] choose  [B] ok  [C] cancel",classicLightOff:"Lights off. Good night.",classicLightOn:"Lights on!",classicDose:(n)=>`Still needs medicine! (${n})`,classicCured:"Healed!",classicNoSick:"It's fine.",classicClean:"Clean!",classicAlreadyClean:"Already clean.",classicScold:"Scolded! Discipline +1",classicGuess:"LEFT or RIGHT?",classicDirHint:"[A]<  [C]>  [B]OK",classicWin:"Yay! You won!",classicLose:"Aw, lost!",classicJump:"Jump! [B]",classicSimonMsg:"DANCE: watch the moves...",classicSimonGo:"Repeat! L[A] JUMP[B] R[C]",classicSimonOk:(s)=>`Nice! Level ${s}`,classicSimonEnd:(s)=>`Over! Sequence: ${s}`,classicWhackMsg:"WHACK! [A][B][C]",classicWhackScore:(s)=>`Hits: ${s}`,classicWhackEnd:(s)=>`Over! Hits: ${s}`,classicJumpBtn:"JUMP",classicJumpEnd:(s)=>`Over! Score: ${s}`,classicResetConfirm:"Are you sure you want to reset the pet? All progress will be lost.",classicResetDone:"New egg!",titleSel:"DINOMIO - SELECT PET",lblInputName:"NAME:",lblInputGender:"GENDER:",lblInputDatetime:"GAME START:",lblDtMonth:"MONTH",lblDtDay:"DAY",lblDtHour:"HOUR",dateTimeRequired:"Enter Month (1-12), Day (1-30) and Hour (0-23) to start!",manualBtn:"MANUAL / RULES",btnChooseAreaMenu:"CHOOSE AREA",titleChooseArea:"CHOOSE YOUR AREA",areaBirth:"Birth",areaForest:"Forest",areaBeach:"Beach",areaCity:"City",areaMountain:"Mountain",areaCastle:"Castle",areaIsland:"Island",areaSpace:"Space",areaMagic:"Magic",btnBackArea:"BACK",travelMsg:"Traveling to: ",rulesTitle:"REAL RULES",rulesBack:"BACK TO SELECTION",
 rulesContent:"<b>1. HATCHING:</b><p>The egg hatches in 7 seconds! The pet is born with stats at 40%.</p><br><b>2. REAL TIME:</b><p>Time passes even when the app is closed. Evolution every 3 days.</p><br><b>3. DECAY:</b><p>Hunger -20%/1h, Cleanliness -20%/1h30, Happiness -20%/2h, Energy -20%/3h, Fitness -20%/4h, Intelligence -20%/3h.</p><br><b>4. POOP:</b><p>3 times a day, -3 Cleanliness dots. The shower restores 100%.</p><br><b>5. ILLNESS:</b><p>At most once a day. When sick: X eyes and -20% Health/hour. Never while the light is off.</p><br><b>6. FUN:</b><p>Park, Cuddles, Rock-Paper-Scissors or Exploration. [X] to exit.</p><br><b>7. GYM:</b><p>Play or check the record.</p><br><b>8. RACES:</b><p>A race every 2 days. You win if Fitness is 95-100%, otherwise random. Ranking in INFO starts at 0 and resets with every new pet.</p><br><b>9. SLEEP:</b><p>While sleeping: Happiness does not drop, no illness, Energy +20%/hour.</p><br><b>10. EXPLORATION:</b><p>The pet explores a 25x25 world. It moves 1 tile per hour. Choose how many hours (max 24) and stop anytime. The map is saved.</p>",
 infoTitle:"PET INFORMATION",infoBack:"BACK TO GAME",lblName:"NAME:",lblGender:"GENDER:",lblGen:"GENERATION:",lblAge:"AGE:",lblDays:"days",lblStage:"STAGE:",lblTrait:"TRAIT:",lblForm:"FORM:",lblHun:"HUNGER (HUN):",lblCln:"CLEANLINESS (CLN):",lblHap:"HAPPINESS (HAP):",lblHlt:"HEALTH (HLT):",lblNrg:"ENERGY (NRG):",lblFit:"FITNESS (FIT):",lblInt:"INTELLIGENCE (INT):",settingsTitle:"SETTINGS",lblLang:"LINGUA / LANGUAGE:",lblBgStyle:"BACKGROUND / REAL BACKGROUND:",bgBasic:"BASIC",bgReal:"REAL",lblShell:"SHELL COLOR:",lblReset:"RESET PET:",btnReset:"RESET PET",btnBackSettings:"BACK TO GAME",btnKitchen:"Kitchen",btnPark:"Fun",btnGym:"Gym",btnClinic:"Clinic",btnShower:"Shower",btnStudy:"Study",btnMeal:"Meal",btnSnack:"Snack",btnCloseKitchen:"Exit",btnParkPlay:"Park",btnCuddle:"Cuddle",btnRpsPlay:"Game",btnExplorePlay:"Exploration",btnCloseFun:"X",btnGymPlay:"Play",btnGymRecord:"Record",btnCloseGym:"X",btnStudyPlay:"Study",btnMemoryPlay:"Memory",btnCloseStudy:"X",memoryMsg:"MEMORY! Find all the pairs.",memoryProgress:(m,tot,mv)=>`Pairs: ${m}/${tot} | Moves: ${mv}`,memoryLevelTxt:(l)=>`Level ${l}`,memoryWin:(l)=>`MEMORY COMPLETE! Bonuses grow. Next: Level ${l}!`,titleShop:"SHOP",lblGems:"GEMS:",lblShopFood:"SPECIAL FOOD:",lblShopAcc:"ACCESSORIES:",shopEquip:"EQUIP",shopEquipped:"WORN",shopNoGems:"Not enough gems!",shopBought:(n)=>`Bought: ${n}!`,btnShop:"SHOP",btnBackShop:"BACK TO GAME",btnLight:"LIGHT",btnSettings:"SETTINGS",btnInfo:"INFO",rankTitle:"RACE RANKING",rankName:"NAME",rankPoints:"POINTS",exploreCollTitle:"DISCOVERIES",achTitle:"ACHIEVEMENTS",exploreStatsTxt:(cells,treasures,flowers,fruits)=>`Explored tiles: ${cells}/625 | Treasures: ${treasures} | Flowers: ${flowers} | Fruits: ${fruits}`,exploreSetupTitle:"EXPLORATION HOURS",exploreUnit:"hours",exploreGo:"CONTINUE",exploreCancel:"CANCEL",eggWarming:"The egg is warming up...",sickTag:"[SICK!]",poopMsg:"The pet pooped!",hatchedMsg:"The egg has hatched!",evoMsg:"EVOLUTION COMPLETE!",deathMsg:"YOUR PET HAS DIED!",deathRebirthMsg:"The pet passed away from old age...",rebirthPrompt:(n)=>`Your pet died of old age.\n\nA new pet is available: ${n}.\nDo you want to adopt it? (OK = Yes, Cancel = No)`,rebirthNamePrompt:"Give the new pet a name:",rebirthDone:(n)=>`A new EGG was born: ${n}!`,rebirthDeclined:"No new pet adopted.",waitEggMsg:"Wait for the egg to hatch!",mealMsg:"Meal eaten (Chicken)!",snackMsg:"Snack enjoyed (Candy)!",parkMsg:"Park! Happiness +1 Dot",cuddleMsg:"Cuddles! Happiness +1 Dot",showerDirtyMsg:"Shower done! All clean.",showerCleanMsg:"Pet washed and fresh!",clinicSickMsg:"Treatment given! Pet healed.",studyMsg:"Studying! Intelligence +1, Happiness -1",lightOffMsg:"Light off. Falling asleep...",lightRestMsg:"Light off. Resting...",lightOnMsg:"Light back on!",gymMsg:"GYM! Jump the cactus [TAP/SPACE]",gymExitMsg:"Left the Gym.",gymRecordMsg:(hi)=>`RECORD SCORE: ${hi}`,racePrompt:(r)=>`There is a race against ${r}! Do you want to join?`,raceDeclined:"Race declined! Fitness -20%, you drop in the ranking.",raceWin:(r)=>`You beat ${r}! Happiness +2, +2 points!`,raceLose:(r)=>`${r} beat you! Happiness -2.`,raceDraw:(r)=>`Draw with ${r}! +1 point.`,rpsMsg:"ROCK-PAPER-SCISSORS! Best of 5 rounds.",rpsRound:(r,ps,cs)=>`Round ${r}/5 - You ${ps} : ${cs} CPU`,rpsRoundWin:"Round won!",rpsRoundLose:"Round lost!",rpsRoundDraw:"Round tied!",rpsWin:"YOU WON THE MATCH! Happiness +2 dots!",rpsLose:"You lost the match. Happiness +1 dot.",rpsDraw:"Match tied. Happiness +1 dot.",resetConfirm:"Are you sure you want to reset the pet? All progress will be permanently lost.",
 exploreIdle:"Paused. Reopen to set new hours.",exploreActive:(h)=>`Exploring... ${h}h left (1 tile/hour)`,exploreStopped:"Exploration stopped. Progress saved.",exploreDone:"Exploration complete!",exploreStarted:(h)=>`Exploration started: ${h}h!`,exploreFoundTreasure:"Found a TREASURE! Happiness +2, Intelligence +1",exploreFoundFlower:"Found a FLOWER! Happiness +1",exploreFoundFruit:"Found a FRUIT! Hunger +1",exploreNewCell:"New area discovered!",
@@ -1050,6 +1051,7 @@ function classicBeep(){playBeep(880,'square',0.06);setTimeout(()=>playBeep(660,'
 
 /* ---- disegno pet monocromatico stile Gen 1 ---- */
 function classicRender(){const cv=document.getElementById('classic-canvas');if(!cv||!classic)return;const ctx=cv.getContext('2d');ctx.imageSmoothingEnabled=false;const W=cv.width,H=cv.height;
+{const _xb=document.getElementById('classic-game-exit');if(_xb)_xb.style.display=(classic.view==='simon'||classic.view==='whack')?'block':'none';}
 ctx.clearRect(0,0,W,H);
 // sfondo LCD
 ctx.fillStyle="#8ca03a";ctx.fillRect(0,0,W,H);
@@ -1063,7 +1065,8 @@ if(classic._previewSheet){classicRenderPreviewSheet(ctx,W,H,cell,p,pe);return;}
 if(classic.view==='info'){classicRenderInfo(ctx,W,H,cell);return;}
 if(classic.view==='dir'){classicRenderDir(ctx,W,H,cell,p);return;}
 if(classic.view==='jump'){classicRenderJump(ctx,W,H,cell,p);return;}
-if(classic.view==='tris'){classicRenderTris(ctx,W,H,cell,p,pe);gridOverlay(ctx,cell,G,W,H);return;}
+if(classic.view==='simon'){classicRenderSimon(ctx,W,H,cell,p,pe);gridOverlay(ctx,cell,G,W,H);return;}
+if(classic.view==='whack'){classicRenderWhack(ctx,W,H,cell,p,pe);gridOverlay(ctx,cell,G,W,H);return;}
 if(classic.isSleeping){drawClassicSleep(p);gridOverlay(ctx,cell,G,W,H);classicDrawIcons(ctx,cell,G);return;}
 const f=classicAnimFrame%2;
 const eating=!!classic._eat;
@@ -1422,27 +1425,57 @@ ctx.fillStyle=(sel===1)?CLASSIC_PX:"rgba(30,40,20,0.45)";ctx.fillText(i18n[curre
 ctx.fillStyle=CLASSIC_PX;ctx.textAlign='start';ctx.textBaseline='alphabetic';
 }
 function classicDrawGameMenuBox(ctx,W,H,cell,p,pe){
-const bx=28,by=10,bw=26,bh=20;
+const bx=26,by=8,bw=30,bh=26;
 p(bx,by,bw,1);p(bx,by+bh,bw,1);p(bx,by,1,bh);p(bx+bw,by,1,bh+1);
 pe(bx+1,by+1,bw-1,bh-1);
 const sel=classic.gameSel||0;
-if(sel===0)p(bx+3,by+5,1,3);else p(bx+3,by+13,1,3);
+const rowsY=[6.5,14.5,22.5]; // Y (in px LCD) delle 3 voci
+p(bx+3,by+rowsY[sel]-1.5,1,3); // cursore alla voce selezionata
 ctx.textAlign='left';ctx.textBaseline='middle';ctx.font=Math.round(cell*4.4)+'px "Courier New",monospace';
-ctx.fillStyle=(sel===0)?CLASSIC_PX:"rgba(30,40,20,0.45)";ctx.fillText('JUMP',(bx+6)*cell,(by+6.5)*cell);
-ctx.fillStyle=(sel===1)?CLASSIC_PX:"rgba(30,40,20,0.45)";ctx.fillText('TRIS',(bx+6)*cell,(by+14.5)*cell);
+const labels=['JUMP','DANCE','WHACK'];
+for(let i=0;i<3;i++){ctx.fillStyle=(sel===i)?CLASSIC_PX:"rgba(30,40,20,0.45)";ctx.fillText(labels[i],(bx+6)*cell,(by+rowsY[i])*cell);}
 ctx.fillStyle=CLASSIC_PX;ctx.textAlign='start';ctx.textBaseline='alphabetic';
 }
-function classicRenderTris(ctx,W,H,cell,p,pe){
-const gx=25,gy=18,step=10;
-for(let k=1;k<3;k++){p(gx+k*step,gy,1,step*3);p(gx,gy+k*step,step*3,1);}
-for(let i=0;i<9;i++){const r=Math.floor(i/3),c=i%3;const ox=gx+c*step+2,oy=gy+r*step+2;
-if(trisBoard[i]===1){
-p(ox,oy,1,1);p(ox+5,oy,1,1);p(ox+1,oy+1,1,1);p(ox+4,oy+1,1,1);p(ox+2,oy+2,2,2);p(ox+1,oy+4,1,1);p(ox+4,oy+4,1,1);p(ox,oy+5,1,1);p(ox+5,oy+5,1,1);}
-else if(trisBoard[i]===2){
-p(ox+1,oy,4,1);p(ox+1,oy+5,4,1);p(ox,oy+1,1,4);p(ox+5,oy+1,1,4);}
+function classicRenderSimon(ctx,W,H,cell,p,pe){
+// DANCE: il pet si sposta a SX (A), SALTA (B) o va a DX (C) secondo simonFlash.
+const groundY=48, cxL=22, cxC=40, cxR=58;
+// terreno
+p(6,groundY,68,1);
+// 3 pedane con etichette A / B / C
+const pads=[[cxL,'A'],[cxC,'B'],[cxR,'C']];
+for(const [px] of pads){p(px-6,groundY-1,13,1);}
+// posizione del pet in base alla mossa mostrata (o centro se turno del giocatore)
+let px=cxC, py=groundY-8;
+if(simonFlash===0){px=cxL;py=groundY-8;}        // sinistra
+else if(simonFlash===1){px=cxC;py=groundY-16;}  // salto
+else if(simonFlash===2){px=cxR;py=groundY-8;}   // destra
+// blob del pet (tondeggiante) centrato su (px,py)
+p(px-2,py-3,5,1);p(px-3,py-2,7,1);p(px-4,py-1,9,3);p(px-3,py+2,7,1);p(px-2,py+3,5,1);
+pe(px-1,py-1,1,1);pe(px+1,py-1,1,1); // occhi
+// ombra a terra
+pe(px-3,groundY-1,7,1);p(px-2,groundY-1,5,1);
+// etichette A/B/C sotto le pedane
+ctx.textAlign='center';ctx.textBaseline='top';ctx.font=Math.round(cell*3.8)+'px "Courier New",monospace';ctx.fillStyle=CLASSIC_PX;
+for(const [pxl,lab] of pads){ctx.fillText(lab,pxl*cell,(groundY+3)*cell);}
+ctx.textAlign='start';ctx.textBaseline='alphabetic';
 }
-if(!trisOver){const r=Math.floor(trisCur/3),c=trisCur%3;const ox=gx+c*step,oy=gy+r*step;p(ox+1,oy+1,step-2,1);p(ox+1,oy+step-2,step-2,1);p(ox+1,oy+1,1,step-2);p(ox+step-2,oy+1,1,step-2);}
-ctx.fillStyle=CLASSIC_PX;ctx.textAlign='center';ctx.font=Math.round(cell*4)+'px "Courier New",monospace';ctx.fillText(i18n[currentLang].classicTrisHint,W/2,(gy+step*3+6)*cell);ctx.textAlign='start';
+function classicRenderWhack(ctx,W,H,cell,p,pe){
+// 3 buche in fila; la buca col bersaglio mostra la "talpa" (blob).
+const y=20,gy=52,pw=18,gap=6,x0=7;
+for(let z=0;z<3;z++){const x=x0+z*(pw+gap);
+// bordo buca (rettangolo)
+p(x,y,pw,1);p(x,gy,pw,1);p(x,y,1,gy-y);p(x+pw,y,1,gy-y+1);
+if(whackTarget===z||whackHitFlash===z){
+// talpa: blob tondeggiante al centro della buca
+const bx=x+Math.round(pw/2)-3,by=y+Math.round((gy-y)/2)-3;
+p(bx+1,by,4,1);p(bx,by+1,6,1);p(bx,by+2,6,3);p(bx+1,by+5,4,1);
+pe(bx+2,by+2,1,1);pe(bx+4,by+2,1,1); // occhi
+}
+}
+// vite (cuoricini) in alto a dx
+ctx.textAlign='right';ctx.textBaseline='top';ctx.font=Math.round(cell*4)+'px "Courier New",monospace';
+ctx.fillStyle=CLASSIC_PX;ctx.fillText('x'+Math.max(0,whackLives),(W-4),4);
+ctx.textAlign='start';ctx.textBaseline='alphabetic';
 }
 function classicDrawShock(p,pe,step,lift){
 const cx=40,cy=64-lift;const on=(step%2===1);
@@ -1488,8 +1521,9 @@ if(classic.view==='jump'){if(btn==='B')jumpDo();else if(btn==='C')classicCloseVi
 if(classic.view==='info'){if(btn==='C'||btn==='B')classicCloseView();return;}
 if(classic._eat||classic._med||classic._bath||classic._scold||classic._refuse){return;}
 if(classic._foodMenu){if(btn==='A'){classic.foodSel=(classic.foodSel+1)%2;classicBeepSel();classicRender();}else if(btn==='C'){classic._foodMenu=false;classicRender();}else if(btn==='B'){classic._foodMenu=false;const chosen=(classic.foodSel===0?'meal':'snack');if(chosen==='meal'&&classic.hunger>=4){startRefuse();}else{startEating(chosen);}}return;}
-if(classic._gameMenu){if(btn==='A'){classic.gameSel=(classic.gameSel+1)%2;classicBeepSel();classicRender();}else if(btn==='C'){classic._gameMenu=false;classicRender();}else if(btn==='B'){classic._gameMenu=false;if(classic.gameSel===0)startJumpGame();else startTris();}return;}
-if(classic.view==='tris'){if(btn==='A')trisMove();else if(btn==='B')trisConfirm();else if(btn==='C'){classic.view='main';classicRender();}return;}
+if(classic._gameMenu){if(btn==='A'){classic.gameSel=(classic.gameSel+1)%3;classicBeepSel();classicRender();}else if(btn==='C'){classic._gameMenu=false;classicRender();}else if(btn==='B'){classic._gameMenu=false;if(classic.gameSel===0)startJumpGame();else if(classic.gameSel===1)startSimon();else startWhack();}return;}
+if(classic.view==='simon'){if(!simonPlaying){classicGameExit();return;}if(btn==='A')simonPress(0);else if(btn==='B')simonPress(1);else if(btn==='C')simonPress(2);return;}
+if(classic.view==='whack'){if(!whackPlaying){classicGameExit();return;}if(btn==='A')whackHit(0);else if(btn==='B')whackHit(1);else if(btn==='C')whackHit(2);return;}
 if(btn==='A'){classic.sel=(classic.sel<0)?0:(classic.sel+1)%CLASSIC_ICONS.length;classicBeepSel();classicRender();return;}
 if(btn==='C'){if(classic.sel>=0){classic.sel=-1;playBeep(300,'square',0.05);classicMsg('');}classicCloseView();return;}
 if(btn==='B'){if(classic.sel<0){classic.sel=0;}classicDoIcon(CLASSIC_ICONS[classic.sel]);return;}}
@@ -1612,22 +1646,77 @@ classic.happy=Math.min(4,classic.happy+1);classic.health=Math.min(4,classic.heal
 classicMsg(i18n[currentLang].classicJumpEnd(jumpScore)+' | REC '+(classic.jumpBest||0));if(jumpTimer)clearInterval(jumpTimer);saveClassic();setTimeout(()=>{classic.view='main';classicRender();},900);}
 classicRender();}
 
-let trisBoard=[],trisCur=0,trisBusy=false,trisOver=false;
-function startTris(){classic.view='tris';trisBoard=[0,0,0,0,0,0,0,0,0];trisCur=0;trisBusy=false;trisOver=false;classicMsg(i18n[currentLang].classicTrisMsg);classicRender();}
-function trisMove(){if(trisBusy||trisOver)return;for(let k=1;k<=9;k++){const i=(trisCur+k)%9;if(trisBoard[i]===0){trisCur=i;break;}}classicBeepSel();classicRender();}
-function trisWinner(b){const L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];for(const l of L){const[a,c,d]=l;if(b[a]&&b[a]===b[c]&&b[a]===b[d])return b[a];}return b.every(v=>v!==0)?3:0;}
-function trisCpuPick(){const empt=[];for(let i=0;i<9;i++)if(trisBoard[i]===0)empt.push(i);
-for(const i of empt){const t=trisBoard.slice();t[i]=2;if(trisWinner(t)===2)return i;}
-for(const i of empt){const t=trisBoard.slice();t[i]=1;if(trisWinner(t)===1)return i;}
-if(trisBoard[4]===0)return 4;const corners=[0,2,6,8].filter(i=>trisBoard[i]===0);if(corners.length)return corners[Math.floor(Math.random()*corners.length)];
-return empt[Math.floor(Math.random()*empt.length)];}
-function trisEnd(){trisOver=true;const t=i18n[currentLang];const w=trisWinner(trisBoard);let msg=w===1?t.classicTrisWin:(w===2?t.classicTrisLose:t.classicTrisDraw);
-classic.happy=Math.min(4,classic.happy+1);classic.discipline=Math.min(4,classic.discipline+1);classicHappyBeep();classicMsg(msg);saveClassic();setTimeout(()=>{classic.view='main';classicRender();},1400);}
-function trisConfirm(){if(trisBusy||trisOver)return;if(trisBoard[trisCur]!==0){trisMove();return;}
-trisBoard[trisCur]=1;playBeep(700,'square',0.05);classicRender();
-if(trisWinner(trisBoard)){trisEnd();return;}
-trisBusy=true;setTimeout(()=>{const ci=trisCpuPick();if(ci!==undefined&&trisBoard[ci]===0){trisBoard[ci]=2;playBeep(400,'square',0.05);}
-if(trisWinner(trisBoard)){classicRender();trisEnd();}else{for(let k=1;k<=9;k++){const i=(trisCur+k)%9;if(trisBoard[i]===0){trisCur=i;break;}}trisBusy=false;classicRender();}},500);}
+/* Mostra/nasconde il pulsante "X" per uscire dai mini-giochi Classic */
+function showClassicGameExit(on){const b=document.getElementById('classic-game-exit');if(b)b.style.display=on?'block':'none';}
+/* Uscita pulita da qualsiasi mini-gioco Classic: ferma i giochi/timer e torna al main */
+function classicGameExit(){
+simonPlaying=false;simonShowing=false;
+whackPlaying=false;if(typeof whackTimer!=='undefined'&&whackTimer)clearTimeout(whackTimer);
+showClassicGameExit(false);
+if(classic){classic.view='main';classicMsg('');classicRender();}
+}
+
+/* ==================== DANCE (ex SIMON) ====================
+   Mossa: 0=SINISTRA (tasto A), 1=SALTO (tasto B), 2=DESTRA (tasto C).
+   Il pet balla la sequenza (si sposta/salta) con beep; poi il giocatore la
+   ripete premendo il tasto della direzione in cui il pet e' andato.
+   A inizio di ogni turno parte una musichetta 8-bit. */
+let simonSeq=[],simonIdx=0,simonPlaying=false,simonShowing=false,simonFlash=-1,simonScore=0,simonTimer=null;
+const SIMON_TONES=[523,659,784]; // DO-MI-SOL (sx / salto / dx)
+// Jingle 8-bit di inizio turno
+function danceJingle(){const notes=[[523,0],[659,90],[784,180],[1047,270]];notes.forEach(([f,ms])=>setTimeout(()=>playBeep(f,'square',0.09),ms));}
+function startSimon(){classic.view='simon';simonSeq=[];simonIdx=0;simonScore=0;simonPlaying=true;simonShowing=false;simonFlash=-1;
+showClassicGameExit(true);classicMsg(i18n[currentLang].classicSimonMsg);classicRender();setTimeout(simonAddStep,900);}
+function simonAddStep(){if(classic.view!=='simon'||!simonPlaying)return;simonSeq.push(Math.floor(Math.random()*3));simonIdx=0;
+danceJingle();setTimeout(simonPlaySequence,520);}
+function simonPlaySequence(){if(classic.view!=='simon'||!simonPlaying)return;simonShowing=true;let k=0;
+const stepMs=Math.max(340,640-simonSeq.length*22);
+function next(){if(classic.view!=='simon'||!simonPlaying){simonShowing=false;return;}
+if(k>=simonSeq.length){simonShowing=false;simonFlash=-1;classicMsg(i18n[currentLang].classicSimonGo);classicRender();return;}
+const zone=simonSeq[k];simonFlash=zone;playBeep(SIMON_TONES[zone],'square',0.15);classicRender();
+setTimeout(()=>{simonFlash=-1;classicRender();setTimeout(()=>{k++;next();},stepMs*0.35);},stepMs*0.6);}
+next();}
+function simonPress(zone){if(!simonPlaying||simonShowing)return;
+simonFlash=zone;playBeep(SIMON_TONES[zone],'square',0.12);classicRender();
+setTimeout(()=>{simonFlash=-1;classicRender();},160);
+if(zone===simonSeq[simonIdx]){simonIdx++;
+if(simonIdx>=simonSeq.length){simonScore=simonSeq.length;classicMsg(i18n[currentLang].classicSimonOk(simonScore));
+setTimeout(simonAddStep,700);}
+}else{simonGameOver();}}
+function simonGameOver(){simonPlaying=false;simonShowing=false;playBeep(160,'sawtooth',0.45);
+classicMsg(i18n[currentLang].classicSimonEnd(simonScore)+' | REC '+(classic.simonBest||0));
+if(simonScore>(classic.simonBest||0))classic.simonBest=simonScore;
+if(simonScore>0){classic.happy=Math.min(4,classic.happy+1);classic.discipline=Math.min(4,classic.discipline+1);} // DANCE -> disciplina + felicita'
+saveClassic();classicRender();setTimeout(()=>{if(classic.view==='simon'){classicGameExit();}},1600);}
+
+/* ==================== WHACK-A-MOLE (colpisci la talpa) ====================
+   3 buche: 0=SX (A), 1=CENTRO (B), 2=DX (C). Compare un bersaglio, colpisci
+   il tasto giusto prima che sparisca. 3 vite, velocita' crescente. */
+let whackPlaying=false,whackTarget=-1,whackScore=0,whackLives=3,whackTimer=null,whackHitFlash=-1,whackMiss=false;
+function startWhack(){classic.view='whack';whackPlaying=true;whackScore=0;whackLives=3;whackTarget=-1;whackHitFlash=-1;whackMiss=false;
+showClassicGameExit(true);classicMsg(i18n[currentLang].classicWhackMsg);classicRender();setTimeout(whackSpawn,700);}
+function whackSpawn(){if(classic.view!=='whack'||!whackPlaying)return;
+whackTarget=Math.floor(Math.random()*3);whackMiss=false;classicRender();
+const life=Math.max(420,1100-whackScore*45); // sempre piu' veloce
+if(whackTimer)clearTimeout(whackTimer);
+whackTimer=setTimeout(()=>{ // scaduto: mancato
+if(classic.view!=='whack'||!whackPlaying)return;
+if(whackTarget!==-1){whackLoseLife();}
+},life);}
+function whackHit(zone){if(!whackPlaying)return;
+if(whackTimer)clearTimeout(whackTimer);
+if(zone===whackTarget){whackScore++;whackHitFlash=zone;whackTarget=-1;playBeep(880,'square',0.06);
+classicMsg(i18n[currentLang].classicWhackScore(whackScore));classicRender();
+setTimeout(()=>{whackHitFlash=-1;whackSpawn();},180);
+}else{whackLoseLife();}}
+function whackLoseLife(){if(whackTimer)clearTimeout(whackTimer);whackLives--;whackMiss=true;playBeep(180,'square',0.45);whackTarget=-1;classicRender();
+if(whackLives<=0){whackGameOver();}else{setTimeout(()=>{whackMiss=false;whackSpawn();},450);}}
+function whackGameOver(){whackPlaying=false;if(whackTimer)clearTimeout(whackTimer);
+playBeep(140,'sawtooth',0.5);
+classicMsg(i18n[currentLang].classicWhackEnd(whackScore)+' | REC '+(classic.whackBest||0));
+if(whackScore>(classic.whackBest||0))classic.whackBest=whackScore;
+if(whackScore>0){classic.happy=Math.min(4,classic.happy+1);classic.weight=Math.max(1,classic.weight-1);} // WHACK -> dimagrire + felicita'
+saveClassic();classicRender();setTimeout(()=>{if(classic.view==='whack'){classicGameExit();}},1600);}
 
 function showModeScreen(){hideAllScreens();if(classicTimer)clearInterval(classicTimer);if(gameTimer)clearInterval(gameTimer);updateTexts();document.getElementById('mode-screen').style.display='flex';document.getElementById('mode-desc').innerText=i18n[currentLang].modeDesc;}
 function chooseMode(m){gameMode=m;localStorage.setItem('dinomio_mode',m);if(m==='classic'){document.getElementById('mode-screen').style.display='none';if(!loadClassic())startClassic();}else{document.getElementById('mode-screen').style.display='none';if(!loadGameState()){for(let p=0;p<5;p++)drawPixelSprite('p'+(p+1)+'_baby',p,1);document.getElementById('selection-screen').style.display='block';}}}
