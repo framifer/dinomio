@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1187,35 +1187,41 @@ ad5:[
 " ###  ###"]
 };
 /* Renderer unico: centra la matrice su (cx,cy).
-   squash = schiacciamento "a blocco": comprime di 1px in verticale (salta 1 riga
-   verso il basso) e allarga di 1px per lato, cosi il pet sembra appiattito a terra. */
+   squash = schiacciamento "a blocco": comprime di 1px in verticale (fonde le ultime
+   2 righe) e allarga di ESATTAMENTE 1px per lato, cosi il pet sembra appiattito a terra. */
 function drawClassicMatrix(p,pe,mat,cx,cy,squash){
 const h=mat.length,w=mat[0].length;
 if(!squash){
 const x0=Math.round(cx-w/2),y0=Math.round(cy-h/2);
 for(let r=0;r<h;r++){const row=mat[r];for(let c=0;c<row.length;c++){const ch=row[c];if(ch==='#')p(x0+c,y0+r,1,1);else if(ch==='.')pe(x0+c,y0+r,1,1);}}
 return;}
-// SQUASH: altezza ridotta di 1 (comprime la penultima riga), largo +1 per lato, spostato in basso
+// SQUASH: comprime di 1px in verticale (fonde le ultime 2 righe) e allarga di
+// ESATTAMENTE 1px per lato. Il corpo resta centrato come nel caso normale (cx-w/2)
+// cosi non "salta" lateralmente; le colonne extra sono simmetriche.
 const nh=h-1;
-const x0=Math.round(cx-(w+2)/2),y0=Math.round(cy-nh/2)+1;
+const x0=Math.round(cx-w/2),y0=Math.round(cy-nh/2)+1;
 for(let r=0;r<nh;r++){
-// mappa la riga compressa: le prime nh-1 righe uguali, l'ultima fonde le ultime 2 righe originali
-const srcRow=(r<nh-1)?mat[r]:mat[h-1];
+// riga sorgente: le prime nh-1 uguali; l'ultima fonde le ultime 2 righe originali
+const srcRow=(r<nh-1)?mat[r]:mergeRows(mat[h-2],mat[h-1]);
+// disegna il corpo (nessuna traslazione: centrato su x0 come il non-squash)
+let first=-1,last=-1;
 for(let c=0;c<srcRow.length;c++){const ch=srcRow[c];if(ch===' ')continue;
-// allarga: la prima e l'ultima colonna piena vengono duplicate ai lati (+1px per lato)
-const drawX=x0+1+c;
-if(ch==='#')p(drawX,y0+r,1,1);else if(ch==='.')pe(drawX,y0+r,1,1);
+if(first<0)first=c;last=c;
+if(ch==='#')p(x0+c,y0+r,1,1);else if(ch==='.')pe(x0+c,y0+r,1,1);
+}
+// allarga di 1px per lato: una sola colonna extra a sx della prima cella piena
+// e una a dx dell'ultima. Solo sulle righe che hanno del corpo pieno.
+if(first>=0){
+if(srcRow[first]==='#')p(x0+first-1,y0+r,1,1);
+if(srcRow[last]==='#')p(x0+last+1,y0+r,1,1);
 }
 }
-// bordi laterali estesi (allargamento): copia colonna estrema sx/dx sulle righe centrali
-for(let r=1;r<nh-1;r++){const row=mat[r<nh-1?r:h-2];
-// trova prima e ultima cella non-spazio della riga originale corrispondente
-const orig=(r<nh-1)?mat[r]:mat[h-2];let first=-1,last=-1;
-for(let c=0;c<orig.length;c++){if(orig[c]!==' '){if(first<0)first=c;last=c;}}
-if(first>=0){const ch1=orig[first];if(ch1==='#')p(x0+first,y0+r,1,1);}
-if(last>=0){const ch2=orig[last];if(ch2==='#')p(x0+2+last,y0+r,1,1);}
 }
-}
+// Fonde due righe della matrice: preferisce '#', poi '.', altrimenti spazio.
+function mergeRows(a,b){const n=Math.max(a.length,b.length);let out='';
+for(let c=0;c<n;c++){const x=a[c]||' ',y=b[c]||' ';
+out+=(x==='#'||y==='#')?'#':((x==='.'||y==='.')?'.':' ');}
+return out;}
 function drawClassicPet(p,stage,f,sick,gender,pe,still,ovX,ovY){
 const bob=still?0:((f===0)?0:1); // su/giu
 const swayCycle=[-3,-1,1,3,1,-1]; const sway=still?0:swayCycle[classicAnimFrame%swayCycle.length]; // dondolio ampio dx/sx
