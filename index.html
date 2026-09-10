@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>DinoMio - 8-bit GBA Edition</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace; image-rendering: pixelated; }
@@ -171,14 +171,20 @@ h1, h2 { font-size: 0.9rem; text-align: center; color: #3a4653; text-transform: 
   body { align-items: flex-start; }
   .tamagotchi-container {
     max-width: 100%; width: 100%;
-    /* Lascia spazio in fondo per il banner Appsgeyser + la barra di sistema Android,
-       cosi i tasti (SETTINGS/SHOP/INFO/LIGHT) non finiscono sotto il banner. */
-    --banner-buffer: 64px;
-    height: calc(100vh - var(--banner-buffer) - env(safe-area-inset-bottom, 0px));
-    height: calc(100dvh - var(--banner-buffer) - env(safe-area-inset-bottom, 0px));
+    /* Riempie tutta l'altezza dello schermo; lo spazio libero sopra/sotto e'
+       ESATTAMENTE quello delle barre di sistema (status bar in alto, barra di
+       navigazione in basso) grazie alle safe-area insets del dispositivo.
+       Nessun buffer fisso: niente vuoto extra. */
+    height: 100vh;
+    height: 100dvh;
     max-height: none;
-    margin-bottom: calc(var(--banner-buffer) + env(safe-area-inset-bottom, 0px));
-    border-radius: 0; padding: 10px; border-width: 0;
+    margin-bottom: 0;
+    border-radius: 0;
+    border-width: 0;
+    padding: calc(10px + env(safe-area-inset-top, 0px))
+             calc(10px + env(safe-area-inset-right, 0px))
+             calc(10px + env(safe-area-inset-bottom, 0px))
+             calc(10px + env(safe-area-inset-left, 0px));
   }
   .lcd-screen { padding: 6px; border-width: 3px; }
   h1, h2 { font-size: 0.8rem; }
